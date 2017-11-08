@@ -6,18 +6,27 @@ using SoccerGame;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerTeam))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class PlayerController : MonoBehaviour
 {
+    //Componente de locomoção
     [SerializeField]
     private ControllerLocomotion locomotion;
     public ControllerLocomotion Locomotion { get { return locomotion; } }
+
+    //Componennte de gravidade
     [SerializeField]
     private ControllerGravity gravity;
     public ControllerGravity Gravity { get { return gravity; } }
+
+    //Velocidade normal aplicada ao rootMotion apartir do componente locomotion
     [HideInInspector]
     public float speed = 0;
+
+    //Direção normal aplicada ao rootMotion apartir do componente locomotion
     [HideInInspector]
     public float dir = 0;
 
@@ -25,10 +34,10 @@ public class PlayerController : MonoBehaviour
     public bool isMovie { get { return (speed > 0.0f || dir > 0.0f); } }
 
     private new Rigidbody rigidbody;
-    private NavMeshAgent agent;
     private Animator animator;
+    private NavMeshAgent agent; 
     private PlayerInput playerInput;
-    private Manualcontroller manualController;
+    private ManualController manualController;
 
     private void Awake()
     {
@@ -36,7 +45,7 @@ public class PlayerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
-        manualController = GetComponent<Manualcontroller>();
+        manualController = GetComponent<ManualController>();
 
     }
     private void Start()

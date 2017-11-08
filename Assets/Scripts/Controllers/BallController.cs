@@ -56,7 +56,6 @@ public class BallController : MonoBehaviour
     public event OnSetOwner onSetMyOwner;
     public event OnRemoveOwner onRemoveMyOwner;
 
-    private Animator animator;
     private new Rigidbody rigidbody;
 
     PlayerController lastOwner;
@@ -69,7 +68,6 @@ public class BallController : MonoBehaviour
 
     void Start()
     {
-        animator = GetComponent<Animator>();
         rigidbody = GetComponent<Rigidbody>();
         if (owner)
         {

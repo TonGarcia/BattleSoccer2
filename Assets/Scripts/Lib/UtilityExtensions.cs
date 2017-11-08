@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SoccerGame
 {
-    static class SoccerUtilityExtensions
+    static class UtilityExtensions
     {
 
         public static float Distance(this Transform transform, Transform other)
