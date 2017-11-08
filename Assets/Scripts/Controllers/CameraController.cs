@@ -17,7 +17,7 @@ public class CameraController : MonoBehaviour
 
     public Vector3 targetOffsetPos;
 
-    public bool automaticZoom;
+    public bool automaticZoom=true;
 
     private Vector3 oldPos;
 
@@ -33,9 +33,8 @@ public class CameraController : MonoBehaviour
             p2 = GameManager.instance.GetSelectedPlayer(CampTeam.Team_B);
             if (p1 && p2)
             {
-                float playersDistance = p1.Distance(p2);
-                
-                zoom = playersDistance / 4;
+                float distance = p1.Distance(p2);
+                zoom = distance / 4;
             }
         }
 
