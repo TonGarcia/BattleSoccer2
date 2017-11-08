@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SoccerGame;
-using System;
 
 public class MultiSelection : MonoBehaviour
 {
-    public GameManager gameMananger;
-
+    public GameManager gameMananger;       
+    
     [SerializeField]
     private ButtomInputType selectInputButtom;
 
     [SerializeField]
     private GameObject selectorPrefab;
 
+    
     private CampTeam team;
     private BallController ball = null;
     private PlayerController selectedPlayer = null;
@@ -26,16 +26,14 @@ public class MultiSelection : MonoBehaviour
         if (selectorPrefab != null)
             selector = Instantiate(selectorPrefab);
 
-        ball.onSetMyOwner += OnBallSetOwner;
        
     }
 
-
-
+    // Update is called once per frame
     void LateUpdate()
     {
         //Seleção manual de jogador mais proximo da bola
-        if (selectedPlayer.IsMyBall() == false)
+        if (selectedPlayer.IsMyBall()==false)
         {
             if (ControllerInput.GetButtonDown(gameMananger.GetControllerType(team), selectInputButtom))
             {
@@ -47,32 +45,11 @@ public class MultiSelection : MonoBehaviour
                 }
             }
         }
-
+   
 
         SelectorUpdate();
     }
 
-    //UnityEvents
-    private void OnDestroy()
-    {
-        ball.onSetMyOwner -= OnBallSetOwner;
-      
-    }
-
-    //BallController Events
-    private void OnBallSetOwner(PlayerController owner, PlayerController lasOwner)
-    {
-        if(owner.PlayerTeam() == team)
-        {
-            if(owner!=selectedPlayer)
-            {
-                SelectPlayer(owner);
-            }
-        }
-    }
-
-   
-    //Methods private
     private void SelectPlayer(PlayerController player)
     {
         if (selectedPlayer == null)
@@ -98,8 +75,6 @@ public class MultiSelection : MonoBehaviour
         else
             selector.transform.position = new Vector3(100, 100, 100);
     }
-   
-    //Methods public
     public void SetTeam(CampTeam team)
     {
         this.team = team;
@@ -117,7 +92,6 @@ public class MultiSelection : MonoBehaviour
     {
         return selectedPlayer;
     }
-
-
+    
 }
 
