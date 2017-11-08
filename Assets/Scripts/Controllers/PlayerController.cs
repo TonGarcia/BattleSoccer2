@@ -4,12 +4,33 @@ using UnityEngine;
 using UnityEngine.AI;
 using SoccerGame;
 
+
+public static class PlayerControllerExtensions
+{
+
+    public static ControllerInputType PlayerInputType(this PlayerController controller)
+    {
+        PlayerInput pinput = controller.GetComponent<PlayerInput>();
+        return pinput.InputType;
+    }
+    public static CampTeam PlayerTeam(this PlayerController controller)
+    {
+        PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
+        return pinput.Team;
+    }
+
+    public static bool IsMyBall(this PlayerController player)
+    {
+        return BallController.IsOwner(player);
+    }
+}
+
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
-[RequireComponent(typeof(PlayerInput))]
-[RequireComponent(typeof(PlayerTeam))]
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(PlayerTeam))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     //Componente de locomoção
@@ -17,7 +38,7 @@ public class PlayerController : MonoBehaviour
     private ControllerLocomotion locomotion;
     public ControllerLocomotion Locomotion { get { return locomotion; } }
 
-    //Componennte de gravidade
+    //Componennte de gravidade 
     [SerializeField]
     private ControllerGravity gravity;
     public ControllerGravity Gravity { get { return gravity; } }
@@ -35,7 +56,7 @@ public class PlayerController : MonoBehaviour
 
     private new Rigidbody rigidbody;
     private Animator animator;
-    private NavMeshAgent agent; 
+    private NavMeshAgent agent;
     private PlayerInput playerInput;
     private ManualController manualController;
 
@@ -72,4 +93,12 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void SetManual()
+    {
+        playerInput.InputType = GameManager.instance.GetControllerType(this.PlayerTeam());
+    }
+    public void SetAutomatic()
+    {
+        playerInput.InputType = ControllerInputType.ControllerCPU;
+    }
 }

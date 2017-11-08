@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SoccerGame
 {
+
     public static class CampPositionExtensions
     {
         public static string ToKey(this CampPosition scgp)
@@ -11,6 +12,11 @@ namespace SoccerGame
             string key = scgp.side.ToString() + scgp.position.ToString() + scgp.camptype.ToString();
             return key;
         }
+    }
+    public enum CampTeam
+    {
+        Team_A,
+        Team_B
     }
     /// <summary>
     /// Representa o lado do campo específico. Direito ou Esquerdo. 

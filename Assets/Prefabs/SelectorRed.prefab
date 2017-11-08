@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4268572625177706}
   - component: {fileID: 95274226139465206}
   m_Layer: 0
-  m_Name: SelectorGreen
+  m_Name: SelectorRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,8 +69,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1614132902261614}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.051, z: 0}
-  m_LocalScale: {x: 2.0108473, y: 0.20108518, z: 2.0108519}
+  m_LocalPosition: {x: 0, y: 0.015, z: 0}
+  m_LocalScale: {x: 1.8570663, y: 0.18570726, z: 1.8570725}
   m_Children: []
   m_Father: {fileID: 4191113176860288}
   m_RootOrder: 0
@@ -117,7 +117,7 @@ MeshRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: c0b8024d7c02094459dcb596c9c70eae, type: 2}
+  - {fileID: 2100000, guid: 220790a2c48f6a948bf35789836aad5d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -151,7 +151,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: cc4cdcfc87dd93f4ea9b8a0704123af6, type: 2}
+  - {fileID: 2100000, guid: 877b1f75ab83af74a83b68d2f0fce38f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
