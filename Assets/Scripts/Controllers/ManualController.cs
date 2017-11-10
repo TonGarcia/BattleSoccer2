@@ -6,7 +6,10 @@ using System;
 
 public class ManualController : MonoBehaviour
 {
+    [Tooltip("Se o jogador tomar a bola e estiver a uma distancia igual ou menor, a animação de tomada de bola sera executada")]
+    public float distanceToEntry = 2.5f;
     public Collider FovBallTryger;
+
     private PlayerController player;
     private ControllerLocomotion locomotion { get { return player.Locomotion; } }
     private PlayerInput playerInput;
@@ -55,7 +58,7 @@ public class ManualController : MonoBehaviour
         if (owner == player && lasOwner != null)
         {
             float distance = lasOwner.Distance(player);
-            if (distance <= 1.5f)
+            if (distance <= distanceToEntry)
             {
                 locomotion.TrygerEntry();
             }

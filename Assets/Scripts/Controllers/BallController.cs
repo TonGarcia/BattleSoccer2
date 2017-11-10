@@ -193,6 +193,17 @@ public class BallController : MonoBehaviour
     {
         return player == owner;
     }
+    public bool IsMyTeam(PlayerController player)
+    {
+        bool result = false;
+
+        if(owner!=null)
+        {
+            if (owner.GetPlayerTeam() == player.GetPlayerTeam()) ;
+        }
+
+        return result;
+    }
 
     public static void ChangeDirection()
     {

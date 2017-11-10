@@ -8,12 +8,12 @@ using SoccerGame;
 public static class PlayerControllerExtensions
 {
 
-    public static ControllerInputType PlayerInputType(this PlayerController controller)
+    public static ControllerInputType GetPlayerInputType(this PlayerController controller)
     {
         PlayerInput pinput = controller.GetComponent<PlayerInput>();
         return pinput.InputType;
     }
-    public static CampTeam PlayerTeam(this PlayerController controller)
+    public static CampTeam GetPlayerTeam(this PlayerController controller)
     {
         PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
         return pinput.Team;
@@ -95,7 +95,7 @@ public class PlayerController : MonoBehaviour
 
     public void SetManual()
     {
-        playerInput.InputType = GameManager.instance.GetControllerType(this.PlayerTeam());
+        playerInput.InputType = GameManager.instance.GetControllerType(this.GetPlayerTeam());
     }
     public void SetAutomatic()
     {

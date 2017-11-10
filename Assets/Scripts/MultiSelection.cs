@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SoccerGame;
+using System;
 
 public class MultiSelection : MonoBehaviour
 {
-    public GameManager gameMananger;       
-    
+    public GameManager gameMananger;
+
     [SerializeField]
     private ButtomInputType selectInputButtom;
 
     [SerializeField]
     private GameObject selectorPrefab;
 
-    
+
     private CampTeam team;
     private BallController ball = null;
     private PlayerController selectedPlayer = null;
@@ -21,19 +22,15 @@ public class MultiSelection : MonoBehaviour
 
     private void Start()
     {
-
         ball = BallController.instance;
         if (selectorPrefab != null)
             selector = Instantiate(selectorPrefab);
-
-       
     }
-
-    // Update is called once per frame
-    void LateUpdate()
+    private void LateUpdate()
     {
+
         //Seleção manual de jogador mais proximo da bola
-        if (selectedPlayer.IsMyBall()==false)
+        if (selectedPlayer.IsMyBall() == false)
         {
             if (ControllerInput.GetButtonDown(gameMananger.GetControllerType(team), selectInputButtom))
             {
@@ -45,10 +42,50 @@ public class MultiSelection : MonoBehaviour
                 }
             }
         }
-   
+
 
         SelectorUpdate();
     }
+    //Start MANUAL do componente. 
+    public void SetTeam(CampTeam team)
+    {
+        this.team = team;
+        //Seleção primaria, selecionamos o jogador mais proximo da bola
+        if (selectedPlayer == null)
+        {
+            PlayerController nearPlayer = gameMananger.GetPlayerNearBall(team);
+            if (nearPlayer != null)
+            {
+                SelectPlayer(nearPlayer);
+            }
+        }
+
+        ball.onSetMyOwner += OnBallSetOwner;
+    }
+    public PlayerController GetSelectedPlayer()
+    {
+        return selectedPlayer;
+    }
+
+    //UnityEvents
+    private void OnDestroy()
+    {
+        ball.onSetMyOwner -= OnBallSetOwner;
+    }
+
+    //Ballcontroller Events
+    private void OnBallSetOwner(PlayerController owner, PlayerController lasOwner)
+    {
+        //Seleção automatica no jogador com a bola
+        if (owner.GetPlayerTeam() == team)
+        {
+            if (owner != selectedPlayer)
+            {
+                SelectPlayer(owner);
+            }
+        }
+    }
+
 
     private void SelectPlayer(PlayerController player)
     {
@@ -75,23 +112,7 @@ public class MultiSelection : MonoBehaviour
         else
             selector.transform.position = new Vector3(100, 100, 100);
     }
-    public void SetTeam(CampTeam team)
-    {
-        this.team = team;
-        //Seleção primaria, selecionamos o jogador mais proximo da bola
-        if (selectedPlayer == null)
-        {
-            PlayerController nearPlayer = gameMananger.GetPlayerNearBall(team);
-            if (nearPlayer != null)
-            {
-                SelectPlayer(nearPlayer);
-            }
-        }
-    }
-    public PlayerController GetSelectedPlayer()
-    {
-        return selectedPlayer;
-    }
-    
+
+
 }
 

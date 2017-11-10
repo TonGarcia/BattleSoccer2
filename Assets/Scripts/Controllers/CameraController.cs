@@ -17,7 +17,7 @@ public class CameraController : MonoBehaviour
 
     public Vector3 targetOffsetPos;
 
-    public bool automaticZoom;
+    public bool automaticZoom = true;
 
     private Vector3 oldPos;
 

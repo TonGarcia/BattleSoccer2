@@ -21,6 +21,17 @@ public class GameManager : MonoBehaviour
         private MultiSelection multSelection;
         public MultiSelection MultSelection { get { return multSelection; } }
         
+        public void Start()
+        {
+            if (autoFoundPlayers)
+                players = new List<PlayerController>();
+
+            List<PlayerController> _players = FindObjectsOfType<PlayerController>().ToList();
+            _players.RemoveAll(r => r.GetPlayerTeam() != team);
+            SetPlayers(_players);
+
+            multSelection.SetTeam(team);
+        }
         public bool autoFoundPlayers = false;
         public void SetPlayers(List<PlayerController> players)
         {
@@ -38,31 +49,13 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;     
-
-        if (teamMananger1.autoFoundPlayers)
-        {
-            teamMananger1.Players.Clear();
-            List<PlayerController> players = FindObjectsOfType<PlayerController>().ToList();
-            players.RemoveAll(r => r.PlayerTeam() != teamMananger1.team);
-            teamMananger1.SetPlayers(players);
-        }
-        if (teamMananger2.autoFoundPlayers)
-        {
-            teamMananger2.Players.Clear();
-
-            List<PlayerController> players = FindObjectsOfType<PlayerController>().ToList();
-            players.RemoveAll(r => r.PlayerTeam() != teamMananger2.team);
-            teamMananger2.SetPlayers(players);
-        }
-
+        instance = this;
     }
     private void Start()
     {
-        teamMananger1.MultSelection.SetTeam(teamMananger1.team);
-        teamMananger2.MultSelection.SetTeam(teamMananger2.team);
+        teamMananger1.Start();
+        teamMananger2.Start();
     }
-
     private TeamManager GetTeamManager(CampTeam team)
     {
         TeamManager manager = null;
