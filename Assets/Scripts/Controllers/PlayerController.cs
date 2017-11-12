@@ -13,16 +13,18 @@ public static class PlayerControllerExtensions
         PlayerInput pinput = controller.GetComponent<PlayerInput>();
         return pinput.InputType;
     }
-    public static CampTeam GetPlayerTeam(this PlayerController controller)
+    public static CampTeam GetCampTeam(this PlayerController controller)
     {
         PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
         return pinput.Team;
     }
-
-    public static bool IsMyBall(this PlayerController player)
+    public static CampPlaceMarcation GetPlaceMarcation(this PlayerController controller)
     {
-        return BallController.IsOwner(player);
+        PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
+        return pinput.PlaceMarcation;
     }
+
+
 }
 
 [RequireComponent(typeof(Animator))]
@@ -59,6 +61,7 @@ public class PlayerController : MonoBehaviour
     private NavMeshAgent agent;
     private PlayerInput playerInput;
     private ManualController manualController;
+    private AIController aicontroller;
 
     private void Awake()
     {
@@ -67,6 +70,7 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         playerInput = GetComponent<PlayerInput>();
         manualController = GetComponent<ManualController>();
+        aicontroller = GetComponent<AIController>();
 
     }
     private void Start()
@@ -78,6 +82,7 @@ public class PlayerController : MonoBehaviour
     {
         agent.enabled = playerInput.IsAI;
         manualController.enabled = !playerInput.IsAI;
+        aicontroller.enabled = playerInput.IsAI;
         locomotion.DoAnimator(speed, dir);
 
     }
@@ -90,12 +95,11 @@ public class PlayerController : MonoBehaviour
     void OnAnimatorMove()
     {
         locomotion.OnAnimatorMove();
-
     }
 
     public void SetManual()
     {
-        playerInput.InputType = GameManager.instance.GetControllerType(this.GetPlayerTeam());
+        playerInput.InputType = GameManager.instance.GetControllerType(this.GetCampTeam());
     }
     public void SetAutomatic()
     {

@@ -9,7 +9,7 @@ namespace SoccerGame
     {
         public static string ToKey(this CampPosition scgp)
         {
-            string key = scgp.side.ToString() + scgp.position.ToString() + scgp.camptype.ToString();
+            string key = scgp.Side.ToString() + scgp.Marcation.ToString() + scgp.CampType.ToString();
             return key;
         }
     }
@@ -32,24 +32,24 @@ namespace SoccerGame
     /// origem em uma partida. As posições possuem marcações para defesa e ataque, veja também
     /// <seealso cref="CampPlaceType"/>
     /// </summary>
-    public enum CampPlacePosition
+    public enum CampPlaceMarcation
     {
-        position_0,
-        position_1,
-        position_2,
-        position_3,
-        position_4,
-        position_5,
-        position_6,
-        position_7,
-        position_8,
-        position_9,
-        position_10
+        marcation_0,
+        marcation_1,
+        marcation_2,
+        marcation_3,
+        marcation_4,
+        marcation_5,
+        marcation_6,
+        marcation_7,
+        marcation_8,
+        marcation_9,
+        marcation_10
 
 
     }
     /// <summary>
-    /// Campo ou grupo de posições <see cref="CampPlacePosition"/>, utilizado para
+    /// Campo ou grupo de posições <see cref="CampPlaceMarcation"/>, utilizado para
     /// saber se a posição origem é uma marcação de ataque ou de defesa
     /// </summary>
     public enum CampPlaceType
@@ -60,12 +60,17 @@ namespace SoccerGame
 
     public class CampPosition : MonoBehaviour
     {
+        [SerializeField]
+        private CampPlaceSide side;
+        public CampPlaceSide Side { get { return side; } }
+        [SerializeField]
+        private CampPlaceMarcation marcation;
+        public CampPlaceMarcation Marcation { get { return marcation; } }
+        [SerializeField]
+        private CampPlaceType camptype;
+        public CampPlaceType CampType { get { return camptype; } }
 
-        public CampPlaceSide side;
-        public CampPlacePosition position;
-        public CampPlaceType camptype;
-
-        public static string GetKey(CampPlaceSide side, CampPosition cpos, CampPlaceType ctype)
+        public static string GetKey(CampPlaceSide side, CampPlaceMarcation cpos, CampPlaceType ctype)
         {
             return (side.ToString() + cpos.ToString() + ctype.ToString());
         }

@@ -4,6 +4,39 @@ using UnityEngine;
 using System.Linq;
 using SoccerGame;
 
+public static class GameManagerExtensions
+{
+    public static Transform GetMarcationPosition(this PlayerController controller, CampPlaceType placeType)
+    {
+        return GameManager.instance.GetMarcationPosition(controller, placeType);
+    }
+    public static bool InMarcation(this PlayerController controller, CampPlaceType placeType, float relativeDistance = 2.5f)
+    {
+        bool result = false;
+        Transform marcation = controller.GetMarcationPosition(placeType);
+        if (marcation != null)
+        {
+            float distance = controller.transform.Distance(marcation);
+            if (distance <= relativeDistance)
+                result = true;
+        }
+
+        return result;
+    }
+    public static bool InMarcation(this PlayerController controller, float relativeDistance = 2.5f)
+    {
+        bool myTeamHasBall = controller.IsBallfromMyTeam();
+
+        CampPlaceType myplace = myTeamHasBall ? CampPlaceType.attack : CampPlaceType.defense;
+
+        return InMarcation(controller, myplace, relativeDistance);
+    }
+    public static PlayerController GetEnemyInMarcation(this PlayerController controller)
+    {
+        PlayerController enemy = GameManager.instance.GetEnemyPlayerInMarcation(controller);
+        return enemy;
+    }
+}
 public class GameManager : MonoBehaviour
 {
     [System.Serializable]
@@ -20,14 +53,14 @@ public class GameManager : MonoBehaviour
         [SerializeField]
         private MultiSelection multSelection;
         public MultiSelection MultSelection { get { return multSelection; } }
-        
+
         public void Start()
         {
             if (autoFoundPlayers)
                 players = new List<PlayerController>();
 
             List<PlayerController> _players = FindObjectsOfType<PlayerController>().ToList();
-            _players.RemoveAll(r => r.GetPlayerTeam() != team);
+            _players.RemoveAll(r => r.GetCampTeam() != team);
             SetPlayers(_players);
 
             multSelection.SetTeam(team);
@@ -37,14 +70,28 @@ public class GameManager : MonoBehaviour
         {
             this.players.AddRange(players);
         }
+
+        public PlayerController GetPlayerInMarcation(CampPlaceMarcation marcation)
+        {
+            PlayerController result = null;
+            if (players.Count > 0)
+            {
+                result = players.Find(r => r.GetPlaceMarcation() == marcation);
+
+            }
+            return result;
+        }
     }
 
     public static GameManager instance;
 
     [SerializeField]
+    private CampPositionsManager placesManager;
+    [SerializeField]
     private TeamManager teamMananger1;
     [SerializeField]
     private TeamManager teamMananger2;
+
 
 
     private void Awake()
@@ -95,8 +142,41 @@ public class GameManager : MonoBehaviour
     {
         TeamManager manager = GetTeamManager(team);
         return manager.MultSelection.GetSelectedPlayer();
-        
+
     }
+    /// <summary>
+    /// Pesquisa e retorna o jogador do time adversario na mesma marcação que o jogador pesqiusado. Tenha em mente
+    /// que e o jogador retornado nao precisa estar necessáriamente proxima e ou que esta pesquisa pode retornar nula
+    /// se o time adversário não tiver nenhum jogador nesta marcação
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns>Jogador asversario na mesma marcação e ou nullo se não houver jogador do time adversario nesta marcação</returns>
+    public PlayerController GetEnemyPlayerInMarcation(PlayerController player)
+    {
+        CampTeam campteam = player.GetCampTeam();
+        CampTeam otherCampTeam = campteam == CampTeam.Team_A ? CampTeam.Team_B : CampTeam.Team_A;
+        TeamManager team = GetTeamManager(otherCampTeam);
+        PlayerController enemy = team.GetPlayerInMarcation(player.GetPlaceMarcation());
+
+        return enemy;
+    }
+    /// <summary>
+    /// Pesquisa e retorna o jogador do time e marcação pesqiusado. Tenha em mente
+    /// que esta pesquisa pode retornar nula se o time adversário não tiver nenhum jogador nesta marcação
+    /// </summary>
+    /// <param name="campteam"></param>
+    /// <param name="marcation"></param>
+    /// <returns>Jogador na mesma marcação e ou nullo se não houver jogador do time nesta marcação</returns>
+    public PlayerController GetPlayerInMarcation(CampTeam campteam, CampPlaceMarcation marcation)
+    {
+
+        CampTeam otherCampTeam = campteam == CampTeam.Team_A ? CampTeam.Team_B : CampTeam.Team_A;
+        TeamManager team = GetTeamManager(otherCampTeam);
+        PlayerController enemy = team.GetPlayerInMarcation(marcation);
+
+        return enemy;
+    }
+
     /// <summary>
     /// Pesquisa de quem é a entrada de jogador que controla determinado time
     /// </summary>
@@ -106,6 +186,20 @@ public class GameManager : MonoBehaviour
     {
         TeamManager manager = GetTeamManager(team);
         return manager.controllerType;
+    }
+    public CampPlaceSide GetTeamPlaceSide(CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+        return manager.side;
+    }
+    public Transform GetMarcationPosition(PlayerController player, CampPlaceType placeType)
+    {
+        CampTeam campTeam = player.GetCampTeam();
+        CampPlaceSide side = GetTeamPlaceSide(campTeam);
+        CampPlaceMarcation marcation = player.GetPlaceMarcation();
+        CampPosition campPosition = placesManager.GetPosition(side, marcation, placeType);
+
+        return campPosition.transform;
     }
 
 }

@@ -14,7 +14,7 @@ public class PlayerTeam : MonoBehaviour
     //public CampPlaceSide PlaceSice { get { return placeSide; } }
 
     [SerializeField]
-    CampPlacePosition placePosition;
-    public CampPlacePosition PlacePosition { get { return placePosition; } }
+    CampPlaceMarcation placeMarcation;
+    public CampPlaceMarcation PlaceMarcation { get { return placeMarcation; } }
 
 }

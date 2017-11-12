@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using SoccerGame;
 
+
+
 public class CampPositionsManager : MonoBehaviour
 {
+   
+
     [SerializeField]
     private GameObject LeftSide;
     [SerializeField]
@@ -14,6 +18,7 @@ public class CampPositionsManager : MonoBehaviour
 
     private void Awake()
     {
+        
         positions = new Dictionary<string, CampPosition>();
         LeftSide.SetActive(true);
         RightSide.SetActive(true);
@@ -23,9 +28,10 @@ public class CampPositionsManager : MonoBehaviour
         if (position == null)
             return;
 
+
         positions.Add(position.ToKey(), position);
     }
-    public CampPosition GetPosition(CampPlaceSide side, CampPosition cpos, CampPlaceType ctype)
+    public CampPosition GetPosition(CampPlaceSide side, CampPlaceMarcation cpos, CampPlaceType ctype)
     {
         CampPosition pos = null;
         string key = CampPosition.GetKey(side, cpos, ctype);

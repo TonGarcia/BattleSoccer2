@@ -141,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 493a379252862b244a0414ca96cf51bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  placesManager: {fileID: 0}
   teamMananger1:
     team: 0
     side: 1
@@ -152,7 +153,6 @@ MonoBehaviour:
     team: 1
     side: 0
     controllerType: 2
-    players:
-    - {fileID: 0}
+    players: []
     multSelection: {fileID: 114328832952372530}
     autoFoundPlayers: 1

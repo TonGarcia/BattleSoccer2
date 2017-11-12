@@ -39,8 +39,14 @@ public class CameraController : MonoBehaviour
             }
         }
 
+        Vector3 to = targetOffsetPos;
+        to.x -= zoom;
+        to.y += zoom;
+       // to.z -= zoom;
+
         oldPos = transform.position;
-        Vector3 newPos = new Vector3(target.position.x + targetOffsetPos.x + zoom, target.position.y + targetOffsetPos.y + zoom, target.position.z + targetOffsetPos.z);
+        Vector3 newPos = target.position + to;
+
         //Transform to new position damped
         transform.position = Vector3.Lerp(oldPos, newPos, dampPosition * Time.deltaTime);
         //Look at and dampen the rotation

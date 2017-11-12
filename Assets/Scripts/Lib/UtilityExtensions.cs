@@ -9,11 +9,18 @@ namespace SoccerGame
 
         public static float Distance(this Transform transform, Transform other)
         {
-            return Vector3.Distance(transform.position, other.position);
+            Vector3 origem = transform.position;
+            Vector3 destino = other.position;
+            destino.y = origem.y;
+            return Vector3.Distance(origem, destino);
         }
         public static float Distance(this PlayerController owner, PlayerController other)
         {
-            return Vector3.Distance(owner.transform.position, other.transform.position);
+            Vector3 origem = owner.transform.position;
+            Vector3 destino = other.transform.position;
+            destino.y = origem.y;
+
+            return Vector3.Distance(origem, destino);
         }
     }
 }

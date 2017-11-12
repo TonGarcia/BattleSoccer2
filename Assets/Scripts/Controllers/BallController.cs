@@ -3,6 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using SoccerGame;
 
+public static class BallControllerExtensions
+{
+    /// <summary>
+    /// Pesquisa se a bola esta de poce do jogador
+    /// </summary>
+    /// <param name="player">jogador pesquisado</param>
+    /// <returns>Verdadeiro se a bola estiver de poce deste jogador ou falso caso contrario</returns>
+    public static bool IsMyBall(this PlayerController player)
+    {
+        return BallController.IsOwner(player);
+    }
+    /// <summary>
+    /// Verifica se a boal esta de poce de algum do time do jogador pesquisado
+    /// Tenha em mente que falso sera retornado se a bola não tiver dono ou se o dono não for
+    /// o jogador pesquisado
+    /// </summary>
+    /// <param name="">jogador pesquisado</param>
+    /// <returns>Faso se a bola não tiver dono ou se o dono nao for o jogador pesquisado
+    /// e Verdadeiro caso a bola esteja de poce do jogador pesquisado</returns>
+    public static bool IsBallfromMyTeam(this PlayerController player)
+    {
+        return BallController.IsFromTeam(player);
+    }
+
+    public static bool IsBallNear(this PlayerController player, float relativeDistance = 5.5f)
+    {
+        float distance = BallController.instance.transform.Distance(player.transform);
+        if (distance <= relativeDistance)
+            return true;
+        else
+            return false;
+    }
+}
+
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(SphereCollider))]
 public class BallController : MonoBehaviour
@@ -193,13 +227,22 @@ public class BallController : MonoBehaviour
     {
         return player == owner;
     }
+    /// <summary>
+    /// Verifica se a bola esta de poce de alguem do time do jogador pesquisado
+    /// </summary>
+    /// <param name="player">Jogador a ser pesquisado</param>
+    /// <returns>Falso se a bola estiver sem nenhum dono ou se o atual dono
+    /// nnão pertencer ao time do jogador pesquisado</returns>
     public bool IsMyTeam(PlayerController player)
     {
         bool result = false;
 
-        if(owner!=null)
+        if (owner != null)
         {
-            if (owner.GetPlayerTeam() == player.GetPlayerTeam()) ;
+            if (owner.GetCampTeam() == player.GetCampTeam())
+            {
+                result = true;
+            }
         }
 
         return result;
@@ -232,7 +275,14 @@ public class BallController : MonoBehaviour
     {
         instance.UnsetmeOwner();
     }
-
+    public static bool IsFromTeam(PlayerController player)
+    {
+        return BallController.instance.IsMyTeam(player);
+    }
+    public static Vector3 GetPosition()
+    {
+        return instance.transform.position;
+    }
     private void SetKinematic()
     {
         rigidbody.isKinematic = true;

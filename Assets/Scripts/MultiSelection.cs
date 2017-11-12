@@ -77,7 +77,7 @@ public class MultiSelection : MonoBehaviour
     private void OnBallSetOwner(PlayerController owner, PlayerController lasOwner)
     {
         //Seleção automatica no jogador com a bola
-        if (owner.GetPlayerTeam() == team)
+        if (owner.GetCampTeam() == team)
         {
             if (owner != selectedPlayer)
             {
@@ -85,8 +85,7 @@ public class MultiSelection : MonoBehaviour
             }
         }
     }
-
-
+    
     private void SelectPlayer(PlayerController player)
     {
         if (selectedPlayer == null)

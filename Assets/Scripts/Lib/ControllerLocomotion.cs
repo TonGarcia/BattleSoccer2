@@ -16,7 +16,7 @@ namespace SoccerGame
     [System.Serializable]
     public class ControllerLocomotion
     {
-        
+
 
         public LocomotionType motionType;
 
@@ -36,8 +36,8 @@ namespace SoccerGame
         private float animSpeedMultiplier = 1.0f;
         [SerializeField]
         private bool useExtraRotation = false;
-                
-        public bool inIdle { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"); } }       
+
+        public bool inIdle { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"); } }
         public bool inWalkRun { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("WalkRun"); } }
         public bool inEntry { get { return m_Animator.GetCurrentAnimatorStateInfo(1).IsName("Entry"); } }
         public bool inStumble { get { return m_Animator.GetCurrentAnimatorStateInfo(2).IsName("Stumble"); } }
@@ -172,24 +172,18 @@ namespace SoccerGame
         }
         public Vector2 GetDirection(Vector3 position)
         {
-            Vector3 nmove = Vector3.zero;
             Vector2 result = Vector2.zero;
 
-            if (m_input.IsAI)
-            {
-                nmove = Quaternion.Inverse(m_Rigidbody.transform.rotation) * m_Rigidbody.gameObject.GetComponent<NavMeshAgent>().desiredVelocity;
-            }
-            else
-            {
-                Vector3 heading = (position - m_Rigidbody.transform.position) * 1;
-                Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-                Vector3 m_Move = heading.z * m_CamForward + heading.x * Camera.main.transform.right;
-                nmove = m_Move;
 
-                if (nmove.magnitude > 1f) nmove.Normalize();
-                nmove = m_Rigidbody.transform.InverseTransformDirection(nmove);
-                nmove = Vector3.ProjectOnPlane(nmove, m_Gravity.GroudNormal);
-            }
+            Vector3 heading = (position - m_Rigidbody.transform.position) * 1;
+            Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+            // Vector3 m_Move = heading.z * m_CamForward + heading.x * Camera.main.transform.right;
+            Vector3 m_Move = heading;
+
+            if (m_Move.magnitude > 1f) m_Move.Normalize();
+            m_Move = m_Rigidbody.transform.InverseTransformDirection(m_Move);
+            m_Move = Vector3.ProjectOnPlane(m_Move, m_Gravity.GroudNormal);
+
 
             float direction = 0;
             float speed = 0;
@@ -198,16 +192,50 @@ namespace SoccerGame
             {
                 case LocomotionType.soccer:
                     {
-                        if (m_input.IsAI)
-                        {
-                            direction = (float)((Mathf.Atan2(nmove.x, nmove.z)) * 180 / 3.14159);
-                            speed = m_Rigidbody.GetComponent<NavMeshAgent>().desiredVelocity.magnitude;
-                        }
-                        else
-                        {
-                            direction = (float)((Mathf.Atan2(nmove.x, nmove.z)) * 180 / 3.14159);
-                            speed = nmove.z * 10;
-                        }
+
+
+                        direction = (float)((Mathf.Atan2(m_Move.x, m_Move.z)) * 180 / 3.14159);
+                        speed = m_Move.z * 10;
+
+                        break;
+                    }
+                case LocomotionType.normal:
+
+                    direction = Mathf.Atan2(m_Move.x, m_Move.z);
+                    speed = m_Move.z;
+
+                    break;
+                case LocomotionType.strafe:
+
+                    direction = m_Move.x;
+                    speed = m_Move.z;
+
+                    break;
+            }
+            result = new Vector2(direction, speed);
+
+            return result;
+        }
+        public Vector2 GetDirectionAI()
+        {
+
+            Vector3 nmove = Vector3.zero;
+            Vector2 result = Vector2.zero;
+
+            nmove = Quaternion.Inverse(m_Rigidbody.transform.rotation) * m_Rigidbody.gameObject.GetComponent<NavMeshAgent>().desiredVelocity;
+
+
+            float direction = 0;
+            float speed = 0;
+
+            switch (motionType)
+            {
+                case LocomotionType.soccer:
+                    {
+
+                        direction = (float)((Mathf.Atan2(nmove.x, nmove.z)) * 180 / 3.14159);
+                        speed = m_Rigidbody.GetComponent<NavMeshAgent>().desiredVelocity.magnitude;
+
                         break;
                     }
                 case LocomotionType.normal:
@@ -236,6 +264,7 @@ namespace SoccerGame
 
             Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
             Vector3 m_Move = v * m_CamForward + h * Camera.main.transform.right;
+
             if (m_Move.magnitude > 1f) m_Move.Normalize();
             m_Move = m_Rigidbody.transform.InverseTransformDirection(m_Move);
             m_Move = Vector3.ProjectOnPlane(m_Move, m_Gravity.GroudNormal);
