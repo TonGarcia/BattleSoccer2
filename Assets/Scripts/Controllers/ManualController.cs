@@ -94,15 +94,19 @@ public class ManualController : MonoBehaviour
     }
     private void OnEntryStart()
     {
-        SetKinematic();
         if (BallController.IsOwner(player))
             BallController.instance.SetBallProtected();
+
+        SetKinematic();
+        
     }
     private void OnEntryFinish()
     {
-        UnsetKinematic();
         if (BallController.IsOwner(player))
             BallController.instance.SetDesprotectBall();
+
+        UnsetKinematic();
+        
     }
 
     //Private methods

@@ -183,6 +183,7 @@ public class BallController : MonoBehaviour
         if (onRemoveMyOwner != null)
             onRemoveMyOwner(lastOwner);
 
+        fovTriger.enabled = true;
         UnsetKinematic();
 
 
@@ -204,11 +205,14 @@ public class BallController : MonoBehaviour
         if (owner == null)
             return;
 
+
         PlayerController old = owner;
         UnsetmeOwner();
 
         rigidbody.AddForce(old.transform.up * 3.5f, ForceMode.Impulse);
         rigidbody.AddForce(-old.transform.forward * 2.0f, ForceMode.Impulse);
+
+       
 
     }
     public void SetBallProtected()

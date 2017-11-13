@@ -194,8 +194,8 @@ namespace SoccerGame
                     {
 
 
-                        direction = (float)((Mathf.Atan2(m_Move.x, m_Move.z)) * 180 / 3.14159);
-                        speed = m_Move.z * 10;
+                        direction = (float)((Mathf.Atan2(m_Move.x, m_Move.z)) * 45 / 3.14159);
+                        speed = m_Move.z * 5.5f;
 
                         break;
                     }
@@ -277,7 +277,7 @@ namespace SoccerGame
                 case LocomotionType.soccer:
 
                     direction = (float)((Mathf.Atan2(m_Move.x, m_Move.z)) * 180 / 3.14159);
-                    speed = m_Move.z * 10;
+                    speed = m_Move.z * 10.0f;
                     break;
                 case LocomotionType.normal:
 
