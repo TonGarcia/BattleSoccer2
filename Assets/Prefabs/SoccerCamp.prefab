@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 4804944811768308}
   - component: {fileID: 114515571048857044}
   m_Layer: 0
-  m_Name: DefenderMID
+  m_Name: DefenderMID-Attack
   m_TagString: Untagged
   m_Icon: {fileID: -1577725955494882426, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -355,7 +355,7 @@ GameObject:
   - component: {fileID: 4864414328239794}
   - component: {fileID: 114146591789546766}
   m_Layer: 0
-  m_Name: DefenderMID
+  m_Name: DefenderMID-Def
   m_TagString: Untagged
   m_Icon: {fileID: -1577725955494882426, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

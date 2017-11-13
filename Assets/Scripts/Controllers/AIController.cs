@@ -15,6 +15,7 @@ public class AIController : MonoBehaviour
         marcando,
         goToGoal,
 
+
     }
 
     [Tooltip("Se o jogador tomar a bola e estiver a uma distancia igual ou menor, a animação de tomada de bola sera executada")]
@@ -51,22 +52,30 @@ public class AIController : MonoBehaviour
 
         UpdateNavMeshAgent();
 
-        switch (aiState)
+        if(player.IsMyBall())
         {
-            case AIState.nothing:
-                Handlle_NothingState();
-                break;
-            case AIState.goToDefaultPosition:
-                Handle_GoToDefaultMarcation();
-                break;
-            case AIState.followBall:
-                break;
-            case AIState.goToGoal:
-                break;
-            case AIState.marcando:
-                Handle_MarcandoState();
-                break;
+
         }
+        else
+        {
+            switch (aiState)
+            {
+                case AIState.nothing:
+                    Handlle_NothingState();
+                    break;
+                case AIState.goToDefaultPosition:
+                    Handle_GoToDefaultMarcation();
+                    break;
+                case AIState.followBall:
+                    break;
+                case AIState.goToGoal:
+                    break;
+                case AIState.marcando:
+                    Handle_MarcandoState();
+                    break;
+            }
+        }
+       
     }
 
     private void OnEnable()
@@ -107,10 +116,10 @@ public class AIController : MonoBehaviour
         //Se eu ja estiver na origem entao vou marcar o jogador mais proximo caso a bola esteja muito longe de mim
         //Se a bola estiver perto entao vou ir atraz dela
 
-        bool inMarcation = player.InMarcation(10.5f);
+        bool inMarcation = player.InMarcation(1.5f);
 
         if (!inMarcation)
-        {
+        {           
             aiState = AIState.goToDefaultPosition;
             return;
         }
@@ -180,10 +189,7 @@ public class AIController : MonoBehaviour
             aiState = AIState.nothing;
             return;
         }
-
-
-
-
+        
     }
     private void Handle_MarcandoState()
     {

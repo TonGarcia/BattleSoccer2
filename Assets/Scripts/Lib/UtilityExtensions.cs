@@ -11,7 +11,7 @@ namespace SoccerGame
         {
             Vector3 origem = transform.position;
             Vector3 destino = other.position;
-            destino.y = origem.y;
+            destino.y = 0;
             return Vector3.Distance(origem, destino);
         }
         public static float Distance(this PlayerController owner, PlayerController other)
