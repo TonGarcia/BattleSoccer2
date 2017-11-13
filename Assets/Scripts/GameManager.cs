@@ -36,6 +36,19 @@ public static class GameManagerExtensions
         PlayerController enemy = GameManager.instance.GetEnemyPlayerInMarcation(controller);
         return enemy;
     }
+    public static bool IsSelected(this PlayerController controller)
+    {
+        bool result = false;
+
+        if (GameManager.instance.IsSelectedPlayer(controller))
+            result = true;
+
+        return result;
+    }
+    public static void SelectME(this PlayerController controller)
+    {
+        GameManager.instance.SelectPlayer(controller);
+    }
 }
 public class GameManager : MonoBehaviour
 {
@@ -144,6 +157,11 @@ public class GameManager : MonoBehaviour
         return manager.MultSelection.GetSelectedPlayer();
 
     }
+    public bool IsSelectedPlayer(PlayerController player)
+    {
+        TeamManager manager = GetTeamManager(player.GetCampTeam());
+        return manager.MultSelection.GetSelectedPlayer() == player;
+    }
     /// <summary>
     /// Pesquisa e retorna o jogador do time adversario na mesma marcação que o jogador pesqiusado. Tenha em mente
     /// que e o jogador retornado nao precisa estar necessáriamente proxima e ou que esta pesquisa pode retornar nula
@@ -200,6 +218,13 @@ public class GameManager : MonoBehaviour
         CampPosition campPosition = placesManager.GetPosition(side, marcation, placeType);
 
         return campPosition.transform;
+    }
+    public void SelectPlayer(PlayerController player)
+    {
+        if (player.IsSelected())
+            return;
+        TeamManager team = GetTeamManager(player.GetCampTeam());
+        team.MultSelection.SelectPlayer(player);
     }
 
 }

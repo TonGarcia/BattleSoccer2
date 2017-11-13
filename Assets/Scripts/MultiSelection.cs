@@ -4,6 +4,7 @@ using UnityEngine;
 using SoccerGame;
 using System;
 
+
 public class MultiSelection : MonoBehaviour
 {
     public GameManager gameMananger;
@@ -86,7 +87,7 @@ public class MultiSelection : MonoBehaviour
         }
     }
     
-    private void SelectPlayer(PlayerController player)
+    public void SelectPlayer(PlayerController player)
     {
         if (selectedPlayer == null)
         {
