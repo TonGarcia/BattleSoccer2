@@ -45,6 +45,14 @@ public static class GameManagerExtensions
 
         return result;
     }
+    public static Transform GetTeamGoalPosition(this PlayerController controller)
+    {
+        return GameManager.instance.GetMyTeamGoalPosition(controller);
+    }
+    public static Transform GetEnemyGoalPosition(this PlayerController controller)
+    {
+        return GameManager.instance.GetEnemyGoalPosition(controller);
+    }
     public static void SelectME(this PlayerController controller)
     {
         GameManager.instance.SelectPlayer(controller);
@@ -58,7 +66,8 @@ public class GameManager : MonoBehaviour
         public CampTeam team;
         public CampPlaceSide side;
         public ControllerInputType controllerType;
-
+        public Transform goalPosition;
+        
         [SerializeField]
         private List<PlayerController> players;
         public List<PlayerController> Players { get { return new List<PlayerController>(players); } }
@@ -104,9 +113,7 @@ public class GameManager : MonoBehaviour
     private TeamManager teamMananger1;
     [SerializeField]
     private TeamManager teamMananger2;
-
-
-
+    
     private void Awake()
     {
         instance = this;
@@ -126,7 +133,16 @@ public class GameManager : MonoBehaviour
 
         return manager;
     }
+    private TeamManager GetOtherTeamManager(CampTeam team)
+    {
+        TeamManager manager = null;
+        if (teamMananger1.team != team)
+            manager = teamMananger1;
+        else
+            manager = teamMananger2;
 
+        return manager;
+    }
     /// <summary>
     /// Pesquisa em um time especifico pelo jogador mais proximo da bola. 
     /// </summary>
@@ -219,6 +235,18 @@ public class GameManager : MonoBehaviour
 
         return campPosition.transform;
     }
+
+    public Transform GetMyTeamGoalPosition(PlayerController player)
+    {
+        TeamManager team = GetTeamManager(player.GetCampTeam());
+        return team.goalPosition;
+    }
+    public Transform GetEnemyGoalPosition(PlayerController player)
+    {
+        TeamManager otherTeam = GetOtherTeamManager(player.GetCampTeam());
+        return otherTeam.goalPosition;
+    }
+
     public void SelectPlayer(PlayerController player)
     {
         if (player.IsSelected())
@@ -226,5 +254,6 @@ public class GameManager : MonoBehaviour
         TeamManager team = GetTeamManager(player.GetCampTeam());
         team.MultSelection.SelectPlayer(player);
     }
+
 
 }

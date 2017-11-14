@@ -23,7 +23,10 @@ public static class PlayerControllerExtensions
         PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
         return pinput.PlaceMarcation;
     }
-
+    public static bool IsMyTeaM(this PlayerController controller, PlayerController player)
+    {
+        return controller.GetCampTeam() == player.GetCampTeam();
+    }
 
 }
 

@@ -11,19 +11,19 @@ public enum SoccerAIState
     goToDefaultPosition,
     followBall,
     marcando,
+    findToPass,
     goToGoal,
-
-
+    drible,
 }
 
 public abstract class SoccerAIGeneric
 {
 
-    public GameObject Owner
+    public AIController Owner
     {
         get { return owner; }
     }
-    private GameObject owner;
+    private AIController owner;
 
     public ControllerLocomotion Locomotion { get { return player.Locomotion; } }
 
@@ -93,7 +93,7 @@ public abstract class SoccerAIGeneric
         }
     }
 
-    public SoccerAIGeneric(GameObject owner)
+    public SoccerAIGeneric(AIController owner)
     {
         this.owner = owner;
     }
@@ -107,7 +107,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
     public SoccerAIState AiState { get { return aiState; } }
     private SoccerAIState aiState;
 
-    public SoccerAIUnSelected(GameObject owner) : base(owner)
+    public SoccerAIUnSelected(AIController owner) : base(owner)
     {
         aiState = SoccerAIState.nothing;
     }
@@ -206,8 +206,8 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         Vector2 move = Locomotion.GetDirectionAI();
         Speed = move.y;
         Direction = move.x;
-        Agent.destination = myTeamHasBall ? attkPos.position : defPos.position;
-
+        Vector3 destination = myTeamHasBall ? attkPos.position : defPos.position;
+        Agent.SetDestination(destination);
         //Eu cheguei ao destino
         if (IsAgentDone)
         {
@@ -287,7 +287,7 @@ public class SoccerAISelected : SoccerAIGeneric
     private SoccerAIState aiState;
     private float timeToSelect = 0;
 
-    public SoccerAISelected(GameObject owner) : base(owner)
+    public SoccerAISelected(AIController owner) : base(owner)
     {
         aiState = SoccerAIState.nothing;
     }
@@ -354,7 +354,8 @@ public class SoccerAISelected : SoccerAIGeneric
         Vector2 move = Locomotion.GetDirectionAI();
         Speed = move.y;
         Direction = move.x;
-        Agent.destination = ball.transform.position;
+        Vector3 destination = ball.transform.position;
+        Agent.SetDestination(destination);
 
         //Verifica a distancia da bola, se estiver muito longe procuro outor jogador mais proximo para selecionar
 
@@ -391,10 +392,25 @@ public class SoccerAISelected : SoccerAIGeneric
 }
 public class SoccerAIwithBall : SoccerAIGeneric
 {
+
+    public float checkDistanceToDrible = 5.5f;
+    /// <summary>
+    /// Dribles serao feito a cada fração de tempo aqui estipulado. valores maiores
+    /// deixam os movimentos de drible uma vez que permanece mais tempo na nova rota escolhida
+    /// e valores mais baixos deixam o player mais agitado uma vez que procura novas rotas em intervalos muito curto.
+    /// Valores indicados são de 0.5 a 1.5f.
+    /// </summary>
+    public float checkTimeToDrible = 0.5f;
+
     public SoccerAIState AiState { get { return aiState; } }
     private SoccerAIState aiState;
 
-    public SoccerAIwithBall(GameObject owner) : base(owner)
+    private float timeToDrible = 0;
+    private float timeToPass = 0;
+    private float timeToStand = 0;//Vai calcular o tempo maximo q o jogador pode ficar parado
+    Vector3 toGo = Vector3.zero;
+
+    public SoccerAIwithBall(AIController owner) : base(owner)
     {
         aiState = SoccerAIState.nothing;
     }
@@ -408,7 +424,9 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 break;
 
             case SoccerAIState.goToGoal:
+                Handle_ToGoState();
                 break;
+
 
             default:
                 Handlle_NothingState();
@@ -419,10 +437,139 @@ public class SoccerAIwithBall : SoccerAIGeneric
     private void Handlle_NothingState()
     {
 
+        /*
+         * Estratégia:
+         * Se o caminho entre eu e o gol estiver livre vou correndo para o gol. 
+         * Se o caminho estiver obstruido e a obstrução estiver muito longe de mim mantenho caminho para o gol;
+         * Se a obstrução estiver perto vou avaliar todos os jogadores proximos , pelos que estiverem sem obstrução entre eu e ele.
+         * Encontrando um jogaodr vou efetuar um passe bola.
+         * Nao encontrando um jogador vou efetuar DRIBLEs procurando trajetos limpos para o gol.
+         * PS: Obstrução não conta o goleiro
+         */
 
-        Speed = 0;
-        Direction = 0;
 
+        aiState = SoccerAIState.goToGoal;
+
+        /*
+           PlayerController playerBTW = GetAnyBtwForward(3.5f);
+        if (playerBTW == null)
+        {
+            aiState = SoccerAIState.goToGoal;
+            return;
+        }
+               
+
+        if (playerBTW.GetCampTeam() != playerBTW.GetCampTeam()) //Inimigo a frente
+        {
+            aiState = SoccerAIState.drible;
+        }
+        else //Aliado a frente
+        {
+            //Posso tocar ou driblar. colocar fator randomico no futuro
+            aiState = SoccerAIState.findToPass;
+        }
+         */
+
+
+        // Speed = 0;
+        // Direction = (Player.GetEnemyGoalPosition().position - Player.transform.position).x;
+
+    }
+
+    private void Handle_ToGoState()
+    {
+
+        timeToDrible += Time.deltaTime;
+        timeToPass += Time.deltaTime;
+
+        Transform goalPosition = Player.GetEnemyGoalPosition();
+        PlayerController playerBtw = GetAnyBtwForward(checkDistanceToDrible);
+
+        if (playerBtw != null)
+        {
+            if (!playerBtw.IsMyTeaM(Player))//Jogador inimigo a frente
+            {
+                //Drible
+                if (timeToDrible >= checkTimeToDrible) //Nova posição para o drible
+                {
+                    Vector3 pos = Locomotion.GetRandomNavCircle(Player.transform.position, 2.5f);
+                    toGo = pos;
+                    timeToDrible = 0.0f;
+                }
+            }
+        }
+
+        if (IsAgentDone)
+        {
+            if (Player.InMarcation(1.5f) == false)
+            {
+                toGo = goalPosition.position;
+            }
+        }
+
+        if (Player.speed == 0)
+        {
+            timeToStand += Time.deltaTime;
+            if (timeToStand > 1.0f)
+            {
+                toGo = goalPosition.position;
+                timeToStand = 0;
+            }
+
+        }
+
+        Vector2 move = Locomotion.GetDirectionAI();
+        Direction = move.x;
+        Speed = move.y;
+        Agent.SetDestination(toGo);
+    }
+
+    private PlayerController GetAnyBtwGoal()
+    {
+        PlayerController any = null;
+
+        Transform goalPosition = Player.GetEnemyGoalPosition();
+
+        Vector3 origem = Player.transform.position;
+        origem.y = 0.5f;
+
+        Vector3 goalDir = goalPosition.position - Player.transform.position;
+        goalDir.y = 0.5f;
+
+        float goalDistance = goalPosition.Distance(Player.transform);
+
+        Ray ray = new Ray(origem, goalDir);
+
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, goalDistance, LayerMask.NameToLayer("SoccerPlayer")))
+        {
+            if (hit.transform.GetComponent<PlayerController>() != null)
+                any = hit.transform.GetComponent<PlayerController>();
+        }
+
+        return any;
+    }
+    private PlayerController GetAnyBtwForward(float distance)
+    {
+        PlayerController any = null;
+
+        Vector3 origem = Player.transform.position;
+        origem.y = 1.0f;
+
+        Vector3 forwad = Player.transform.forward;
+
+
+        Ray ray = new Ray(origem, forwad);
+
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, distance, LayerMask.GetMask("SoccerPlayer")))
+        {
+            if (hit.transform.GetComponent<PlayerController>() != null)
+                any = hit.transform.GetComponent<PlayerController>();
+        }
+
+        Debug.DrawRay(ray.origin, ray.direction * distance, Color.red);
+        return any;
     }
 
     private bool IsAgentDone

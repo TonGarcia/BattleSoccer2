@@ -36,7 +36,7 @@ public class ManualController : MonoBehaviour
         //Ações de chute
         if (ControllerInput.GetButtonDown(playerInput.InputType, playerInput.Input_Kick))
         {
-            locomotion.TrygerKick();
+            locomotion.TriggerKick();
         }
 
     }
@@ -60,7 +60,7 @@ public class ManualController : MonoBehaviour
             float distance = lasOwner.Distance(player);
             if (distance <= distanceToEntry)
             {
-                locomotion.TrygerEntry();
+                locomotion.TriggerEntry();
             }
         }
     }
@@ -73,8 +73,13 @@ public class ManualController : MonoBehaviour
     //Estes eventos são chamados apartir das animações rerentes em quadros espesificos
     private void OnChangeDirectionStart()
     {
+       
 
         SetKinematic();
+
+        if (!player.IsMyBall())
+            return;
+
         BallController.ChangeDirection();
 
 

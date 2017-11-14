@@ -200,6 +200,18 @@ public class BallController : MonoBehaviour
         rigidbody.AddForce(playerFromKick.transform.up * 8, ForceMode.Impulse);
 
     }
+    public void SetmePass(float distance)
+    {
+
+        if (owner == null)
+            return;
+
+        PlayerController playerFromKick = owner;
+        UnsetmeOwner();
+        rigidbody.AddForce(playerFromKick.transform.forward * distance, ForceMode.Impulse);
+        rigidbody.AddForce(playerFromKick.transform.up * distance/4, ForceMode.Impulse);
+
+    }
     public void ChangemeDirection()
     {
         if (owner == null)
@@ -267,6 +279,10 @@ public class BallController : MonoBehaviour
     public static void SetKick()
     {
         instance.SetmeKick();
+    }
+    public static void SetPass(float distance)
+    {
+        instance.SetmePass(distance);
     }
     public static void SetOwner(PlayerController player)
     {

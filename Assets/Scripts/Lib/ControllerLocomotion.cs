@@ -41,6 +41,9 @@ namespace SoccerGame
         public bool inWalkRun { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("WalkRun"); } }
         public bool inEntry { get { return m_Animator.GetCurrentAnimatorStateInfo(1).IsName("Entry"); } }
         public bool inStumble { get { return m_Animator.GetCurrentAnimatorStateInfo(2).IsName("Stumble"); } }
+        public bool inKick { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("LongKick"); } }
+        public bool inPass { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("ShortPass"); } }
+
         public bool inStrafe { get { return motionType == LocomotionType.strafe; } }
         public bool inSoccer { get { return motionType == LocomotionType.soccer; } }
         public bool inTurn
@@ -69,7 +72,8 @@ namespace SoccerGame
         private int m_GroundedId = 0;
         private int m_JumpId = 0;
         private int m_JumpLegCycleId = 0;
-        private int m_LongKickId = 0;
+        private int m_KickId = 0;
+        private int m_PassId = 0;
         private int m_EntryId = 0;
         private int m_StumbleId = 0;
 
@@ -85,7 +89,8 @@ namespace SoccerGame
             m_GroundedId = Animator.StringToHash("OnGround");
             m_JumpId = Animator.StringToHash("Jump");
             m_JumpLegCycleId = Animator.StringToHash("JumpLeg");
-            m_LongKickId = Animator.StringToHash("LongKick");
+            m_KickId = Animator.StringToHash("LongKick");
+            m_PassId = Animator.StringToHash("ShortPass");
             m_EntryId = Animator.StringToHash("Entry");
         }
         public void DoAnimator(float speed, float direction)
@@ -311,22 +316,44 @@ namespace SoccerGame
 
             return target;
         }
-        public void TrygerKick()
+        public Vector3 GetRandomNavCircle(Vector3 origin, float dist)
+        {
+            Vector3 randDirection = UnityEngine.Random.insideUnitCircle * dist;
+
+            randDirection += origin;
+
+            NavMeshHit navHit;
+
+            NavMesh.SamplePosition(randDirection, out navHit, dist, NavMesh.AllAreas);
+
+            return navHit.position;
+        }
+        public void TriggerKick()
+        {
+            if (inSoccer == false && inStrafe == false && inStumble == false)
+            {
+                if (inWalkRun == true || inIdle == true)
+                {                    
+                    m_Animator.SetTrigger(m_KickId);
+                }
+            }
+        }
+        public void TriggerPass()
         {
             if (inSoccer == false && inStrafe == false && inStumble == false)
             {
                 if (inWalkRun == true || inIdle == true)
                 {
-                    m_Animator.SetTrigger(m_LongKickId);
+                    m_Animator.SetTrigger(m_PassId);
                 }
             }
         }
-        public void TrygerEntry()
+        public void TriggerEntry()
         {
             if (!inEntry)
                 m_Animator.SetTrigger(m_EntryId);
         }
-        public void TrygerStumb()
+        public void TriggerStumb()
         {
             if (!inStumble)
                 m_Animator.SetTrigger(m_StumbleId);
