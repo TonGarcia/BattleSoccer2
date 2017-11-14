@@ -108,4 +108,16 @@ public class PlayerController : MonoBehaviour
     {
         playerInput.InputType = ControllerInputType.ControllerCPU;
     }
+    public void SetMotionNormal()
+    {
+        locomotion.motionType = LocomotionType.normal;
+    }
+    public void SetMotionSoccer()
+    {
+        locomotion.motionType = LocomotionType.soccer;
+    }
+    public void SetMotionStrafe()
+    {
+        locomotion.motionType = LocomotionType.strafe;
+    }
 }

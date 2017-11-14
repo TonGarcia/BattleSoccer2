@@ -142,8 +142,9 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         //Se a bola estiver perto entao vou ir atraz dela
 
         bool inMarcation = Player.InMarcation(1.5f);
+        bool inSelection = Player.IsSelected();
 
-        if (!inMarcation)
+        if (!inMarcation && !inSelection)
         {
             aiState = SoccerAIState.goToDefaultPosition;
             return;
@@ -193,11 +194,12 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         //> Eu chegar ao destino
 
         //Eu mesmo possuo a bola
-        if (Player.IsMyBall())
+        if (Player.IsMyBall() || Player.IsSelected())
         {
             aiState = SoccerAIState.nothing;
             return;
         }
+
 
         Transform defPos = Player.GetMarcationPosition(CampPlaceType.defense);
         Transform attkPos = Player.GetMarcationPosition(CampPlaceType.attack);
@@ -497,6 +499,32 @@ public class SoccerAIwithBall : SoccerAIGeneric
                     timeToDrible = 0.0f;
                 }
             }
+            else //Jogador amigo a frente
+            {
+                //Passe
+                float dist = playerBtw.Distance(Player);
+
+                if (dist <= 3.5f)
+                {
+                    //Drible
+                    if (timeToDrible >= checkTimeToDrible) //Nova posição para o drible
+                    {
+                        Vector3 pos = Locomotion.GetRandomNavCircle(playerBtw.transform.position, 2.5f);
+                        toGo = pos;
+                        timeToDrible = 0.0f;
+                        timeToPass = 0.0f;
+                    }
+                }
+                else
+                {
+                    if (timeToPass >= 2.5f)
+                    {
+                        toGo = playerBtw.transform.position;
+                        Owner.TriggerPass(playerBtw.GetComponent<AIController>(), dist * 2);
+                        timeToPass = 0.0f;
+                    }
+                }
+            }
         }
 
         if (IsAgentDone)
@@ -507,7 +535,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
             }
         }
 
-        if (Player.speed == 0)
+        if (Player.speed <= 0.1f)
         {
             timeToStand += Time.deltaTime;
             if (timeToStand > 1.0f)
@@ -515,8 +543,9 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 toGo = goalPosition.position;
                 timeToStand = 0;
             }
-
         }
+        else
+        { timeToStand = 0; }
 
         Vector2 move = Locomotion.GetDirectionAI();
         Direction = move.x;

@@ -1644,7 +1644,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1206900691969080}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.3299999, y: 0, z: 5.59}
+  m_LocalPosition: {x: -0.03, y: 0, z: -5.64}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4155211436089992}
@@ -2181,7 +2181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b79878bbf220214d9010c5cb14e1e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 1
+  team: 0
   placeMarcation: 10
 --- !u!114 &114376613557650372
 MonoBehaviour:
@@ -2205,7 +2205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63aa500526f6a1f4a859f7c84a8ef8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InputType: 2
+  InputType: 0
   InputJump: 0
   InputShortPass: 0
   InputKick: 0
@@ -2482,7 +2482,7 @@ NavMeshAgent:
   m_Radius: 1
   m_Speed: 9
   m_Acceleration: 8
-  avoidancePriority: 99
+  avoidancePriority: 0
   m_AngularSpeed: 120
   m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
@@ -2491,4 +2491,4 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 0
