@@ -13,6 +13,16 @@ namespace SoccerGame
             return key;
         }
     }
+    /// <summary>
+    /// Atributo de ação que o jogador tem no campo.
+    /// </summary>
+    public enum CampActionAttribute
+    {
+        deffender,
+        middle,
+        attack
+    }
+    
     public enum CampTeam
     {
         Team_A,

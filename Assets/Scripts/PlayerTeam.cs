@@ -6,15 +6,18 @@ using SoccerGame;
 public class PlayerTeam : MonoBehaviour
 {
     [SerializeField]
-    CampTeam team;
+    private CampTeam team;
     public CampTeam Team { get { return team; } }
 
+    [SerializeField]
+    private CampActionAttribute placeAction;
+    public CampActionAttribute PlaceAction { get { return placeAction; } }
     //[SerializeField]
     //CampPlaceSide placeSide;
     //public CampPlaceSide PlaceSice { get { return placeSide; } }
 
     [SerializeField]
-    CampPlaceMarcation placeMarcation;
+    private CampPlaceMarcation placeMarcation;
     public CampPlaceMarcation PlaceMarcation { get { return placeMarcation; } }
 
 }

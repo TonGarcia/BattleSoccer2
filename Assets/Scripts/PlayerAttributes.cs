@@ -61,8 +61,7 @@ public class PlayerAttributes : MonoBehaviour
     }
 
     public Attribute Stamina;
-
-
+    
     public void Update()
     {
         Stamina.Update();
