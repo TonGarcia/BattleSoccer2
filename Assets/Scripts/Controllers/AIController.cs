@@ -35,7 +35,6 @@ public class AIController : MonoBehaviour
     {
         //NavMesh.avoidancePredictionTime = 10.0f;
 
-
         player = GetComponent<PlayerController>();
         playerInput = GetComponent<PlayerInput>();
         agent = GetComponent<NavMeshAgent>();
@@ -44,8 +43,7 @@ public class AIController : MonoBehaviour
         AIUnselected = new SoccerAIUnSelected(this);
         AISelected = new SoccerAISelected(this);
         AIWithBall = new SoccerAIwithBall(this);
-
-
+        
         nvSpeed = agent.speed;
         nvAngularSpeed = agent.angularSpeed;
         nvAceleration = agent.acceleration;
@@ -57,6 +55,13 @@ public class AIController : MonoBehaviour
             return;
 
         UpdateNavMeshAgent();
+
+        if(locomotion.inStumble ) //Tropeçando
+        {
+            speed = 0;
+            direction = 0;
+            return;
+        }
 
         //Se alguem fez um passe para mim, vou estar aguardando o passe. Neste caso
         //Vou ajudar correndo para perto da bola
@@ -99,6 +104,15 @@ public class AIController : MonoBehaviour
     {
         UnsignEvents();
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        PlayerController colPlayer = collision.gameObject.GetComponent<PlayerController>();
+        if (colPlayer)
+        {
+            locomotion.TriggerEntry();
+        }
+
+    }
     //BallEvents
     private void OnBallSetOwner(PlayerController owner, PlayerController lasOwner)
     {
@@ -112,6 +126,7 @@ public class AIController : MonoBehaviour
             }
         }
 
+
         waitingToPass = false;
     }
     private void OnBallRemoveOwner(PlayerController lasOwner)
@@ -124,23 +139,53 @@ public class AIController : MonoBehaviour
     {
 
 
-        SetKinematic();
+        player.SetKinematic();
 
         if (!player.IsMyBall())
             return;
 
+        BallController.instance.SetBallProtectedTo(player);
         BallController.ChangeDirection();
+
+        //Se o jogador selecionado do time adversario estiver proximo a mim na hora do lésinho, vou fazer ele tropeçar
+        CampTeam adversary = player.GetCampTeam() == CampTeam.Team_A ? CampTeam.Team_B : CampTeam.Team_A;
+
+        List<PlayerController> enemys = GameManager.instance.GetPlayersNearBall(adversary, 2.5f);
+        if (enemys.Count > 0)
+            foreach (PlayerController enemy in enemys)
+                enemy.Locomotion.TriggerStumb();
 
 
     }
     private void OnChangeDirectionOk()
     {
-        UnsetKinematic();
+        BallController.instance.SetBallDesprotectTo(player);
     }
     private void OnChangeDirectionFinish()
     {
-
+        BallController.instance.SetBallDesprotectTo(player);
+        player.UnsetKinematic();
     }
+
+    private void OnTurnDirectionStart()
+    {
+        player.SetKinematic();
+
+        if (!player.IsMyBall())
+            return;
+
+        BallController.instance.SetBallProtectedTo(player);
+    }
+    private void OnTurnDirectionOk()
+    {
+       // BallController.instance.SetBallDesprotectTo(player);
+    }
+    private void OnTurnDirectionFinish()
+    {
+        BallController.instance.SetBallDesprotectTo(player);
+        player.UnsetKinematic();
+    }
+
     private void OnLongKickOk()
     {
         if (BallController.IsOwner(player))
@@ -149,17 +194,16 @@ public class AIController : MonoBehaviour
     private void OnEntryStart()
     {
         if (BallController.IsOwner(player))
-            BallController.instance.SetBallProtected();
+            BallController.instance.SetBallProtectedTo(player);
 
-        SetKinematic();
+        player.SetKinematic();
 
     }
     private void OnEntryFinish()
     {
-        if (BallController.IsOwner(player))
-            BallController.instance.SetDesprotectBall();
 
-        UnsetKinematic();
+        BallController.instance.SetBallDesprotectTo(player);
+        player.UnsetKinematic();
 
     }
     private void OnShortPassOk()
@@ -178,20 +222,17 @@ public class AIController : MonoBehaviour
         AiToPass = null;
         powerToPass = 0;
     }
+    private void OnStumbleStart()
+    {
+        player.SetKinematic();
+    }
+    private void OnStumbleFinish()
+    {
+        player.UnsetKinematic();
+    }
 
     //Private methods
-    private void SetKinematic()
-    {
-        gameObject.GetComponent<Rigidbody>().isKinematic = true;
-        gameObject.GetComponent<Collider>().enabled = false;
-        FovBallTryger.enabled = false;
-    }
-    private void UnsetKinematic()
-    {
-        gameObject.GetComponent<Collider>().enabled = true;
-        gameObject.GetComponent<Rigidbody>().isKinematic = false;
-        FovBallTryger.enabled = true;
-    }
+
     private void SignEvents()
     {
         StartCoroutine(IESignevents());

@@ -173,6 +173,15 @@ public class GameManager : MonoBehaviour
         return manager.MultSelection.GetSelectedPlayer();
 
     }
+    public List<PlayerController> GetPlayersNearBall(CampTeam team, float near)
+    {
+        TeamManager manager = GetTeamManager(team);
+        List<PlayerController> players = manager.Players;
+
+        players.RemoveAll(r => r.transform.Distance(BallController.instance.transform) > near);
+
+        return players;
+    }
     public bool IsSelectedPlayer(PlayerController player)
     {
         TeamManager manager = GetTeamManager(player.GetCampTeam());

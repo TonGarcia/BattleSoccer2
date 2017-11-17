@@ -201,8 +201,8 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.99701446
-        functionName: OnStumbleEnd
+      - time: 1
+        functionName: OnStumbleFinish
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

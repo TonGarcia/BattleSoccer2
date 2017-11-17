@@ -30,10 +30,10 @@ public static class BallControllerExtensions
     public static bool IsBallNear(this PlayerController player, float relativeDistance = 5.5f)
     {
         float distance = BallController.instance.transform.Distance(player.transform);
-        if (distance <= relativeDistance)
-            return true;
-        else
+        if (distance > relativeDistance)
             return false;
+        else
+            return true;
     }
 }
 
@@ -93,6 +93,7 @@ public class BallController : MonoBehaviour
     private new Rigidbody rigidbody;
 
     PlayerController lastOwner;
+    PlayerController protectedTo;
     private float timeToSetOwner = 0.0f;
 
     private void Awake()
@@ -183,7 +184,7 @@ public class BallController : MonoBehaviour
         if (onRemoveMyOwner != null)
             onRemoveMyOwner(lastOwner);
 
-        fovTriger.enabled = true;
+        //fovTriger.enabled = true;
         UnsetKinematic();
 
 
@@ -221,18 +222,35 @@ public class BallController : MonoBehaviour
         PlayerController old = owner;
         UnsetmeOwner();
 
+       
         rigidbody.AddForce(old.transform.up * 3.5f, ForceMode.Impulse);
         rigidbody.AddForce(-old.transform.forward * 2.0f, ForceMode.Impulse);
 
        
 
     }
-    public void SetBallProtected()
+    public void SetBallProtectedTo(PlayerController player)
     {
+        if (protectedTo != null)
+            return;
+
+        protectedTo = player;
+        int maskPlayer = LayerMask.NameToLayer("SoccerPlayer");
+        int maskBall = LayerMask.NameToLayer("SoccerBall");
+
+        Physics.IgnoreLayerCollision(maskPlayer, maskBall, true);
         fovTriger.enabled = false;
     }
-    public void SetDesprotectBall()
+    public void SetBallDesprotectTo(PlayerController player)
     {
+        if (protectedTo != player)
+            return;
+
+        int maskPlayer = LayerMask.NameToLayer("SoccerPlayer");
+        int maskBall = LayerMask.NameToLayer("SoccerBall");
+
+        Physics.IgnoreLayerCollision(maskPlayer, maskBall, false);
+        protectedTo = null;
         fovTriger.enabled = true;
     }
     public PlayerController GetMyOwner()

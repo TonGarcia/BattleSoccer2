@@ -34,6 +34,7 @@ namespace SoccerGame
         private float animatorSpeedDamp = 5.5f;
         [SerializeField]
         private float animSpeedMultiplier = 1.0f;
+
         [SerializeField]
         private bool useExtraRotation = false;
 
@@ -92,6 +93,8 @@ namespace SoccerGame
             m_KickId = Animator.StringToHash("LongKick");
             m_PassId = Animator.StringToHash("ShortPass");
             m_EntryId = Animator.StringToHash("Entry");
+            m_StumbleId = Animator.StringToHash("Stumble");
+
         }
         public void DoAnimator(float speed, float direction)
         {
@@ -151,23 +154,32 @@ namespace SoccerGame
             {
                 if (m_Rigidbody.isKinematic)
                 {
+                    if (m_input.IsAI)
+                    {
+                        m_Rigidbody.GetComponent<NavMeshAgent>().velocity = Vector3.zero;
+                    }
+
                     m_Rigidbody.transform.position = m_Animator.rootPosition;
                     m_Rigidbody.transform.rotation = m_Animator.rootRotation;
 
                 }
-                else if (Time.deltaTime > 0)
+                else
                 {
                     Vector3 v = (m_Animator.deltaPosition * animSpeedMultiplier) / Time.deltaTime;
                     v.y = m_Rigidbody.velocity.y;
 
-                    if ((m_input.IsAI && motionType == LocomotionType.soccer) || (m_input.IsAI && motionType == LocomotionType.strafe))
+
+                    if (m_input.IsAI)
                     {
-                        m_Rigidbody.GetComponent<NavMeshAgent>().velocity = v;
+
+                        m_Rigidbody.GetComponent<NavMeshAgent>().velocity = Vector3.Lerp(m_Rigidbody.GetComponent<NavMeshAgent>().velocity, v, animatorSpeedDamp * Time.deltaTime); 
+
                     }
                     else
                     {
                         m_Rigidbody.velocity = Vector3.Lerp(m_Rigidbody.velocity, v, animatorSpeedDamp * Time.deltaTime);
                     }
+
                     if (motionType == LocomotionType.normal)
                         m_Rigidbody.transform.rotation = Quaternion.Slerp(m_Rigidbody.transform.rotation, m_Animator.rootRotation, animatorSpeedDamp * Time.deltaTime);
                     else
@@ -328,12 +340,20 @@ namespace SoccerGame
 
             return navHit.position;
         }
+        public void SetSpeedMultiplies(float mult)
+        {
+            animSpeedMultiplier = mult;
+        }
+        public void ResetSpeedMultiples()
+        {
+            animSpeedMultiplier = 1.0f;
+        }
         public void TriggerKick()
         {
             if (inSoccer == false && inStrafe == false && inStumble == false)
             {
                 if (inWalkRun == true || inIdle == true)
-                {                    
+                {
                     m_Animator.SetTrigger(m_KickId);
                 }
             }

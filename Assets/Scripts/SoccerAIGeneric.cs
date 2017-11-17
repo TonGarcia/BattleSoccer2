@@ -120,9 +120,10 @@ public class SoccerAIUnSelected : SoccerAIGeneric
                 Handlle_NothingState();
                 break;
             case SoccerAIState.goToDefaultPosition:
-                Handle_GoToDefaultMarcation();
+                Handle_GoToDefaultState();
                 break;
             case SoccerAIState.followBall:
+                Handle_FollowBallState();
                 break;
             case SoccerAIState.goToGoal:
                 break;
@@ -141,17 +142,32 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         //Se eu ja estiver na origem entao vou marcar o jogador mais proximo caso a bola esteja muito longe de mim
         //Se a bola estiver perto entao vou ir atraz dela
 
+        //Indo atraz da bola se estiver perto e nao estiver no pe do meu time
+        bool isBallNear = Player.IsBallNear();
+        bool teamHasBall = Player.IsBallfromMyTeam();
+
+        if (isBallNear == true && !teamHasBall)
+        {
+            aiState = SoccerAIState.followBall;
+            return;
+        }
+
+        //Indo para posição padrão
         bool inMarcation = Player.InMarcation(1.5f);
         bool inSelection = Player.IsSelected();
+        bool ballHasOwner = BallController.HasOwner();
 
-        if (!inMarcation && !inSelection)
+        if (!inMarcation && !inSelection && ballHasOwner)
         {
             aiState = SoccerAIState.goToDefaultPosition;
             return;
         }
 
+        //Marcando jogador mais proximo
+        //...
 
         //Olhando para a bola
+        Agent.destination = Player.transform.position;
         Speed = 0;
         Direction = Locomotion.GetDirection(BallController.GetPosition()).x;
 
@@ -185,21 +201,31 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
 
     }
-    private void Handle_GoToDefaultMarcation()
+    private void Handle_GoToDefaultState()
     {
         //Vou para a minha posição de marcação origem
         //Marcação de dfesa caso meu time nao tenha a bola, marcação de ataque caso tenha.
         //Vou finalizar quando:
         //> Eu estiver com a bola
         //> Eu chegar ao destino
+        //> Time estiver com bola
+        //> Eu estiver perto da bola
 
-        //Eu mesmo possuo a bola
-        if (Player.IsMyBall() || Player.IsSelected())
+        if (Player.IsSelected() || BallController.HasOwner()==false)
         {
+            Speed = 0;
             aiState = SoccerAIState.nothing;
             return;
         }
 
+        bool isBallNear = Player.IsBallNear();
+
+        if (isBallNear == true && BallController.IsFromTeam(Player) == false)
+        {
+            Speed = 0;
+            aiState = SoccerAIState.nothing;
+            return;
+        }
 
         Transform defPos = Player.GetMarcationPosition(CampPlaceType.defense);
         Transform attkPos = Player.GetMarcationPosition(CampPlaceType.attack);
@@ -210,12 +236,38 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         Direction = move.x;
         Vector3 destination = myTeamHasBall ? attkPos.position : defPos.position;
         Agent.SetDestination(destination);
+
         //Eu cheguei ao destino
         if (IsAgentDone)
         {
+            Speed = 0;
             aiState = SoccerAIState.nothing;
             return;
         }
+
+    }
+    private void Handle_FollowBallState()
+    {
+        //Indo atraz da bola se estiver perto
+        bool isBallNear = Player.IsBallNear();
+        bool teamHasBall = Player.IsBallfromMyTeam();
+
+
+        if (isBallNear == false || teamHasBall == true || Player.IsMyBall() || Player.IsSelected())
+        {
+            Speed = 0;
+            aiState = SoccerAIState.nothing;
+            return;
+        }
+
+        Vector3 ballPosition = BallController.GetPosition();
+        ballPosition.y = Player.transform.position.y;
+
+
+        Vector2 move = Locomotion.GetDirectionAI();
+        Direction = move.x;
+        Speed = move.y;
+        Agent.SetDestination(ballPosition);
 
     }
     private void Handle_MarcandoState()
@@ -504,12 +556,12 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 //Passe
                 float dist = playerBtw.Distance(Player);
 
-                if (dist <= 3.5f)
+                if (dist <= 2.5f)
                 {
                     //Drible
                     if (timeToDrible >= checkTimeToDrible) //Nova posição para o drible
                     {
-                        Vector3 pos = Locomotion.GetRandomNavCircle(playerBtw.transform.position, 2.5f);
+                        Vector3 pos = Locomotion.GetRandomNavCircle(Player.transform.position, 2.5f);
                         toGo = pos;
                         timeToDrible = 0.0f;
                         timeToPass = 0.0f;
@@ -517,7 +569,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 }
                 else
                 {
-                    if (timeToPass >= 2.5f)
+                    if (timeToPass >= 1.5f)
                     {
                         toGo = playerBtw.transform.position;
                         Owner.TriggerPass(playerBtw.GetComponent<AIController>(), dist * 2);

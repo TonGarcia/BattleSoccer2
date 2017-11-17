@@ -56,6 +56,8 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public float dir = 0;
 
+    public Collider FovBallTryger;
+
     public bool isAI { get { return playerInput.IsAI; } }
     public bool isMovie { get { return (speed > 0.0f || dir > 0.0f); } }
 
@@ -100,6 +102,19 @@ public class PlayerController : MonoBehaviour
         locomotion.OnAnimatorMove();
     }
 
+    public void SetKinematic()
+    {
+        GetComponent<Animator>().rootPosition = transform.position;
+        gameObject.GetComponent<Rigidbody>().isKinematic = true;
+        gameObject.GetComponent<Collider>().enabled = false;
+        FovBallTryger.enabled = false;
+    }
+    public void UnsetKinematic()
+    {
+        gameObject.GetComponent<Collider>().enabled = true;
+        gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        FovBallTryger.enabled = true;
+    }
     public void SetManual()
     {
         playerInput.InputType = GameManager.instance.GetControllerType(this.GetCampTeam());

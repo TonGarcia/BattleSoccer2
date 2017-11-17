@@ -47,7 +47,20 @@ namespace SoccerGame
             string str_input = userType.ToShortCutInput() + bt.ToString();
             return Input.GetButtonDown(str_input);
         }
-
+        public static bool GetButtonUp(ControllerInputType userType, string bt)
+        {
+            if (userType == ControllerInputType.ControllerCPU)
+                return false;
+            string str_input = userType.ToShortCutInput() + bt;
+            return Input.GetButtonUp(str_input);
+        }
+        public static bool GetButtonUp(ControllerInputType userType, ButtomInputType bt)
+        {
+            if (userType == ControllerInputType.ControllerCPU)
+                return false;
+            string str_input = userType.ToShortCutInput() + bt.ToString();
+            return Input.GetButtonUp(str_input);
+        }
         public static float GetAxisHorizontal(ControllerInputType userType)
         {
             if (userType == ControllerInputType.ControllerCPU)

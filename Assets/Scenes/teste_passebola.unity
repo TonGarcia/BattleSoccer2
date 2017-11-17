@@ -151,7 +151,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &125453999
+--- !u!1001 &65751273
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -592,6 +592,10 @@ Prefab:
       value: 
       objectReference: {fileID: 13400000, guid: d3e58b97ef2a2fa42b20327b45a89087,
         type: 2}
+    - target: {fileID: 1644604989069764, guid: b0ac87d541c90f54981bfa12c21d639c, type: 2}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b0ac87d541c90f54981bfa12c21d639c, type: 2}
   m_IsPrefabParent: 0
@@ -1370,7 +1374,7 @@ MonoBehaviour:
 Transform:
   m_PrefabParentObject: {fileID: 4573405893184542, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
     type: 2}
-  m_PrefabInternal: {fileID: 125453999}
+  m_PrefabInternal: {fileID: 65751273}
 --- !u!4 &1762451283 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4573405893184542, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
