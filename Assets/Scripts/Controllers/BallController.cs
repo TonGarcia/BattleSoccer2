@@ -26,7 +26,20 @@ public static class BallControllerExtensions
     {
         return BallController.IsFromTeam(player);
     }
-
+    /// <summary>
+    /// Informa se o jogaodr é o jogador mais proximo da bola atualmente
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns></returns>
+    public static bool IsBallMostNear(this PlayerController player)
+    {
+       
+        PlayerController mostNeat = GameManager.instance.GetPlayerNearBall(player.GetCampTeam());
+        if (mostNeat != null)
+            return player == mostNeat;
+        else
+            return true;
+    }
     public static bool IsBallNear(this PlayerController player, float relativeDistance = 5.5f)
     {
         float distance = BallController.instance.transform.Distance(player.transform);
@@ -94,6 +107,9 @@ public class BallController : MonoBehaviour
 
     PlayerController lastOwner;
     PlayerController protectedTo;
+
+    private bool isPass = false;
+
     private float timeToSetOwner = 0.0f;
 
     private void Awake()
@@ -169,6 +185,8 @@ public class BallController : MonoBehaviour
         if (onSetMyOwner != null)
             onSetMyOwner(player, owner);
 
+        isPass = false;
+
         lastOwner = owner;
         owner = player;
 
@@ -207,10 +225,12 @@ public class BallController : MonoBehaviour
         if (owner == null)
             return;
 
+        isPass = true;
         PlayerController playerFromKick = owner;
         UnsetmeOwner();
         rigidbody.AddForce(playerFromKick.transform.forward * distance, ForceMode.Impulse);
-        rigidbody.AddForce(playerFromKick.transform.up * distance/4, ForceMode.Impulse);
+        rigidbody.AddForce(playerFromKick.transform.up * distance / 4, ForceMode.Impulse);
+
 
     }
     public void ChangemeDirection()
@@ -222,11 +242,11 @@ public class BallController : MonoBehaviour
         PlayerController old = owner;
         UnsetmeOwner();
 
-       
+
         rigidbody.AddForce(old.transform.up * 3.5f, ForceMode.Impulse);
         rigidbody.AddForce(-old.transform.forward * 2.0f, ForceMode.Impulse);
 
-       
+
 
     }
     public void SetBallProtectedTo(PlayerController player)

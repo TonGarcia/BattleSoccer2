@@ -43,7 +43,7 @@ public class AIController : MonoBehaviour
         AIUnselected = new SoccerAIUnSelected(this);
         AISelected = new SoccerAISelected(this);
         AIWithBall = new SoccerAIwithBall(this);
-        
+
         nvSpeed = agent.speed;
         nvAngularSpeed = agent.angularSpeed;
         nvAceleration = agent.acceleration;
@@ -56,7 +56,7 @@ public class AIController : MonoBehaviour
 
         UpdateNavMeshAgent();
 
-        if(locomotion.inStumble ) //Tropeçando
+        if (locomotion.inStumble) //Tropeçando
         {
             speed = 0;
             direction = 0;
@@ -117,15 +117,19 @@ public class AIController : MonoBehaviour
     private void OnBallSetOwner(PlayerController owner, PlayerController lasOwner)
     {
         //Animação de entrada de bola
-        if (owner == player && lasOwner != null)
-        {
-            float distance = lasOwner.Distance(player);
-            if (distance <= distanceToEntry)
+        if (owner == player)
+        {            
+            agent.SetDestination(BallController.GetPosition());
+
+            if (lasOwner != null)
             {
-                locomotion.TriggerEntry();
+                float distance = lasOwner.Distance(player);
+                if (distance <= distanceToEntry)
+                {
+                    locomotion.TriggerEntry();
+                }
             }
         }
-
 
         waitingToPass = false;
     }
@@ -178,7 +182,7 @@ public class AIController : MonoBehaviour
     }
     private void OnTurnDirectionOk()
     {
-       // BallController.instance.SetBallDesprotectTo(player);
+        // BallController.instance.SetBallDesprotectTo(player);
     }
     private void OnTurnDirectionFinish()
     {
@@ -256,7 +260,7 @@ public class AIController : MonoBehaviour
         {
             agent.speed = 1;
             agent.angularSpeed = 1;
-            agent.acceleration = 1;
+            agent.acceleration = 8;
         }
     }
     private IEnumerator IESignevents()

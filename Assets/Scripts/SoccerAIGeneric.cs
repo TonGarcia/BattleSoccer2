@@ -143,7 +143,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         //Se a bola estiver perto entao vou ir atraz dela
 
         //Indo atraz da bola se estiver perto e nao estiver no pe do meu time
-        bool isBallNear = Player.IsBallNear();
+        bool isBallNear = Player.IsBallMostNear();
         bool teamHasBall = Player.IsBallfromMyTeam();
 
         if (isBallNear == true && !teamHasBall)
@@ -211,7 +211,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         //> Time estiver com bola
         //> Eu estiver perto da bola
 
-        if (Player.IsSelected() || BallController.HasOwner()==false)
+        if (Player.IsSelected() || BallController.HasOwner() == false)
         {
             Speed = 0;
             aiState = SoccerAIState.nothing;
@@ -249,9 +249,8 @@ public class SoccerAIUnSelected : SoccerAIGeneric
     private void Handle_FollowBallState()
     {
         //Indo atraz da bola se estiver perto
-        bool isBallNear = Player.IsBallNear();
+        bool isBallNear = Player.IsBallMostNear();
         bool teamHasBall = Player.IsBallfromMyTeam();
-
 
         if (isBallNear == false || teamHasBall == true || Player.IsMyBall() || Player.IsSelected())
         {
@@ -395,6 +394,9 @@ public class SoccerAISelected : SoccerAIGeneric
 
         if (Player.IsMyBall() || !Player.IsSelected())
         {
+            Speed = 0;
+            Direction = 0;
+
             aiState = SoccerAIState.nothing;
             return;
         }
@@ -413,15 +415,16 @@ public class SoccerAISelected : SoccerAIGeneric
 
         //Verifica a distancia da bola, se estiver muito longe procuro outor jogador mais proximo para selecionar
 
-        if (timeToSelect > 2.5f)
+        if (timeToSelect > 1.5f)
         {
-            if (balldistance >= 5.0f) //Procurando jogador mais proximo
+            if (balldistance > 3.5f) //Procurando jogador mais proximo
             {
                 PlayerController nearBall = GameManager.instance.GetPlayerNearBall(Player.GetCampTeam());
                 if (nearBall != Player)
-                    Player.SelectME();
-
-                timeToSelect = 0.0f;
+                {
+                    nearBall.SelectME();
+                    timeToSelect = 0.0f;
+                }
             }
         }
 
@@ -556,7 +559,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 //Passe
                 float dist = playerBtw.Distance(Player);
 
-                if (dist <= 2.5f)
+                if (dist <= checkDistanceToDrible / 2)
                 {
                     //Drible
                     if (timeToDrible >= checkTimeToDrible) //Nova posição para o drible

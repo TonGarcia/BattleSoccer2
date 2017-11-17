@@ -214,6 +214,12 @@ Transform:
   m_PrefabParentObject: {fileID: 4205879005033266, guid: f122634bab67ad44698b3e545a8dc1a7,
     type: 2}
   m_PrefabInternal: {fileID: 1050170002}
+--- !u!114 &481856493 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114806801671383424, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
+    type: 2}
+  m_PrefabInternal: {fileID: 665640730}
+  m_Script: {fileID: 11500000, guid: 7909a66e0e115964996f96a10443edcb, type: 3}
 --- !u!1001 &585743655
 Prefab:
   m_ObjectHideFlags: 0
@@ -388,7 +394,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1206900691969080, guid: 7de88fd53e5186f43bfc02c6bd9b02ee, type: 2}
       propertyPath: m_Name
-      value: SoccerPlayer (1)
+      value: SoccerEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 137560248353040144, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
         type: 2}
@@ -698,4 +704,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f22861abd67144dab7aff8768e14bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 481856493}
