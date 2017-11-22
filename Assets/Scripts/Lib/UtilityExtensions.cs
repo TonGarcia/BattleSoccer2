@@ -22,5 +22,13 @@ namespace SoccerGame
 
             return Vector3.Distance(origem, destino);
         }
+        public static float Distance(this PlayerController owner, Vector3 other)
+        {
+            Vector3 origem = owner.transform.position;
+            Vector3 destino = other;
+            destino.y = origem.y;
+
+            return Vector3.Distance(origem, destino);
+        }
     }
 }

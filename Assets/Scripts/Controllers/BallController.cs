@@ -108,8 +108,6 @@ public class BallController : MonoBehaviour
     PlayerController lastOwner;
     PlayerController protectedTo;
 
-    private bool isPass = false;
-
     private float timeToSetOwner = 0.0f;
 
     private void Awake()
@@ -131,6 +129,8 @@ public class BallController : MonoBehaviour
 
     void Update()
     {
+        if (transform.position.y < 0)
+            transform.position = new Vector3(transform.position.x, 0.2f, transform.position.z);
 
         if (owner)
         {
@@ -185,7 +185,6 @@ public class BallController : MonoBehaviour
         if (onSetMyOwner != null)
             onSetMyOwner(player, owner);
 
-        isPass = false;
 
         lastOwner = owner;
         owner = player;
@@ -225,7 +224,6 @@ public class BallController : MonoBehaviour
         if (owner == null)
             return;
 
-        isPass = true;
         PlayerController playerFromKick = owner;
         UnsetmeOwner();
         rigidbody.AddForce(playerFromKick.transform.forward * distance, ForceMode.Impulse);
@@ -277,9 +275,18 @@ public class BallController : MonoBehaviour
     {
         return owner;
     }
+    public PlayerController GetMyLastOwner()
+    {
+        return lastOwner;
+    }
+
     public bool IsMyOwner(PlayerController player)
     {
         return player == owner;
+    }
+    public bool IsMyLastOwner(PlayerController player)
+    {
+        return player == lastOwner;
     }
     /// <summary>
     /// Verifica se a bola esta de poce de alguem do time do jogador pesquisado
@@ -314,6 +321,10 @@ public class BallController : MonoBehaviour
     {
         return instance.IsMyOwner(player);
     }
+    public static bool IsLastOwner(PlayerController player)
+    {
+        return instance.IsMyLastOwner(player);
+    }
     public static void SetKick()
     {
         instance.SetmeKick();
@@ -341,6 +352,14 @@ public class BallController : MonoBehaviour
     {
         return instance.transform.position;
     }
+    public static PlayerController GetOwner()
+    {
+        return instance.GetMyOwner();
+    }
+    public static PlayerController GetLastOwner()
+    {
+        return instance.GetMyLastOwner();
+    }
     private void SetKinematic()
     {
         rigidbody.isKinematic = true;
@@ -352,5 +371,6 @@ public class BallController : MonoBehaviour
         GetComponent<Collider>().isTrigger = false;
         rigidbody.isKinematic = false;
     }
+
 
 }

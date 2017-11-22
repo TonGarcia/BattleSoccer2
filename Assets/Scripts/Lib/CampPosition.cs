@@ -12,6 +12,42 @@ namespace SoccerGame
             string key = scgp.Side.ToString() + scgp.Marcation.ToString() + scgp.CampType.ToString();
             return key;
         }
+        public static CampActionAttribute Next(this CampActionAttribute campAction)
+        {
+            CampActionAttribute result = CampActionAttribute.deffender;
+
+            if (campAction == CampActionAttribute.deffender)
+                result = CampActionAttribute.middle;
+            else if (campAction == CampActionAttribute.middle)
+                result = CampActionAttribute.attack;
+            else
+                result = CampActionAttribute.attack;
+
+            return result;
+        }
+        public static CampActionAttribute Prev(this CampActionAttribute campAction)
+        {
+            CampActionAttribute result = CampActionAttribute.deffender;
+
+            if (campAction == CampActionAttribute.attack)
+                result = CampActionAttribute.middle;
+            else if (campAction == CampActionAttribute.middle)
+                result = CampActionAttribute.deffender;
+            else
+                result = CampActionAttribute.deffender;
+
+            return result;
+        }
+
+        public static CampTeam Enemy(this CampTeam team)
+        {
+            if (team == CampTeam.Team_A)
+                return CampTeam.Team_B;
+            else
+                return CampTeam.Team_A;
+
+        }
+
     }
     /// <summary>
     /// Atributo de ação que o jogador tem no campo.

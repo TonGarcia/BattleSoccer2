@@ -63,6 +63,7 @@ namespace SoccerGame
 
 
         private Animator m_Animator = null;
+        private NavMeshAgent m_Agent = null;
         private Rigidbody m_Rigidbody = null;
         private ControllerGravity m_Gravity = null;
         private PlayerInput m_input = null;
@@ -82,6 +83,7 @@ namespace SoccerGame
         {
             m_Animator = transform.GetComponent<Animator>();
             m_Rigidbody = transform.GetComponent<Rigidbody>();
+            m_Agent = transform.GetComponent<NavMeshAgent>();
             m_Gravity = gravity;
             m_input = plaerinput;
             m_SpeedId = Animator.StringToHash("Speed");
@@ -185,6 +187,23 @@ namespace SoccerGame
                     else
                         m_Rigidbody.transform.rotation = m_Animator.rootRotation;
                 }
+            }
+        }
+        public bool IsAgentDone
+        {
+            get
+            {
+                return !m_Agent.pathPending && IsAgentStopping;
+            }
+        }
+        public bool IsAgentStopping
+        {
+            get
+            {
+                if (m_Agent.enabled == false)
+                    return true;
+
+                return m_Agent.remainingDistance <= m_Agent.stoppingDistance;
             }
         }
         public Vector2 GetDirection(Vector3 position)
@@ -327,6 +346,11 @@ namespace SoccerGame
             }
 
             return target;
+        }
+
+        public Vector3 GetRandomNavCircle(PlayerController origin, float dist)
+        {
+            return GetRandomNavCircle(origin.transform.position, dist);
         }
         public Vector3 GetRandomNavCircle(Vector3 origin, float dist)
         {

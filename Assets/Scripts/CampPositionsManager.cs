@@ -7,7 +7,7 @@ using SoccerGame;
 
 public class CampPositionsManager : MonoBehaviour
 {
-   
+
 
     [SerializeField]
     private GameObject LeftSide;
@@ -18,10 +18,12 @@ public class CampPositionsManager : MonoBehaviour
 
     private void Awake()
     {
-        
+
         positions = new Dictionary<string, CampPosition>();
-        LeftSide.SetActive(true);
-        RightSide.SetActive(true);
+        if (LeftSide)
+            LeftSide.SetActive(true);
+        if (RightSide)
+            RightSide.SetActive(true);
     }
     public void AddPosition(CampPosition position)
     {

@@ -4,7 +4,24 @@ using UnityEngine;
 using SoccerGame;
 using UnityEngine.AI;
 using System;
+using System.Linq;
 
+public static class SoccerAIGenericExtensions
+{
+    public static SoccerAIUnSelected ToUnSelected(this SoccerAIGeneric generic)
+    {
+        return (SoccerAIUnSelected)generic;
+    }
+    public static SoccerAISelected ToSelected(this SoccerAIGeneric generic)
+    {
+        return (SoccerAISelected)generic;
+    }
+    public static SoccerAIwithBall ToWithBall(this SoccerAIGeneric generic)
+    {
+        return (SoccerAIwithBall)generic;
+    }
+
+}
 public enum SoccerAIState
 {
     nothing,
@@ -15,7 +32,6 @@ public enum SoccerAIState
     goToGoal,
     drible,
 }
-
 public abstract class SoccerAIGeneric
 {
 
@@ -25,17 +41,10 @@ public abstract class SoccerAIGeneric
     }
     private AIController owner;
 
-    public ControllerLocomotion Locomotion { get { return player.Locomotion; } }
+    public ControllerLocomotion Locomotion { get { return Player.Locomotion; } }
 
-    public PlayerController Player
-    {
-        get
-        {
-            if (player == null)
-                player = owner.GetComponent<PlayerController>();
-            return player;
-        }
-    }
+
+    public PlayerController Player { get { return player; } }
     private PlayerController player;
 
 
@@ -93,13 +102,130 @@ public abstract class SoccerAIGeneric
         }
     }
 
-    public SoccerAIGeneric(AIController owner)
+    public LocomotionType motionType;
+
+    private bool isForcedGoTo = false;
+
+    private Vector3 forceGoTo;
+    private Transform forceLoockat;
+
+    public SoccerAIGeneric(AIController owner, PlayerController controller)
     {
         this.owner = owner;
+        this.player = controller;
+        motionType = LocomotionType.normal;
     }
 
-    public abstract void HandleStates();
+    public virtual bool UpdateHandleStates()
+    {
+        if (Locomotion == null)
+            return false;
 
+        Locomotion.motionType = motionType;
+
+        if (Locomotion.inStumble) //Tropeçando
+        {
+            Agent.destination = Player.transform.position;
+            Speed = 0;
+            Direction = 0;
+            return false;
+        }
+
+        if (isForcedGoTo)
+        {           
+            if (Player.IsMyBall())
+            {
+                Stop();
+                isForcedGoTo = false;
+                return true;
+            }
+
+            Vector2 move = Locomotion.GetDirectionAI();
+            Speed = move.y;
+            Direction = move.x;
+
+            //Lookat
+            Vector3 loockposition = forceLoockat.position;
+            loockposition.y = Player.transform.position.y;
+            Player.transform.LookAt(loockposition);
+
+            //Move AI
+            Agent.destination = forceGoTo;
+
+            if (Locomotion.IsAgentDone)
+            {
+                Stop();
+                isForcedGoTo = false;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+    public virtual void StopHandleStates()
+    {
+        Stop();
+
+    }
+    public virtual void ForceGoTo(Vector3 position)
+    {
+        if (isForcedGoTo)
+            return;
+
+        Stop();
+
+        isForcedGoTo = true;
+        forceGoTo = position;
+        Agent.destination = forceGoTo;
+    }
+    public virtual void ForceGoTo(Vector3 position, Transform loockat)
+    {
+        if (isForcedGoTo)
+            return;
+
+        Stop();
+
+        this.motionType = LocomotionType.strafe;
+
+        isForcedGoTo = true;
+        forceLoockat = loockat;
+        forceGoTo = position;
+        Agent.destination = forceGoTo;
+    }
+
+    protected void Move(Vector3 position)
+    {
+        Agent.SetDestination(position);
+        //Move para o destino
+        Vector2 move = Locomotion.GetDirectionAI();
+        Speed = move.y;
+        Direction = move.x;
+    }
+    protected void Lookat(Vector3 position)
+    {
+        //Move para o destino
+        Agent.SetDestination(Player.transform.position);
+
+        Vector2 move = Locomotion.GetDirection(position);
+        Speed = 0;
+        Direction = move.x;
+    }
+    protected void Stop()
+    {
+        if (Agent.isOnNavMesh && Agent.enabled)
+            Agent.destination = Player.transform.position;
+
+
+        Speed = 0;
+        Direction = 0;
+        motionType = LocomotionType.normal;
+        Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        Player.GetComponent<Animator>().rootPosition = Player.transform.position;
+        isForcedGoTo = false;
+        forceGoTo = Player.transform.position;
+
+    }
 }
 
 public class SoccerAIUnSelected : SoccerAIGeneric
@@ -107,13 +233,17 @@ public class SoccerAIUnSelected : SoccerAIGeneric
     public SoccerAIState AiState { get { return aiState; } }
     private SoccerAIState aiState;
 
-    public SoccerAIUnSelected(AIController owner) : base(owner)
+    public SoccerAIUnSelected(AIController owner, PlayerController controller) : base(owner, controller)
     {
         aiState = SoccerAIState.nothing;
     }
 
-    public override void HandleStates()
+    public override bool UpdateHandleStates()
     {
+        if (base.UpdateHandleStates() == false)
+            return false;
+
+
         switch (aiState)
         {
             case SoccerAIState.nothing:
@@ -131,6 +261,8 @@ public class SoccerAIUnSelected : SoccerAIGeneric
                 Handle_MarcandoState();
                 break;
         }
+
+        return true;
     }
 
     private void Handlle_NothingState()
@@ -147,7 +279,8 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         bool teamHasBall = Player.IsBallfromMyTeam();
 
         if (isBallNear == true && !teamHasBall)
-        {
+        {           
+            
             aiState = SoccerAIState.followBall;
             return;
         }
@@ -159,6 +292,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
         if (!inMarcation && !inSelection && ballHasOwner)
         {
+            Stop();
             aiState = SoccerAIState.goToDefaultPosition;
             return;
         }
@@ -168,8 +302,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
         //Olhando para a bola
         Agent.destination = Player.transform.position;
-        Speed = 0;
-        Direction = Locomotion.GetDirection(BallController.GetPosition()).x;
+        Lookat(BallController.GetPosition());
 
 
         /*
@@ -213,11 +346,12 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
         if (Player.IsSelected() || BallController.HasOwner() == false)
         {
-            Speed = 0;
+            Stop();
             aiState = SoccerAIState.nothing;
             return;
         }
 
+       
         bool isBallNear = Player.IsBallNear();
 
         if (isBallNear == true && BallController.IsFromTeam(Player) == false)
@@ -238,9 +372,9 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         Agent.SetDestination(destination);
 
         //Eu cheguei ao destino
-        if (IsAgentDone)
+        if (Locomotion.IsAgentDone)
         {
-            Speed = 0;
+            Stop();
             aiState = SoccerAIState.nothing;
             return;
         }
@@ -254,7 +388,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
         if (isBallNear == false || teamHasBall == true || Player.IsMyBall() || Player.IsSelected())
         {
-            Speed = 0;
+            Stop();
             aiState = SoccerAIState.nothing;
             return;
         }
@@ -316,23 +450,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         //Seta trajeto para a posição between
         */
     }
-    private bool IsAgentDone
-    {
-        get
-        {
-            return !Agent.pathPending && IsAgentStopping;
-        }
-    }
-    private bool IsAgentStopping
-    {
-        get
-        {
-            if (Agent.enabled == false)
-                return true;
 
-            return Agent.remainingDistance <= Agent.stoppingDistance;
-        }
-    }
 }
 public class SoccerAISelected : SoccerAIGeneric
 {
@@ -340,17 +458,18 @@ public class SoccerAISelected : SoccerAIGeneric
     private SoccerAIState aiState;
     private float timeToSelect = 0;
 
-    public SoccerAISelected(AIController owner) : base(owner)
+    public SoccerAISelected(AIController owner, PlayerController controller) : base(owner, controller)
     {
         aiState = SoccerAIState.nothing;
     }
 
-    public override void HandleStates()
+    public override bool UpdateHandleStates()
     {
+        if (base.UpdateHandleStates() == false)
+            return false;
+
         if (!Agent.isActiveAndEnabled || !Agent.isOnNavMesh)
-            return;
-
-
+            return false;
 
         aiState = SoccerAIState.followBall;
 
@@ -366,10 +485,13 @@ public class SoccerAISelected : SoccerAIGeneric
                 Handlle_NothingState();
                 break;
         }
+
+        return true;
     }
 
     private void Handlle_NothingState()
     {
+        
         //Indo para a origem
         //Se eu estiver proximo do jogador que possui a bola vou correr atraz da bola
         //Se eu estiver longe Vou passar a seleção para o jogador mais proximo da bola e se não houver vou atraz
@@ -383,6 +505,7 @@ public class SoccerAISelected : SoccerAIGeneric
         timeToSelect = 0;
         Speed = 0;
         Direction = 0;
+        Agent.destination = Player.transform.position;
 
 
     }
@@ -394,6 +517,7 @@ public class SoccerAISelected : SoccerAIGeneric
 
         if (Player.IsMyBall() || !Player.IsSelected())
         {
+            Agent.destination = Player.transform.position;
             Speed = 0;
             Direction = 0;
 
@@ -429,28 +553,12 @@ public class SoccerAISelected : SoccerAIGeneric
         }
 
     }
-    private bool IsAgentDone
-    {
-        get
-        {
-            return !Agent.pathPending && IsAgentStopping;
-        }
-    }
-    private bool IsAgentStopping
-    {
-        get
-        {
-            if (Agent.enabled == false)
-                return true;
 
-            return Agent.remainingDistance <= Agent.stoppingDistance;
-        }
-    }
 }
 public class SoccerAIwithBall : SoccerAIGeneric
 {
-
-    public float checkDistanceToDrible = 5.5f;
+    public float checkDistanceToPass = 10.0f;
+    public float checkDistanceToDrible = 2.5f;
     /// <summary>
     /// Dribles serao feito a cada fração de tempo aqui estipulado. valores maiores
     /// deixam os movimentos de drible uma vez que permanece mais tempo na nova rota escolhida
@@ -462,80 +570,205 @@ public class SoccerAIwithBall : SoccerAIGeneric
     public SoccerAIState AiState { get { return aiState; } }
     private SoccerAIState aiState;
 
-    private float timeToDrible = 0;
-    private float timeToPass = 0;
-    private float timeToStand = 0;//Vai calcular o tempo maximo q o jogador pode ficar parado
-    Vector3 toGo = Vector3.zero;
+    private float timeToGoal = 0;
+    private float timeToDrible = 100;
 
-    public SoccerAIwithBall(AIController owner) : base(owner)
+    private Vector3 MidCampPosition { get { return GameManager.instance.midCampTransform.position; } }
+    Vector3 toGo = Vector3.zero;
+    PlayerController toPass = null;
+    private bool inPass = false;
+
+    public SoccerAIwithBall(AIController owner, PlayerController controller) : base(owner, controller)
     {
         aiState = SoccerAIState.nothing;
+        PlayerAnimatorEvents animatorEvents = Player.GetComponent<PlayerAnimatorEvents>();
+        animatorEvents.OnPassFinish += OnPassFinish;
+
     }
 
-    public override void HandleStates()
+    ~SoccerAIwithBall()
     {
-        switch (aiState)
-        {
-            case SoccerAIState.nothing:
-                Handlle_NothingState();
-                break;
+        if (Player == null)
+            return;
+        PlayerAnimatorEvents animatorEvents = Player.gameObject.GetComponent<PlayerAnimatorEvents>();
+        animatorEvents.OnPassFinish -= OnPassFinish;
+    }
 
-            case SoccerAIState.goToGoal:
-                Handle_ToGoState();
-                break;
+    public override bool UpdateHandleStates()
+    {
+        if (base.UpdateHandleStates() == false)
+            return false;
 
+        if (!Agent.isActiveAndEnabled || !Agent.isOnNavMesh)
+            return false;
 
-            default:
-                Handlle_NothingState();
-                break;
-        }
+        Handlle_NothingState();
+
+        return true;
     }
 
     private void Handlle_NothingState()
     {
-
-        /*
-         * Estratégia:
-         * Se o caminho entre eu e o gol estiver livre vou correndo para o gol. 
-         * Se o caminho estiver obstruido e a obstrução estiver muito longe de mim mantenho caminho para o gol;
-         * Se a obstrução estiver perto vou avaliar todos os jogadores proximos , pelos que estiverem sem obstrução entre eu e ele.
-         * Encontrando um jogaodr vou efetuar um passe bola.
-         * Nao encontrando um jogador vou efetuar DRIBLEs procurando trajetos limpos para o gol.
-         * PS: Obstrução não conta o goleiro
-         */
-
-
-        aiState = SoccerAIState.goToGoal;
-
-        /*
-           PlayerController playerBTW = GetAnyBtwForward(3.5f);
-        if (playerBTW == null)
+        if (Player.IsMyBall() == false)
         {
-            aiState = SoccerAIState.goToGoal;
+            aiState = SoccerAIState.nothing;
             return;
         }
-               
 
-        if (playerBTW.GetCampTeam() != playerBTW.GetCampTeam()) //Inimigo a frente
+        Transform goalPosition = Player.GetEnemyGoalPosition();
+        PlayerController playerBtw = null;
+        timeToDrible += Time.deltaTime;
+
+        if (toPass != null)
         {
-            aiState = SoccerAIState.drible;
+            motionType = LocomotionType.normal;
+
+            Debug.DrawLine(Player.transform.position, toPass.transform.position, Color.red);
+
+            toGo = toPass.transform.position;
+
+            if (Player.IsLookAt(toGo) == true && inPass == false)
+            {
+                if (Player.IsHitBetween(toPass) == false)
+                {
+                    Owner.TriggerPass(toPass);
+                    inPass = true;
+                }
+                else
+                {
+                    toPass = null;
+                }
+            }
+
+            Move(toGo);
+            return;
         }
-        else //Aliado a frente
+
+        //Vou passar a bola se existir um cara livre entre e o gol. Esta e a prioridade ja q ele tem caminho livre
+        if (Player.IsHitForwad(checkDistanceToPass, out playerBtw))
         {
-            //Posso tocar ou driblar. colocar fator randomico no futuro
-            aiState = SoccerAIState.findToPass;
+            motionType = LocomotionType.soccer;
+
+            if (playerBtw.IsMyTeaM(Player)) //Player e meu amigo, vou pedir para ele sair do caminho
+            {
+                Vector3 origim = playerBtw.transform.position + (-playerBtw.transform.forward * 4.5f);
+                Vector3 freePos = Locomotion.GetRandomNavCircle(origim, 4.5f);
+                playerBtw.GetComponent<AIController>().GoToPosition(freePos, BallController.instance.transform);
+            }
+            else if (playerBtw.Distance(Player) <= checkDistanceToDrible) //Player inimigo e perto de mais. Drible
+            {
+                Vector3 positionToDrible = Vector3.zero;
+
+                if (GetPositionToDrible(playerBtw, out positionToDrible))
+                    toGo = positionToDrible;
+                else
+                {
+                    //Se posição boa para o drible.
+                    toGo = positionToDrible;
+                }
+            }
+            else //Player inimigo mas longe de mais vou tentar um passe de bola
+            {
+
+                PlayerController topass = null;
+                if (GetToPass(out topass))
+                {
+                    toPass = topass;
+                    toGo = Player.transform.position;
+                    //Stop();
+                }
+                else
+                {
+                    toGo = goalPosition.position;
+                }
+            }
         }
-         */
+        else
+        {
+            timeToGoal += Time.deltaTime;
+            if (Locomotion.IsAgentDone || timeToGoal >=1.5f)
+            {
+                motionType = LocomotionType.normal;
+                toGo = goalPosition.position;
+                timeToGoal = 0;
 
+            }
+        }
 
-        // Speed = 0;
-        // Direction = (Player.GetEnemyGoalPosition().position - Player.transform.position).x;
+        Move(toGo);
 
     }
 
-    private void Handle_ToGoState()
+    private bool GetPositionToDrible(PlayerController enemy, out Vector3 toGo)
     {
+        bool result = false;
+        Vector3 resultPosition = Vector3.zero;
+        Vector3 freePos = Vector3.zero;
 
+        if (GetFreeHit(out freePos, enemy.transform.position, true))
+        {
+            resultPosition = freePos;
+            result = true;
+        }
+        else
+        {
+            Vector3 pos = Locomotion.GetRandomNavCircle(Player.transform.position, 3.5f);
+            resultPosition = pos;
+
+            if (Player.IsHitBetween(pos) == false)
+            {
+
+                result = true;
+            }
+        }
+
+        toGo = resultPosition;
+        return result;
+    }
+    private bool GetToPass(out PlayerController playerPassed)
+    {
+        bool result = false;
+        PlayerController selec = null;
+
+        //Procura jogadores proximo de mim que estejam livres
+        List<PlayerController> players = GameManager.instance.GetPlayersNearBall(Player.GetCampTeam(), checkDistanceToPass);
+        List<PlayerController> playersNear = new List<PlayerController>(players);
+        playersNear.RemoveAll(p => p.IsHitBetween(Player));
+        playersNear.Remove(Player);
+        playersNear.Remove(BallController.GetLastOwner());
+
+        if (playersNear.Count > 0) //Existem jogadores proximos
+        {
+
+            if (playersNear.Exists(r => r.GetCampAction() == CampActionAttribute.attack))
+            {
+                playersNear.RemoveAll(r => r.GetCampAction() != CampActionAttribute.attack);
+                float max = playersNear.Max(r => r.Distance(Player));
+                selec = playersNear.FirstOrDefault(r => r.Distance(Player) == max);
+
+            }
+            else if (playersNear.Exists(r => r.GetCampAction() == CampActionAttribute.middle))
+            {
+                playersNear.RemoveAll(r => r.GetCampAction() != CampActionAttribute.middle);
+                float min = playersNear.Min(r => r.Distance(Player));
+                selec = playersNear.FirstOrDefault(r => r.Distance(Player) == min);
+            }
+            else
+            {
+                float min = playersNear.Min(r => r.Distance(Player));
+                selec = playersNear.FirstOrDefault(r => r.Distance(Player) == min);
+            }
+
+            if (selec != null)
+                result = true;
+        }
+
+        playerPassed = selec;
+        return result;
+    }
+    private void Handle_ToGoalStateOLD()
+    {
+        /*
         timeToDrible += Time.deltaTime;
         timeToPass += Time.deltaTime;
 
@@ -605,72 +838,32 @@ public class SoccerAIwithBall : SoccerAIGeneric
         Vector2 move = Locomotion.GetDirectionAI();
         Direction = move.x;
         Speed = move.y;
-        Agent.SetDestination(toGo);
+        Agent.SetDestination(toGo);*/
     }
-
-    private PlayerController GetAnyBtwGoal()
+    private bool GetFreeHit(out Vector3 positionFree, Vector3 lefRightCEnter, bool inverser = false)
     {
-        PlayerController any = null;
+        int leftRight = (int)Player.LeftRightDir(lefRightCEnter);
+        if (inverser)
+            leftRight *= -1;
 
-        Transform goalPosition = Player.GetEnemyGoalPosition();
+        Vector3 freePos = Vector3.zero;
+        bool hasfree = false;
 
-        Vector3 origem = Player.transform.position;
-        origem.y = 0.5f;
-
-        Vector3 goalDir = goalPosition.position - Player.transform.position;
-        goalDir.y = 0.5f;
-
-        float goalDistance = goalPosition.Distance(Player.transform);
-
-        Ray ray = new Ray(origem, goalDir);
-
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, goalDistance, LayerMask.NameToLayer("SoccerPlayer")))
+        if (leftRight != 0)
         {
-            if (hit.transform.GetComponent<PlayerController>() != null)
-                any = hit.transform.GetComponent<PlayerController>();
+            hasfree = Player.GetFreeHitLeftOrRight(checkDistanceToDrible, leftRight, out freePos);
         }
 
-        return any;
+
+        positionFree = freePos;
+        return hasfree;
     }
-    private PlayerController GetAnyBtwForward(float distance)
+
+    //Eventos de jogador
+    private void OnPassFinish()
     {
-        PlayerController any = null;
-
-        Vector3 origem = Player.transform.position;
-        origem.y = 1.0f;
-
-        Vector3 forwad = Player.transform.forward;
-
-
-        Ray ray = new Ray(origem, forwad);
-
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, distance, LayerMask.GetMask("SoccerPlayer")))
-        {
-            if (hit.transform.GetComponent<PlayerController>() != null)
-                any = hit.transform.GetComponent<PlayerController>();
-        }
-
-        Debug.DrawRay(ray.origin, ray.direction * distance, Color.red);
-        return any;
+        inPass = false;
+        toPass = null;
     }
 
-    private bool IsAgentDone
-    {
-        get
-        {
-            return !Agent.pathPending && IsAgentStopping;
-        }
-    }
-    private bool IsAgentStopping
-    {
-        get
-        {
-            if (Agent.enabled == false)
-                return true;
-
-            return Agent.remainingDistance <= Agent.stoppingDistance;
-        }
-    }
 }

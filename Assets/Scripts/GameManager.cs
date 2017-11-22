@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
         public CampPlaceSide side;
         public ControllerInputType controllerType;
         public Transform goalPosition;
-        
+
         [SerializeField]
         private List<PlayerController> players;
         public List<PlayerController> Players { get { return new List<PlayerController>(players); } }
@@ -106,14 +106,16 @@ public class GameManager : MonoBehaviour
     }
 
     public static GameManager instance;
-
+    
     [SerializeField]
     private CampPositionsManager placesManager;
     [SerializeField]
     private TeamManager teamMananger1;
     [SerializeField]
     private TeamManager teamMananger2;
-    
+
+    public Transform midCampTransform;
+
     private void Awake()
     {
         instance = this;
@@ -182,6 +184,98 @@ public class GameManager : MonoBehaviour
 
         return players;
     }
+    public PlayerController GetPlayerNearBall(CampTeam team, CampActionAttribute campAcation)
+    {
+        TeamManager manager = GetTeamManager(team);
+
+        List<PlayerController> players = manager.Players;
+        players.RemoveAll(r => r.GetCampAction() != campAcation);
+
+        if (players.Count > 0)
+        {
+            float min = players.Min(r => r.transform.Distance(BallController.instance.transform));
+            PlayerController player = players.FirstOrDefault(r => r.transform.Distance(BallController.instance.transform) == min);
+
+
+            return player;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+    /// <summary>
+    /// Pesquisa o jogaodr do mesmo time e ação de campo especificada, que esteja mais proximo do jogador origem e que não tenha nenhum inimigo entre eles.
+    /// caso não exista nenhum jogador nestes critérios, nullo sera retornado
+    /// </summary>
+    /// <param name="player">Jogador origem</param>
+    /// <param name="campAcation">Tipo de ação de campo dos jogadores a serem pesquisados</param>
+    /// <returns>Jogador que tenha caminho livre entre o jogaodor origem e ele, ou nulo se os criterios nao forem sucetiveis</returns>
+    public PlayerController GetNearPlayerRaycast(PlayerController player, CampActionAttribute campAcation)
+    {
+        PlayerController result = null;
+        TeamManager manager = GetTeamManager(player.GetCampTeam());
+
+        List<PlayerController> players = manager.Players;
+        players.Remove(player);
+        players.RemoveAll(r => r.GetCampAction() != campAcation);
+
+        foreach (PlayerController p in new List<PlayerController>(players))
+        {
+            PlayerController hitedPlayer;
+            if (p.IsHitBetween(player, out hitedPlayer))
+            {
+                if (hitedPlayer.IsMyTeaM(player) == false)
+                    players.Remove(p);
+            }
+        }
+
+        if (players.Count > 0)
+        {
+            float min = players.Min(r => r.Distance(player));
+            result = players.FirstOrDefault(r => r.Distance(player) == min);
+        }
+
+        return result;
+
+    }
+    /// <summary>
+    /// Pesquisa o jogaodr do mesmo time, que esteja mais proximo do jogador origem e que não tenha nenhum inimigo entre eles.
+    /// caso não exista nenhum jogador nestes critérios, nullo sera retornado
+    /// </summary>
+    /// <param name="player">Jogador origem</param>
+    /// <param name="campAcation">Tipo de ação de campo dos jogadores a serem pesquisados</param>
+    /// <returns>Jogador que tenha caminho livre entre o jogaodor origem e ele, ou nulo se os criterios nao forem sucetiveis</returns>
+    public PlayerController GetNearPlayerRaycast(PlayerController player)
+    {
+        PlayerController result = null;
+        TeamManager manager = GetTeamManager(player.GetCampTeam());
+
+        List<PlayerController> players = manager.Players;
+        players.Remove(player);
+        //players.RemoveAll(r => r.GetCampAction() != campAcation);
+
+        foreach (PlayerController p in new List<PlayerController>(players))
+        {
+            PlayerController hitedPlayer;
+            if (p.IsHitBetween(player, out hitedPlayer))
+            {
+                if (hitedPlayer.IsMyTeaM(player) == false)
+                    players.Remove(p);
+            }
+        }
+
+        if (players.Count > 0)
+        {
+            float min = players.Min(r => r.Distance(player));
+            result = players.FirstOrDefault(r => r.Distance(player) == min);
+        }
+
+        return result;
+
+    }
+
     public bool IsSelectedPlayer(PlayerController player)
     {
         TeamManager manager = GetTeamManager(player.GetCampTeam());
