@@ -114,26 +114,32 @@ public static class ExtDebug
 
 public class TextBoxCast : MonoBehaviour
 {
+    public Transform target;
     float angle = 0;
 
     // Update is called once per frame
     void Update()
     {
-        angle += Time.deltaTime * 10;
 
-        float distance = 10f;
+       // angle += 45 * Time.deltaTime;
+
+
+
+        float distance = 5.5f;
 
         //Angle Target to rotate box
+
         Quaternion angleAxis = Quaternion.AngleAxis(-angle, Vector3.up);
-        Vector3 angleDirection = transform.forward * distance;
-        Vector3 angleTarget = angleAxis * angleDirection;
+        Vector3 angleDirection = transform.position+(transform.forward * distance);
+        Vector3 angleTarget = RotateAroundPoint(angleDirection, transform.position, angleAxis);
+
 
         //Projection of the box
         Vector3 origin = transform.position;
         Vector3 halfExtents = Vector3.one / 2f;
-        Vector3 direction = angleTarget - transform.position; //Transform.forward
+        Vector3 direction = angleTarget - origin; //Transform.forward
         Quaternion orientation = Quaternion.LookRotation(direction); //Transform.rotation
-               
+
 
         RaycastHit hitInfo;
         if (Physics.BoxCast(origin, halfExtents, direction, out hitInfo, orientation, distance))
@@ -144,5 +150,12 @@ public class TextBoxCast : MonoBehaviour
 
 
         ExtDebug.DrawBoxCastBox(origin, halfExtents, orientation, direction, distance, Color.green);
+    }
+
+
+
+    Vector3 RotateAroundPoint(Vector3 point, Vector3 pivot, Quaternion angle)
+    {
+        return angle * (point - pivot) + pivot;
     }
 }

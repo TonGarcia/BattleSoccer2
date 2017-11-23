@@ -650,7 +650,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
         //Vou passar a bola se existir um cara livre entre e o gol. Esta e a prioridade ja q ele tem caminho livre
         if (Player.IsHitForwad(checkDistanceToPass, out playerBtw))
         {
-            motionType = LocomotionType.soccer;
+            //motionType = LocomotionType.soccer;
 
             if (playerBtw.IsMyTeaM(Player)) //Player e meu amigo, vou pedir para ele sair do caminho
             {
@@ -660,14 +660,20 @@ public class SoccerAIwithBall : SoccerAIGeneric
             }
             else if (playerBtw.Distance(Player) <= checkDistanceToDrible) //Player inimigo e perto de mais. Drible
             {
-                Vector3 positionToDrible = Vector3.zero;
-
-                if (GetPositionToDrible(playerBtw, out positionToDrible))
-                    toGo = positionToDrible;
-                else
+                if (Player.IsLookAt(toGo))
                 {
-                    //Se posição boa para o drible.
-                    toGo = positionToDrible;
+                    Vector3 positionToDrible = Vector3.zero;
+
+                    if (GetPositionToDrible(playerBtw, out positionToDrible))
+                    {
+
+                        toGo = positionToDrible;
+                    }
+                    else
+                    {                       
+                        //Se posição boa para o drible.
+                        toGo = positionToDrible;
+                    }
                 }
             }
             else //Player inimigo mas longe de mais vou tentar um passe de bola
@@ -676,12 +682,14 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 PlayerController topass = null;
                 if (GetToPass(out topass))
                 {
+                   
                     toPass = topass;
                     toGo = Player.transform.position;
                     //Stop();
                 }
                 else
                 {
+                   
                     toGo = goalPosition.position;
                 }
             }
@@ -712,9 +720,11 @@ public class SoccerAIwithBall : SoccerAIGeneric
         {
             resultPosition = freePos;
             result = true;
+           
         }
         else
         {
+           
             Vector3 pos = Locomotion.GetRandomNavCircle(Player.transform.position, 3.5f);
             resultPosition = pos;
 
@@ -845,7 +855,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
     }
     private bool GetFreeHit(out Vector3 positionFree, Vector3 lefRightCEnter, bool inverser = false)
     {
-        int leftRight = (int)Player.LeftRightDir(lefRightCEnter);
+        float leftRight = Player.LeftRightDir(lefRightCEnter);
         if (inverser)
             leftRight *= -1;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using SoccerGame;
-
+using UnityEditor;
 
 public static class PlayerControllerExtensions
 {
@@ -37,251 +37,7 @@ public static class PlayerControllerExtensions
         return controller.GetCampTeam() == player.GetCampTeam();
     }
 
-    public static bool IsHitBetween(this PlayerController player, PlayerController to)
-    {
-        bool result = false;
-        PlayerController hitedPlayer = null;
 
-        if (player.IsHitBetween(to.transform, out hitedPlayer))
-        {
-            if (hitedPlayer != to)
-                result = true;
-        }
-
-
-        return result;
-
-    }
-    public static bool IsHitBetween(this PlayerController player, Vector3 to)
-    {
-        bool result = false;
-        PlayerController hitedPlayer = null;
-
-        if (player.IsHitBetween(to, out hitedPlayer))
-        {
-            if (player.transform.position.Equals(to) == false)
-                result = true;
-        }
-
-
-        return result;
-
-    }
-    public static bool IsHitBetween(this PlayerController player, PlayerController to, out PlayerController hitPlayer)
-    {
-        bool result = false;
-        PlayerController hitedPlayer = null;
-
-        if (player.IsHitBetween(to.transform, out hitedPlayer))
-        {
-            if (hitedPlayer != to)
-                result = true;
-        }
-
-        hitPlayer = hitedPlayer;
-        return result;
-
-    }
-    public static bool IsHitBetween(this PlayerController player, Transform to, out PlayerController hitPlayer)
-    {
-        bool result = false;
-        PlayerController hitedPlayer = null;
-
-        if (player.IsHitBetween(to.position, out hitedPlayer))
-        {
-            if (hitedPlayer.transform != to)
-                result = true;
-        }
-
-        hitPlayer = hitedPlayer;
-        return result;
-
-    }
-    public static bool IsHitBetween(this PlayerController player, Vector3 to, out PlayerController hitPlayer)
-    {
-
-        bool result = false;
-        PlayerController hitedPlayer = null;
-
-        Vector3 origem = player.transform.position + (player.transform.forward * 1.0f);
-        Vector3 halfExtents = Vector3.one / 2f;
-        Vector3 direction = player.transform.forward;
-        Quaternion orientation = player.transform.rotation;
-
-        float distance = player.Distance(to);
-
-        RaycastHit hitInfo;
-        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
-        {
-
-            if (hitInfo.transform.GetComponent<PlayerController>() != null)
-            {
-                hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
-                if (hitedPlayer.transform.position != to)
-                    result = true;
-            }
-
-            ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
-        }
-
-        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
-
-        hitPlayer = hitedPlayer;
-        return result;
-    }
-
-    public static bool IsHitForwad(this PlayerController player, float distance, out PlayerController hitPlayer)
-    {
-        bool result = false;
-        PlayerController hitedPlayer = null;
-
-        Vector3 origem = player.transform.position + (player.transform.forward * 1.0f);
-        Vector3 halfExtents = Vector3.one / 2f;
-        Vector3 direction = player.transform.forward;
-        Quaternion orientation = player.transform.rotation;
-
-        RaycastHit hitInfo;
-        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
-        {
-
-            if (hitInfo.transform.GetComponent<PlayerController>() != null)
-            {
-                hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
-                result = true;
-            }
-
-            ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
-        }
-
-        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
-
-        hitPlayer = hitedPlayer;
-        return result;
-
-    }
-    public static bool IsHitForwad(this PlayerController player, float distance, out PlayerController hitPlayer, CampTeam team)
-    {
-        bool result = false;
-        PlayerController hitedPlayer = null;
-
-        Vector3 origem = player.transform.position+(player.transform.forward*1.0f);
-        Vector3 halfExtents = Vector3.one / 2f;
-        Vector3 direction = player.transform.forward;
-        Quaternion orientation = player.transform.rotation;
-
-        RaycastHit hitInfo;
-        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
-        {
-
-            if (hitInfo.transform.GetComponent<PlayerController>() != null)
-            {
-
-                hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
-
-                if (hitedPlayer.GetCampTeam() == team)
-                    result = true;
-            }
-
-
-            ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
-        }
-
-        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
-        hitPlayer = hitedPlayer;
-        return result;
-
-    }
-
-    public static bool GetFreeHitRight(this PlayerController player, float distance, out Vector3 FreePosition)
-    {
-        bool result = false;
-        Vector3 resultPosition = Vector3.zero;
-
-
-        for (int angle = 0; angle <= 90; angle += 30)
-        {
-
-            //Angle Target to rotate box
-            Quaternion angleAxis = Quaternion.AngleAxis(angle, Vector3.up);
-            Vector3 angleDirection = player.transform.forward * distance;
-            Vector3 angleTarget = angleAxis * angleDirection;
-
-            //Projection of the box
-            Vector3 origin = player.transform.position + (player.transform.forward * 1.0f);
-            Vector3 halfExtents = Vector3.one / 2f;
-            Vector3 direction = angleTarget - origin; //Transform.forward
-            Quaternion orientation = Quaternion.LookRotation(direction); //Transform.rotation
-
-            RaycastHit hitInfo;
-            if (Physics.BoxCast(origin, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")) == false)
-            {
-                result = true;
-                resultPosition = angleTarget;
-                break;
-
-            }
-
-        }
-
-
-        FreePosition = resultPosition;
-        return result;
-
-    }
-    public static bool GetFreeHitLeft(this PlayerController player, float distance, out Vector3 FreePosition)
-    {
-        bool result = false;
-        Vector3 resultPosition = Vector3.zero;
-
-
-        for (int angle = 0; angle <= 90; angle += 30)
-        {
-
-            //Angle Target to rotate box
-            Quaternion angleAxis = Quaternion.AngleAxis(-angle, Vector3.up);
-            Vector3 angleDirection = player.transform.forward * distance;
-            Vector3 angleTarget = angleAxis * angleDirection;
-
-            //Projection of the box
-            Vector3 origin = player.transform.position + (player.transform.forward * 1.0f);
-            Vector3 halfExtents = Vector3.one / 2f;
-            Vector3 direction = angleTarget - origin; //Transform.forward
-            Quaternion orientation = Quaternion.LookRotation(direction); //Transform.rotation
-
-            RaycastHit hitInfo;
-            if (Physics.BoxCast(origin, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")) == false)
-            {
-                result = true;
-                resultPosition = angleTarget;
-                break;
-
-            }
-
-        }
-
-
-        FreePosition = resultPosition;
-        return result;
-
-    }
-    public static bool GetFreeHitLeftOrRight(this PlayerController player, float distance, float leftOrRight, out Vector3 FreePosition)
-    {
-        if (leftOrRight > 0)
-        {
-
-            return player.GetFreeHitRight(distance, out FreePosition);
-        }
-        else if (leftOrRight < 0)
-        {
-            return player.GetFreeHitLeft(distance, out FreePosition);
-        }
-        else
-        {
-            FreePosition = Vector3.zero;
-            return false;
-        }
-
-    }
 
     public static float LeftRightDir(this PlayerController player, Vector3 position)
     {
@@ -433,5 +189,262 @@ public class PlayerController : MonoBehaviour
     public void SetMotionStrafe()
     {
         locomotion.motionType = LocomotionType.strafe;
+    }
+
+    //HitTest
+    public bool IsHitBetween(PlayerController to)
+    {
+        bool result = false;
+        PlayerController hitedPlayer = null;
+
+        if (IsHitBetween(to.transform, out hitedPlayer))
+        {
+            if (hitedPlayer != to)
+                result = true;
+        }
+
+
+        return result;
+
+    }
+    public bool IsHitBetween(Vector3 to)
+    {
+        bool result = false;
+        PlayerController hitedPlayer = null;
+
+        if (IsHitBetween(to, out hitedPlayer))
+        {
+            if (transform.position.Equals(to) == false)
+                result = true;
+        }
+
+
+        return result;
+
+    }
+    public bool IsHitBetween(PlayerController to, out PlayerController hitPlayer)
+    {
+        bool result = false;
+        PlayerController hitedPlayer = null;
+
+        if (IsHitBetween(to.transform, out hitedPlayer))
+        {
+            if (hitedPlayer != to)
+                result = true;
+        }
+
+        hitPlayer = hitedPlayer;
+        return result;
+
+    }
+    public bool IsHitBetween(Transform to, out PlayerController hitPlayer)
+    {
+        bool result = false;
+        PlayerController hitedPlayer = null;
+
+        if (IsHitBetween(to.position, out hitedPlayer))
+        {
+            if (hitedPlayer.transform != to)
+                result = true;
+        }
+
+        hitPlayer = hitedPlayer;
+        return result;
+
+    }
+    public bool IsHitBetween(Vector3 to, out PlayerController hitPlayer)
+    {
+
+        bool result = false;
+        PlayerController hitedPlayer = null;
+
+        Vector3 origem = transform.position ;
+        Vector3 halfExtents = Vector3.one / 2f;
+        Vector3 direction = transform.forward;
+        Quaternion orientation = transform.rotation;
+
+        float distance = this.Distance(to);
+
+        RaycastHit hitInfo;
+        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
+        {
+
+            if (hitInfo.transform.GetComponent<PlayerController>() != null)
+            {
+                hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
+                if (hitedPlayer.transform.position != to)
+                    result = true;
+            }
+
+            ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
+        }
+
+        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
+
+        hitPlayer = hitedPlayer;
+        return result;
+    }
+
+    public bool IsHitForwad(float distance, out PlayerController hitPlayer)
+    {
+        bool result = false;
+        PlayerController hitedPlayer = null;
+
+        Vector3 origem = transform.position ;
+        Vector3 halfExtents = Vector3.one / 2f;
+        Vector3 direction = transform.forward;
+        Quaternion orientation = transform.rotation;
+
+        RaycastHit hitInfo;
+        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
+        {
+
+            if (hitInfo.transform.GetComponent<PlayerController>() != null)
+            {
+                hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
+                result = true;
+            }
+
+            ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
+        }
+
+        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
+
+        hitPlayer = hitedPlayer;
+        return result;
+
+    }
+    public bool IsHitForwad(float distance, out PlayerController hitPlayer, CampTeam team)
+    {
+        bool result = false;
+        PlayerController hitedPlayer = null;
+
+        Vector3 origem = transform.position ;
+        Vector3 halfExtents = Vector3.one / 2f;
+        Vector3 direction = transform.forward;
+        Quaternion orientation = transform.rotation;
+
+        RaycastHit hitInfo;
+        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
+        {
+
+            if (hitInfo.transform.GetComponent<PlayerController>() != null)
+            {
+
+                hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
+
+                if (hitedPlayer.GetCampTeam() == team)
+                    result = true;
+
+                ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
+            }
+
+
+            ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
+        }
+
+        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
+        hitPlayer = hitedPlayer;
+        return result;
+
+    }
+
+    public bool GetFreeHitRight(float distance, out Vector3 FreePosition)
+    {
+
+        bool result = false;
+        Vector3 resultPosition = Vector3.zero;
+
+
+        for (int angle = 0; angle <= 90; angle += 15)
+        {
+
+            //Angle Target to rotate box
+            Quaternion angleAxis = Quaternion.AngleAxis(angle, Vector3.up);
+            Vector3 angleDirection = transform.position + (transform.forward * distance);
+            Vector3 angleTarget = RotateAroundPoint(angleDirection, transform.position, angleAxis);
+
+            //Projection of the box
+            Vector3 origin = transform.position;
+            Vector3 halfExtents = Vector3.one / 2f;
+            Vector3 direction = angleTarget - origin; //Transform.forward
+            Quaternion orientation = Quaternion.LookRotation(direction); //Transform.rotation
+
+            RaycastHit hitInfo;
+            if (Physics.BoxCast(origin, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")) == false)
+            {
+                result = true;
+                resultPosition = angleTarget;
+                break;
+
+            }
+
+        }
+
+
+        FreePosition = resultPosition;
+        return result;
+
+    }
+    public bool GetFreeHitLeft(float distance, out Vector3 FreePosition)
+    {
+        bool result = false;
+        Vector3 resultPosition = Vector3.zero;
+
+
+        for (int angle = 0; angle <= 90; angle += 15)
+        {
+
+            //Angle Target to rotate box
+            Quaternion angleAxis = Quaternion.AngleAxis(angle, Vector3.up);
+            Vector3 angleDirection = transform.position + (transform.forward * distance);
+            Vector3 angleTarget = RotateAroundPoint(angleDirection, transform.position, angleAxis);
+
+            //Projection of the box
+            Vector3 origin = transform.position;
+            Vector3 halfExtents = Vector3.one / 2f;
+            Vector3 direction = angleTarget - origin; //Transform.forward
+            Quaternion orientation = Quaternion.LookRotation(direction); //Transform.rotation
+
+            RaycastHit hitInfo;
+            if (Physics.BoxCast(origin, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")) == false)
+            {
+                result = true;
+                resultPosition = angleTarget;
+                break;
+
+            }
+
+        }
+
+
+        FreePosition = resultPosition;
+        return result;
+
+    }
+    public bool GetFreeHitLeftOrRight(float distance, float leftOrRight, out Vector3 FreePosition)
+    {
+        if (leftOrRight > 0)
+        {
+
+
+            return GetFreeHitRight(distance, out FreePosition);
+        }
+        else if (leftOrRight < 0)
+        {
+
+            return GetFreeHitLeft(distance, out FreePosition);
+        }
+        else
+        {
+            FreePosition = Vector3.zero;
+            return false;
+        }
+
+    }
+
+    Vector3 RotateAroundPoint(Vector3 point, Vector3 pivot, Quaternion angle)
+    {
+        return angle * (point - pivot) + pivot;
     }
 }
