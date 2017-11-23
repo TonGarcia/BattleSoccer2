@@ -1,0 +1,13 @@
+NOTAS PRA FUTUROS UPDATES DE MODIFICAÇÃO DE MODELOS QUE POSSAM ENVOLVER ESCALA, TAMANHO ETC.
+============================================================================================
+RAYCASTS 
+-------------------------------------------
+> Todos os raycasts utilizados na extensão de classe em PlayerController.cs estão utilizando valores relativos manuais de acordo com as escalas atuais dos modelos de testes utilizados no projeto. Tenha em mente que modificando os modelos pode haver serios problemas com as detecções de colisões utilizadas por esta extensão. 
+As extenções que estão utilizando atualmente são as seguintes:
+--IsHitBetween
+--IsHitForwad
+--GetFreeHitRight
+--GetFreeHitLeft
+Estas são extensões que testam colisões apartir do jogador. Elas utilizam valores manuais para ponto de ORIGEM e Destino baseado na atual escala dos modelos.
+Assim sendo, considere verificar a desenpenho deelas caso haja modificações nestes modelos.
+Todas elas ja utlizam modo de DEBUG para serem avaliadas via Scene no EDITOR, utilize este recurços para verificar seu desenpenho correto.

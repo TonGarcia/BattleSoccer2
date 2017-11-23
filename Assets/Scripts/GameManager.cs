@@ -4,6 +4,12 @@ using UnityEngine;
 using System.Linq;
 using SoccerGame;
 
+public enum GameOptionMode
+{
+    automatric,
+    manual
+}
+
 public static class GameManagerExtensions
 {
     public static Transform GetMarcationPosition(this PlayerController controller, CampPlaceType placeType)
@@ -57,6 +63,18 @@ public static class GameManagerExtensions
     {
         GameManager.instance.SelectPlayer(controller);
     }
+    public static PlayerController GetTeamPlayerNear(this PlayerController controller)
+    {
+        return GameManager.instance.GetTeamPlayerNear(controller);
+    }
+    public static GameOptionMode GetSelectionMode(this CampTeam team)
+    {
+        return GameManager.instance.GetSelectionMode(team);
+    }
+    public static ControllerInputType GetControllerInputType(this CampTeam team)
+    {
+        return GameManager.instance.GetControllerType(team);
+    }
 }
 public class GameManager : MonoBehaviour
 {
@@ -66,6 +84,7 @@ public class GameManager : MonoBehaviour
         public CampTeam team;
         public CampPlaceSide side;
         public ControllerInputType controllerType;
+        public GameOptionMode selectionMode;
         public Transform goalPosition;
 
         [SerializeField]
@@ -175,6 +194,18 @@ public class GameManager : MonoBehaviour
         return manager.MultSelection.GetSelectedPlayer();
 
     }
+    public PlayerController GetTeamPlayerNear(PlayerController controller)
+    {
+        TeamManager manager = GetTeamManager(controller.GetCampTeam());
+        List<PlayerController> players = manager.Players;
+        players.Remove(controller);
+
+        float min = players.Min(r => r.Distance(controller));
+        PlayerController result = players.FirstOrDefault(r => r.Distance(controller) == min);
+
+        return result;
+
+    }
     public List<PlayerController> GetPlayersNearBall(CampTeam team, float near)
     {
         TeamManager manager = GetTeamManager(team);
@@ -275,7 +306,11 @@ public class GameManager : MonoBehaviour
         return result;
 
     }
-
+    public GameOptionMode GetSelectionMode(CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+        return manager.selectionMode;
+    }
     public bool IsSelectedPlayer(PlayerController player)
     {
         TeamManager manager = GetTeamManager(player.GetCampTeam());

@@ -154,11 +154,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7de88fd53e5186f43bfc02c6bd9b02ee, type: 2}
   m_IsPrefabParent: 0
---- !u!4 &297865008 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 4940241925069920, guid: 9f098573c46fe6d43986c86ca74b801b,
-    type: 2}
-  m_PrefabInternal: {fileID: 585743655}
 --- !u!4 &315453904 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4205879005033266, guid: f122634bab67ad44698b3e545a8dc1a7,
@@ -208,16 +203,26 @@ Prefab:
       propertyPath: placesManager
       value: 
       objectReference: {fileID: 1556369255}
+    - target: {fileID: 114328832952372530, guid: 9f098573c46fe6d43986c86ca74b801b,
+        type: 2}
+      propertyPath: team
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114925576742751908, guid: 9f098573c46fe6d43986c86ca74b801b,
         type: 2}
-      propertyPath: teamMananger1.goalPosition
-      value: 
-      objectReference: {fileID: 1394101337}
-    - target: {fileID: 114925576742751908, guid: 9f098573c46fe6d43986c86ca74b801b,
+      propertyPath: teamMananger1.selectionMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114328832952372530, guid: 9f098573c46fe6d43986c86ca74b801b,
         type: 2}
-      propertyPath: teamMananger2.goalPosition
-      value: 
-      objectReference: {fileID: 297865008}
+      propertyPath: selectInputButtom
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114098962011075818, guid: 9f098573c46fe6d43986c86ca74b801b,
+        type: 2}
+      propertyPath: selectInputButtom
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9f098573c46fe6d43986c86ca74b801b, type: 2}
   m_IsPrefabParent: 0
@@ -445,11 +450,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7de88fd53e5186f43bfc02c6bd9b02ee, type: 2}
   m_IsPrefabParent: 0
---- !u!4 &1394101337 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 4357769947549254, guid: 9f098573c46fe6d43986c86ca74b801b,
-    type: 2}
-  m_PrefabInternal: {fileID: 585743655}
 --- !u!114 &1556369255 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114715851615877138, guid: b0ac87d541c90f54981bfa12c21d639c,

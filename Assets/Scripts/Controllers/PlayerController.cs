@@ -103,7 +103,7 @@ public static class PlayerControllerExtensions
         bool result = false;
         PlayerController hitedPlayer = null;
 
-        Vector3 origem = player.transform.position;
+        Vector3 origem = player.transform.position + (player.transform.forward * 1.0f);
         Vector3 halfExtents = Vector3.one / 2f;
         Vector3 direction = player.transform.forward;
         Quaternion orientation = player.transform.rotation;
@@ -111,7 +111,7 @@ public static class PlayerControllerExtensions
         float distance = player.Distance(to);
 
         RaycastHit hitInfo;
-        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance))
+        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
         {
 
             if (hitInfo.transform.GetComponent<PlayerController>() != null)
@@ -124,6 +124,8 @@ public static class PlayerControllerExtensions
             ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
         }
 
+        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
+
         hitPlayer = hitedPlayer;
         return result;
     }
@@ -133,13 +135,13 @@ public static class PlayerControllerExtensions
         bool result = false;
         PlayerController hitedPlayer = null;
 
-        Vector3 origem = player.transform.position;
+        Vector3 origem = player.transform.position + (player.transform.forward * 1.0f);
         Vector3 halfExtents = Vector3.one / 2f;
         Vector3 direction = player.transform.forward;
         Quaternion orientation = player.transform.rotation;
 
         RaycastHit hitInfo;
-        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance))
+        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
         {
 
             if (hitInfo.transform.GetComponent<PlayerController>() != null)
@@ -151,6 +153,8 @@ public static class PlayerControllerExtensions
             ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
         }
 
+        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
+
         hitPlayer = hitedPlayer;
         return result;
 
@@ -160,13 +164,13 @@ public static class PlayerControllerExtensions
         bool result = false;
         PlayerController hitedPlayer = null;
 
-        Vector3 origem = player.transform.position;
+        Vector3 origem = player.transform.position+(player.transform.forward*1.0f);
         Vector3 halfExtents = Vector3.one / 2f;
         Vector3 direction = player.transform.forward;
         Quaternion orientation = player.transform.rotation;
 
         RaycastHit hitInfo;
-        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance))
+        if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
         {
 
             if (hitInfo.transform.GetComponent<PlayerController>() != null)
@@ -178,9 +182,11 @@ public static class PlayerControllerExtensions
                     result = true;
             }
 
+
             ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
         }
 
+        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
         hitPlayer = hitedPlayer;
         return result;
 
@@ -201,9 +207,9 @@ public static class PlayerControllerExtensions
             Vector3 angleTarget = angleAxis * angleDirection;
 
             //Projection of the box
-            Vector3 origin = player.transform.position;
+            Vector3 origin = player.transform.position + (player.transform.forward * 1.0f);
             Vector3 halfExtents = Vector3.one / 2f;
-            Vector3 direction = angleTarget - player.transform.position; //Transform.forward
+            Vector3 direction = angleTarget - origin; //Transform.forward
             Quaternion orientation = Quaternion.LookRotation(direction); //Transform.rotation
 
             RaycastHit hitInfo;
@@ -237,9 +243,9 @@ public static class PlayerControllerExtensions
             Vector3 angleTarget = angleAxis * angleDirection;
 
             //Projection of the box
-            Vector3 origin = player.transform.position;
+            Vector3 origin = player.transform.position + (player.transform.forward * 1.0f);
             Vector3 halfExtents = Vector3.one / 2f;
-            Vector3 direction = angleTarget - player.transform.position; //Transform.forward
+            Vector3 direction = angleTarget - origin; //Transform.forward
             Quaternion orientation = Quaternion.LookRotation(direction); //Transform.rotation
 
             RaycastHit hitInfo;

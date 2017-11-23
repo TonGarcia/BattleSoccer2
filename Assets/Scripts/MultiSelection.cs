@@ -10,13 +10,16 @@ public class MultiSelection : MonoBehaviour
     public GameManager gameMananger;
 
     [SerializeField]
+    private CampTeam team;
+
+    [SerializeField]
     private ButtomInputType selectInputButtom;
 
     [SerializeField]
     private GameObject selectorPrefab;
 
 
-    private CampTeam team;
+
     private BallController ball = null;
     private PlayerController selectedPlayer = null;
     private GameObject selector = null;
@@ -30,13 +33,18 @@ public class MultiSelection : MonoBehaviour
     private void LateUpdate()
     {
 
-        //Seleção manual de jogador mais proximo da bola
-        if (selectedPlayer.IsMyBall() == false)
+        //Seleção manual de jogador mais proximo
+        if (selectedPlayer.IsMyBall() == false && team.GetSelectionMode() == GameOptionMode.manual)
         {
-            if (ControllerInput.GetButtonDown(gameMananger.GetControllerType(team), selectInputButtom))
+            if (ControllerInput.GetButtonDown(team.GetControllerInputType(), selectInputButtom))
             {
-                PlayerController nearPlayer = gameMananger.GetPlayerNearBall(team);
-                if (nearPlayer != null)
+                PlayerController nearPlayer = null;
+                if (selectedPlayer != null)
+                    nearPlayer = selectedPlayer.GetTeamPlayerNear();
+                else
+                    nearPlayer = gameMananger.GetPlayerNearBall(team);
+
+                if (nearPlayer != null && nearPlayer != selectedPlayer)
                 {
                     SelectPlayer(nearPlayer);
 
@@ -86,7 +94,7 @@ public class MultiSelection : MonoBehaviour
             }
         }
     }
-    
+
     public void SelectPlayer(PlayerController player)
     {
         if (selectedPlayer == null)

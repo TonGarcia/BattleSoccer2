@@ -245,4 +245,4 @@ MonoBehaviour:
     players: []
     multSelection: {fileID: 114328832952372530}
     autoFoundPlayers: 1
-  midCampTransform: {fileID: 0}
+  midCampTransform: {fileID: 4074345516051024}

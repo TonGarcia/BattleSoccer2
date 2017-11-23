@@ -28,22 +28,24 @@ public class ManualController : MonoBehaviour
         if (player == null)
             return;
 
-        timeToSelect += Time.deltaTime;
-
         //Seleciona outro jogador manual mais proximo se eu estiver muito longe da bola
-        if (timeToSelect > 1.5f)
+        if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric)
         {
-            if (player.Distance(BallController.GetPosition()) > 3.5f) //Procurando jogador mais proximo
+            timeToSelect += Time.deltaTime;
+            if (timeToSelect > 1.5f)
             {
-                PlayerController nearBall = GameManager.instance.GetPlayerNearBall(player.GetCampTeam());
-                if (nearBall != player)
+                if (player.Distance(BallController.GetPosition()) > 3.5f) //Procurando jogador mais proximo
                 {
-                    speed = 0;
-                    dir = 0;
+                    PlayerController nearBall = GameManager.instance.GetPlayerNearBall(player.GetCampTeam());
+                    if (nearBall != player)
+                    {
+                        speed = 0;
+                        dir = 0;
 
-                    nearBall.SelectME();
-                    timeToSelect = 0.0f;
-                    return;
+                        nearBall.SelectME();
+                        timeToSelect = 0.0f;
+                        return;
+                    }
                 }
             }
         }
@@ -67,14 +69,17 @@ public class ManualController : MonoBehaviour
         }
 
         //Solicita avoid dos aliados a frente
-        PlayerController allyBtw = null;
-        if (player.IsHitForwad(5.5f, out allyBtw, player.GetCampTeam()))
+        if (player.IsMyBall())
         {
-            Vector3 origim = allyBtw.transform.position + (-allyBtw.transform.forward * 4.5f);
-            Vector3 freePos = locomotion.GetRandomNavCircle(origim, 4.5f);
-            allyBtw.GetComponent<AIController>().GoToPosition(freePos, BallController.instance.transform);
+            PlayerController allyBtw = null;
+            if (player.IsHitForwad(5.5f, out allyBtw, player.GetCampTeam()))
+            {               
+                Vector3 origim = allyBtw.transform.position + (-allyBtw.transform.forward * 4.5f);
+                Vector3 freePos = locomotion.GetRandomNavCircle(origim, 4.5f);
+                allyBtw.GetComponent<AIController>().GoToPosition(freePos, BallController.instance.transform);
+            }
         }
-
+        
         //Move jogador para cordenadas do joystick
         Vector2 move = locomotion.GetDirectionAxis();
         dir = move.x;

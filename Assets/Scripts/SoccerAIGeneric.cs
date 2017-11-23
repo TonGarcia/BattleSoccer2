@@ -132,7 +132,7 @@ public abstract class SoccerAIGeneric
         }
 
         if (isForcedGoTo)
-        {           
+        {
             if (Player.IsMyBall())
             {
                 Stop();
@@ -279,8 +279,8 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         bool teamHasBall = Player.IsBallfromMyTeam();
 
         if (isBallNear == true && !teamHasBall)
-        {           
-            
+        {
+
             aiState = SoccerAIState.followBall;
             return;
         }
@@ -351,7 +351,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
             return;
         }
 
-       
+
         bool isBallNear = Player.IsBallNear();
 
         if (isBallNear == true && BallController.IsFromTeam(Player) == false)
@@ -491,7 +491,7 @@ public class SoccerAISelected : SoccerAIGeneric
 
     private void Handlle_NothingState()
     {
-        
+
         //Indo para a origem
         //Se eu estiver proximo do jogador que possui a bola vou correr atraz da bola
         //Se eu estiver longe Vou passar a seleção para o jogador mais proximo da bola e se não houver vou atraz
@@ -525,7 +525,7 @@ public class SoccerAISelected : SoccerAIGeneric
             return;
         }
 
-        timeToSelect += Time.deltaTime;
+
 
         BallController ball = BallController.instance;
         float balldistance = ball.transform.Distance(Player.transform);
@@ -538,16 +538,19 @@ public class SoccerAISelected : SoccerAIGeneric
         Agent.SetDestination(destination);
 
         //Verifica a distancia da bola, se estiver muito longe procuro outor jogador mais proximo para selecionar
-
-        if (timeToSelect > 1.5f)
+        if (Player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric)
         {
-            if (balldistance > 3.5f) //Procurando jogador mais proximo
+            timeToSelect += Time.deltaTime;
+            if (timeToSelect > 1.5f)
             {
-                PlayerController nearBall = GameManager.instance.GetPlayerNearBall(Player.GetCampTeam());
-                if (nearBall != Player)
+                if (balldistance > 3.5f) //Procurando jogador mais proximo
                 {
-                    nearBall.SelectME();
-                    timeToSelect = 0.0f;
+                    PlayerController nearBall = GameManager.instance.GetPlayerNearBall(Player.GetCampTeam());
+                    if (nearBall != Player)
+                    {
+                        nearBall.SelectME();
+                        timeToSelect = 0.0f;
+                    }
                 }
             }
         }
@@ -686,7 +689,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
         else
         {
             timeToGoal += Time.deltaTime;
-            if (Locomotion.IsAgentDone || timeToGoal >=1.5f)
+            if (Locomotion.IsAgentDone || timeToGoal >= 1.5f)
             {
                 motionType = LocomotionType.normal;
                 toGo = goalPosition.position;
