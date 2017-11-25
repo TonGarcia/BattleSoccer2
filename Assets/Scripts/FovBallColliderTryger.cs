@@ -28,6 +28,15 @@ public class FovBallColliderTryger : MonoBehaviour
         if (ball.GetMyOwner() == player)
             return;
 
+        //Nao podera pegar a bola se o jogaodr for do mesmo time. 
+        //Considerado esbarrao. 
+        PlayerController playerBall = ball.GetMyOwner();
+        if(playerBall!=null)
+        {
+            if (playerBall.IsMyTeaM(player))
+                return;
+        }
+
         ball.SetmeOwner(player);
 
     }

@@ -1387,6 +1387,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: ShortPass
     m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: OwnerBall
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102468052559639280}
   m_Solo: 0

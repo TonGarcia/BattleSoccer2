@@ -140,10 +140,14 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        if (BallController.instance == null)
+            return;
+
         agent.enabled = playerInput.IsAI;
         manualController.enabled = !playerInput.IsAI;
         aicontroller.enabled = playerInput.IsAI;
-        locomotion.DoAnimator(speed, dir);
+        locomotion.DoAnimator(speed, dir, this.IsMyBall()); 
+        
 
     }
     private void FixedUpdate()
@@ -258,7 +262,7 @@ public class PlayerController : MonoBehaviour
         bool result = false;
         PlayerController hitedPlayer = null;
 
-        Vector3 origem = transform.position ;
+        Vector3 origem = transform.position + (transform.forward * 1.0f);
         Vector3 halfExtents = Vector3.one / 2f;
         Vector3 direction = transform.forward;
         Quaternion orientation = transform.rotation;
@@ -290,7 +294,7 @@ public class PlayerController : MonoBehaviour
         bool result = false;
         PlayerController hitedPlayer = null;
 
-        Vector3 origem = transform.position ;
+        Vector3 origem = transform.position + (transform.forward * 1.0f);
         Vector3 halfExtents = Vector3.one / 2f;
         Vector3 direction = transform.forward;
         Quaternion orientation = transform.rotation;
@@ -319,7 +323,7 @@ public class PlayerController : MonoBehaviour
         bool result = false;
         PlayerController hitedPlayer = null;
 
-        Vector3 origem = transform.position ;
+        Vector3 origem = transform.position + (transform.forward * 1.0f);
         Vector3 halfExtents = Vector3.one / 2f;
         Vector3 direction = transform.forward;
         Quaternion orientation = transform.rotation;
@@ -351,12 +355,12 @@ public class PlayerController : MonoBehaviour
 
     public bool GetFreeHitRight(float distance, out Vector3 FreePosition)
     {
-
+       
         bool result = false;
         Vector3 resultPosition = Vector3.zero;
 
 
-        for (int angle = 0; angle <= 90; angle += 15)
+        for (int angle = 0; angle <= 90; angle += 45)
         {
 
             //Angle Target to rotate box
@@ -388,15 +392,16 @@ public class PlayerController : MonoBehaviour
     }
     public bool GetFreeHitLeft(float distance, out Vector3 FreePosition)
     {
+       
         bool result = false;
         Vector3 resultPosition = Vector3.zero;
 
 
-        for (int angle = 0; angle <= 90; angle += 15)
+        for (int angle = 0; angle <= 90; angle += 45)
         {
 
             //Angle Target to rotate box
-            Quaternion angleAxis = Quaternion.AngleAxis(angle, Vector3.up);
+            Quaternion angleAxis = Quaternion.AngleAxis(-angle, Vector3.up);
             Vector3 angleDirection = transform.position + (transform.forward * distance);
             Vector3 angleTarget = RotateAroundPoint(angleDirection, transform.position, angleAxis);
 

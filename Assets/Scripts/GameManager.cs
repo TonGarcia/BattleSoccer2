@@ -59,6 +59,17 @@ public static class GameManagerExtensions
     {
         return GameManager.instance.GetEnemyGoalPosition(controller);
     }
+    public static PlayerController GetEnemyNear(this PlayerController controller)
+    {
+        return GameManager.instance.GetEnemyPlayerNear(controller);
+
+    }
+    public static PlayerController GetPlayerNear(this PlayerController controller, CampTeam team)
+    {
+        return GameManager.instance.GetPlayerNear(controller,team);
+
+    }
+    
     public static void SelectME(this PlayerController controller)
     {
         GameManager.instance.SelectPlayer(controller);
@@ -125,7 +136,7 @@ public class GameManager : MonoBehaviour
     }
 
     public static GameManager instance;
-    
+
     [SerializeField]
     private CampPositionsManager placesManager;
     [SerializeField]
@@ -154,7 +165,7 @@ public class GameManager : MonoBehaviour
 
         return manager;
     }
-    private TeamManager GetOtherTeamManager(CampTeam team)
+    private TeamManager GetEnemyTeamManager(CampTeam team)
     {
         TeamManager manager = null;
         if (teamMananger1.team != team)
@@ -348,7 +359,32 @@ public class GameManager : MonoBehaviour
 
         return enemy;
     }
+    /// <summary>
+    /// Pesquisa o jogador do time adversário mais proximo do jogador origem
+    /// </summary>
+    /// <param name="controller">jogador origem</param>
+    /// <returns>jogador proximo. nunca retorna nulo</returns>
+    public PlayerController GetEnemyPlayerNear(PlayerController controller)
+    {
+        TeamManager manager = GetEnemyTeamManager(controller.GetCampTeam());
+        List<PlayerController> players = manager.Players;
+        float min = players.Min(r => r.Distance(controller));
+        PlayerController result = players.FirstOrDefault(r => r.Distance(controller) == min);
 
+        return result;
+    }
+    public PlayerController GetPlayerNear(PlayerController controller, CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+        List<PlayerController> players = manager.Players;
+        if (team == controller.GetCampTeam())
+            players.Remove(controller);
+
+        float min = players.Min(r => r.Distance(controller));
+        PlayerController result = players.FirstOrDefault(r => r.Distance(controller) == min);
+
+        return result;
+    }
     /// <summary>
     /// Pesquisa de quem é a entrada de jogador que controla determinado time
     /// </summary>
@@ -381,7 +417,7 @@ public class GameManager : MonoBehaviour
     }
     public Transform GetEnemyGoalPosition(PlayerController player)
     {
-        TeamManager otherTeam = GetOtherTeamManager(player.GetCampTeam());
+        TeamManager otherTeam = GetEnemyTeamManager(player.GetCampTeam());
         return otherTeam.goalPosition;
     }
 

@@ -488,26 +488,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114489430451828410, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
-        type: 2}
-      propertyPath: InputStamina
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 195457362972814068, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
-        type: 2}
-      propertyPath: m_ObstacleAvoidanceType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114489430451828410, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
-        type: 2}
-      propertyPath: InputType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114247506803361644, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
-        type: 2}
-      propertyPath: team
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7de88fd53e5186f43bfc02c6bd9b02ee, type: 2}
   m_IsPrefabParent: 0

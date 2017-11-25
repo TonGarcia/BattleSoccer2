@@ -182,13 +182,17 @@ public class BallController : MonoBehaviour
         if (timeToSetOwner <= 0.5f)
             return;
 
+
+
+
         if (onSetMyOwner != null)
             onSetMyOwner(player, owner);
 
-
+        
         lastOwner = owner;
         owner = player;
 
+               
         SetKinematic();
 
         timeToSetOwner = 0.0f;

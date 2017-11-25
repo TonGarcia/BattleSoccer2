@@ -361,6 +361,8 @@ public class SoccerAIUnSelected : SoccerAIGeneric
             return;
         }
 
+        
+
         Transform defPos = Player.GetMarcationPosition(CampPlaceType.defense);
         Transform attkPos = Player.GetMarcationPosition(CampPlaceType.attack);
         bool myTeamHasBall = Player.IsBallfromMyTeam();
@@ -580,10 +582,12 @@ public class SoccerAIwithBall : SoccerAIGeneric
     Vector3 toGo = Vector3.zero;
     PlayerController toPass = null;
     private bool inPass = false;
+    private bool inGoalDir = false;
 
     public SoccerAIwithBall(AIController owner, PlayerController controller) : base(owner, controller)
     {
         aiState = SoccerAIState.nothing;
+        
         PlayerAnimatorEvents animatorEvents = Player.GetComponent<PlayerAnimatorEvents>();
         animatorEvents.OnPassFinish += OnPassFinish;
 
@@ -620,8 +624,11 @@ public class SoccerAIwithBall : SoccerAIGeneric
 
         Transform goalPosition = Player.GetEnemyGoalPosition();
         PlayerController playerBtw = null;
+        PlayerController enemyNear = Player.GetEnemyNear();
         timeToDrible += Time.deltaTime;
+        timeToGoal += Time.deltaTime;
 
+      
         if (toPass != null)
         {
             motionType = LocomotionType.normal;
@@ -630,9 +637,9 @@ public class SoccerAIwithBall : SoccerAIGeneric
 
             toGo = toPass.transform.position;
 
-            if (Player.IsLookAt(toGo) == true && inPass == false)
+            if (Player.IsLookAt(toGo) == true)
             {
-                if (Player.IsHitBetween(toPass) == false)
+                if (Player.IsHitBetween(toPass) == false && Player.IsMyBall())
                 {
                     Owner.TriggerPass(toPass);
                     inPass = true;
@@ -647,16 +654,26 @@ public class SoccerAIwithBall : SoccerAIGeneric
             return;
         }
 
+        if (enemyNear != null)
+            if (enemyNear.Distance(Player) <= 5.5f && enemyNear.IsSelected())
+                motionType = LocomotionType.soccer;
+            else
+                motionType = LocomotionType.normal;
+
         //Vou passar a bola se existir um cara livre entre e o gol. Esta e a prioridade ja q ele tem caminho livre
         if (Player.IsHitForwad(checkDistanceToPass, out playerBtw))
         {
-            //motionType = LocomotionType.soccer;
+            inGoalDir = false;
+            timeToDrible = 0.0f;
 
             if (playerBtw.IsMyTeaM(Player)) //Player e meu amigo, vou pedir para ele sair do caminho
             {
-                Vector3 origim = playerBtw.transform.position + (-playerBtw.transform.forward * 4.5f);
-                Vector3 freePos = Locomotion.GetRandomNavCircle(origim, 4.5f);
-                playerBtw.GetComponent<AIController>().GoToPosition(freePos, BallController.instance.transform);
+                if (playerBtw.IsLookAt(Player))
+                {
+                    Vector3 origim = playerBtw.transform.position + (-playerBtw.transform.forward * 4.5f);
+                    Vector3 freePos = Locomotion.GetRandomNavCircle(origim, 4.5f);
+                    playerBtw.GetComponent<AIController>().GoToPosition(freePos, BallController.instance.transform);
+                }
             }
             else if (playerBtw.Distance(Player) <= checkDistanceToDrible) //Player inimigo e perto de mais. Drible
             {
@@ -670,7 +687,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
                         toGo = positionToDrible;
                     }
                     else
-                    {                       
+                    {
                         //Se posição boa para o drible.
                         toGo = positionToDrible;
                     }
@@ -682,27 +699,47 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 PlayerController topass = null;
                 if (GetToPass(out topass))
                 {
-                   
+
                     toPass = topass;
                     toGo = Player.transform.position;
                     //Stop();
                 }
                 else
                 {
-                   
-                    toGo = goalPosition.position;
+
+                    inGoalDir = true;
                 }
             }
         }
         else
         {
-            timeToGoal += Time.deltaTime;
+            inGoalDir = true;
+
+            if (enemyNear != null)
+            {
+                //Inimigo perto demais para ir pro gol. a probalidade de perder a bola e muito grande
+                //Assim sendo vou tentar driblar
+                if (enemyNear.Distance(Player) <= 1.0f && enemyNear.IsSelected())
+                {
+                    if (timeToDrible >= 1.0f || Locomotion.IsAgentDone)
+                    {
+                        toGo = Locomotion.GetRandomNavCircle(Player, 3.5f);
+                        timeToDrible = 0;
+                    }
+
+                    inGoalDir = false;
+
+                }
+            }
+
+        }
+
+        if (inGoalDir) //Tudo livre para ir para o GOL
+        {
             if (Locomotion.IsAgentDone || timeToGoal >= 1.5f)
             {
-                motionType = LocomotionType.normal;
                 toGo = goalPosition.position;
                 timeToGoal = 0;
-
             }
         }
 
@@ -720,11 +757,11 @@ public class SoccerAIwithBall : SoccerAIGeneric
         {
             resultPosition = freePos;
             result = true;
-           
+
         }
         else
         {
-           
+
             Vector3 pos = Locomotion.GetRandomNavCircle(Player.transform.position, 3.5f);
             resultPosition = pos;
 

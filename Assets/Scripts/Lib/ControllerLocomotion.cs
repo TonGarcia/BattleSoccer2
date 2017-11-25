@@ -78,6 +78,7 @@ namespace SoccerGame
         private int m_PassId = 0;
         private int m_EntryId = 0;
         private int m_StumbleId = 0;
+        private int m_OwnerBall = 0;
 
         public void Start(Transform transform, ControllerGravity gravity, PlayerInput plaerinput)
         {
@@ -96,9 +97,10 @@ namespace SoccerGame
             m_PassId = Animator.StringToHash("ShortPass");
             m_EntryId = Animator.StringToHash("Entry");
             m_StumbleId = Animator.StringToHash("Stumble");
+            m_OwnerBall = Animator.StringToHash("OwnerBall");
 
         }
-        public void DoAnimator(float speed, float direction)
+        public void DoAnimator(float speed, float direction, bool ownerBall)
         {
             bool inTransition = m_Animator.IsInTransition(0);
             AnimatorStateInfo state = m_Animator.GetCurrentAnimatorStateInfo(0);
@@ -126,7 +128,7 @@ namespace SoccerGame
             m_Animator.SetBool(m_GroundedId, isGrounded);
             m_Animator.SetBool("Strafe", inStrafe);
             m_Animator.SetBool("Locomotion", inSoccer);
-
+            m_Animator.SetBool("OwnerBall", ownerBall);
             if (!isGrounded)
                 m_Animator.SetFloat(m_JumpId, m_Rigidbody.velocity.y);
             else
