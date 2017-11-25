@@ -8,11 +8,7 @@ using UnityEditor;
 public static class PlayerControllerExtensions
 {
 
-    public static ControllerInputType GetPlayerInputType(this PlayerController controller)
-    {
-        PlayerInput pinput = controller.GetComponent<PlayerInput>();
-        return pinput.InputType;
-    }
+   
     public static CampTeam GetCampTeam(this PlayerController controller)
     {
         PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
@@ -90,7 +86,6 @@ public static class PlayerControllerExtensions
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(PlayerTeam))]
-[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     //Componente de locomoção
@@ -111,24 +106,24 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]
     public float dir = 0;
 
-    public Collider FovBallTryger;
+    public bool IsIA = true;
 
-    public bool isAI { get { return playerInput.IsAI; } }
+    public Collider FovBallTryger;
+        
     public bool isMovie { get { return (speed > 0.0f || dir > 0.0f); } }
 
     private new Rigidbody rigidbody;
     private Animator animator;
     private NavMeshAgent agent;
-    private PlayerInput playerInput;
     private ManualController manualController;
     private AIController aicontroller;
+    
 
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        playerInput = GetComponent<PlayerInput>();
         manualController = GetComponent<ManualController>();
         aicontroller = GetComponent<AIController>();
 
@@ -136,17 +131,19 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         gravity.Start(rigidbody, animator);
-        locomotion.Start(transform, gravity, playerInput);
+        locomotion.Start(this, gravity);
     }
     private void Update()
     {
         if (BallController.instance == null)
             return;
+        if (GameManager.instance == null)
+            return;
 
-        agent.enabled = playerInput.IsAI;
-        manualController.enabled = !playerInput.IsAI;
-        aicontroller.enabled = playerInput.IsAI;
-        locomotion.DoAnimator(speed, dir, this.IsMyBall()); 
+        agent.enabled = IsIA;
+        manualController.enabled = !IsIA;
+        aicontroller.enabled = IsIA;
+        locomotion.DoAnimator(speed, dir, this.IsMyBall(), IsIA); 
         
 
     }
@@ -176,11 +173,11 @@ public class PlayerController : MonoBehaviour
     }
     public void SetManual()
     {
-        playerInput.InputType = GameManager.instance.GetControllerType(this.GetCampTeam());
+        IsIA = false;
     }
     public void SetAutomatic()
     {
-        playerInput.InputType = ControllerInputType.ControllerCPU;
+        IsIA = true;
     }
     public void SetMotionNormal()
     {

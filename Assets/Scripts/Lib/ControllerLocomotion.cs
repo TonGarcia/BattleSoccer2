@@ -66,7 +66,8 @@ namespace SoccerGame
         private NavMeshAgent m_Agent = null;
         private Rigidbody m_Rigidbody = null;
         private ControllerGravity m_Gravity = null;
-        private PlayerInput m_input = null;
+        private PlayerController m_controller = null;
+        private bool m_ai = false;
 
         private int m_SpeedId = 0;
         private int m_AgularSpeedId = 0;
@@ -80,13 +81,14 @@ namespace SoccerGame
         private int m_StumbleId = 0;
         private int m_OwnerBall = 0;
 
-        public void Start(Transform transform, ControllerGravity gravity, PlayerInput plaerinput)
+        public void Start(PlayerController controller, ControllerGravity gravity)
         {
-            m_Animator = transform.GetComponent<Animator>();
-            m_Rigidbody = transform.GetComponent<Rigidbody>();
-            m_Agent = transform.GetComponent<NavMeshAgent>();
+            m_controller = controller;
+            m_Animator = m_controller.transform.GetComponent<Animator>();
+            m_Rigidbody = m_controller.transform.GetComponent<Rigidbody>();
+            m_Agent = m_controller.transform.GetComponent<NavMeshAgent>();
             m_Gravity = gravity;
-            m_input = plaerinput;
+            
             m_SpeedId = Animator.StringToHash("Speed");
             m_AgularSpeedId = Animator.StringToHash("AngularSpeed");
             m_DirectionId = Animator.StringToHash("Direction");
@@ -100,8 +102,10 @@ namespace SoccerGame
             m_OwnerBall = Animator.StringToHash("OwnerBall");
 
         }
-        public void DoAnimator(float speed, float direction, bool ownerBall)
+        public void DoAnimator(float speed, float direction, bool ownerBall, bool isAI)
         {
+            m_ai = isAI;
+
             bool inTransition = m_Animator.IsInTransition(0);
             AnimatorStateInfo state = m_Animator.GetCurrentAnimatorStateInfo(0);
 
@@ -158,7 +162,7 @@ namespace SoccerGame
             {
                 if (m_Rigidbody.isKinematic)
                 {
-                    if (m_input.IsAI)
+                    if (m_ai)
                     {
                         m_Rigidbody.GetComponent<NavMeshAgent>().velocity = Vector3.zero;
                     }
@@ -173,7 +177,7 @@ namespace SoccerGame
                     v.y = m_Rigidbody.velocity.y;
 
 
-                    if (m_input.IsAI)
+                    if (m_ai)
                     {
 
                         m_Rigidbody.GetComponent<NavMeshAgent>().velocity = Vector3.Lerp(m_Rigidbody.GetComponent<NavMeshAgent>().velocity, v, animatorSpeedDamp * Time.deltaTime); 
@@ -296,8 +300,8 @@ namespace SoccerGame
         public Vector2 GetDirectionAxis()
         {
 
-            float h = ControllerInput.GetAxisHorizontal(m_input.InputType);
-            float v = ControllerInput.GetAxisVertical(m_input.InputType);
+            float h = ControllerInput.GetAxisHorizontal(m_controller.GetInputType());
+            float v = ControllerInput.GetAxisVertical(m_controller.GetInputType());
             Vector2 result = Vector2.zero;
 
             Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;

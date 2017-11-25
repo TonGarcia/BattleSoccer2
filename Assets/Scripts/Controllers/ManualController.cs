@@ -12,7 +12,7 @@ public class ManualController : MonoBehaviour
 
     private PlayerController player;
     private ControllerLocomotion locomotion { get { return player.Locomotion; } }
-    private PlayerInput playerInput;
+   
 
     private float dir { get { return player.dir; } set { player.dir = value; } }
     private float speed { get { return player.speed; } set { player.speed = value; } }
@@ -20,7 +20,7 @@ public class ManualController : MonoBehaviour
     void Awake()
     {
         player = GetComponent<PlayerController>();
-        playerInput = GetComponent<PlayerInput>();
+      
 
     }
     void Update()
@@ -86,13 +86,13 @@ public class ManualController : MonoBehaviour
         speed = move.y;
 
         //Ações de chute
-        if (ControllerInput.GetButtonDown(playerInput.InputType, playerInput.Input_Kick))
+        if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Kick))
         {
             locomotion.TriggerKick();
         }
 
         //Soccer Motion
-        if (ControllerInput.GetButtonDown(playerInput.InputType, playerInput.Input_Stamina))
+        if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
 
             player.SetMotionSoccer();
@@ -100,7 +100,7 @@ public class ManualController : MonoBehaviour
             player.Locomotion.SetSpeedMultiplies(1.2f);
 
         }
-        if (ControllerInput.GetButtonUp(playerInput.InputType, playerInput.Input_Stamina))
+        if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
@@ -108,17 +108,20 @@ public class ManualController : MonoBehaviour
         }
 
         //Strafe Motion
-        if (ControllerInput.GetButtonDown(playerInput.InputType, playerInput.Input_Strafe))
+        if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
             player.SetMotionStrafe();
             player.Locomotion.SetSpeedMultiplies(1.2f);
         }
-        if (ControllerInput.GetButtonUp(playerInput.InputType, playerInput.Input_Strafe))
+        if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
 
         }
+
+        //Passe de bola
+
     }
 
     //Unity Events

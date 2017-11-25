@@ -23,7 +23,7 @@ public class AIController : MonoBehaviour
     private float direction { get { return player.dir; } set { player.dir = value; } }
     private float speed { get { return player.speed; } set { player.speed = value; } }
 
-    private PlayerInput playerInput;
+  
     private NavMeshAgent agent;
     private SoccerAIGeneric AIUnselected;
     private SoccerAIGeneric AISelected;
@@ -42,7 +42,6 @@ public class AIController : MonoBehaviour
         //NavMesh.avoidancePredictionTime = 10.0f;
 
         player = GetComponent<PlayerController>();
-        playerInput = GetComponent<PlayerInput>();
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         //agent.updatePosition = false;
@@ -60,7 +59,7 @@ public class AIController : MonoBehaviour
 
     void Update()
     {
-        if (!agent || !playerInput || !player)
+        if (!agent || !player)
             return;
 
         UpdateNavMeshAgent();

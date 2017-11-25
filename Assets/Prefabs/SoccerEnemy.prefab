@@ -377,7 +377,6 @@ GameObject:
   - component: {fileID: 136379758638132164}
   - component: {fileID: 195658686068012426}
   - component: {fileID: 114055956586340504}
-  - component: {fileID: 114384589614662300}
   - component: {fileID: 114945925683078354}
   - component: {fileID: 114522414071244932}
   - component: {fileID: 114840751440000430}
@@ -2329,23 +2328,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Player Name
---- !u!114 &114384589614662300
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1311895783170454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63aa500526f6a1f4a859f7c84a8ef8f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputType: 2
-  InputJump: 0
-  InputPass: 0
-  InputKick: 0
-  InputStamina: 4
-  InputStrafe: 5
 --- !u!114 &114442234959944802
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2439,7 +2421,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1311895783170454}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8561a5972f4af4f478ae9e4fe993415a, type: 3}
   m_Name: 
@@ -2476,6 +2458,7 @@ MonoBehaviour:
     runCycleLegOffset: 0.2
   speed: 0
   dir: 0
+  IsIA: 1
   FovBallTryger: {fileID: 135693329154715832}
 --- !u!135 &135693329154715832
 SphereCollider:

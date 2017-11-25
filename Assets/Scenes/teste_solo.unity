@@ -151,8 +151,7 @@ Prefab:
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 114489430451828410, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
-        type: 2}
+    - target: {fileID: 0}
       propertyPath: InputType
       value: 2
       objectReference: {fileID: 0}
@@ -208,26 +207,11 @@ Prefab:
       propertyPath: placesManager
       value: 
       objectReference: {fileID: 1556369255}
-    - target: {fileID: 114328832952372530, guid: 9f098573c46fe6d43986c86ca74b801b,
-        type: 2}
-      propertyPath: team
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 114925576742751908, guid: 9f098573c46fe6d43986c86ca74b801b,
         type: 2}
-      propertyPath: teamMananger1.selectionMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114328832952372530, guid: 9f098573c46fe6d43986c86ca74b801b,
-        type: 2}
-      propertyPath: selectInputButtom
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 114098962011075818, guid: 9f098573c46fe6d43986c86ca74b801b,
-        type: 2}
-      propertyPath: selectInputButtom
-      value: 6
-      objectReference: {fileID: 0}
+      propertyPath: indicator
+      value: 
+      objectReference: {fileID: 1886243048}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9f098573c46fe6d43986c86ca74b801b, type: 2}
   m_IsPrefabParent: 0
@@ -452,10 +436,14 @@ Prefab:
       propertyPath: placeMarcation
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 114489430451828410, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
-        type: 2}
+    - target: {fileID: 0}
       propertyPath: InputType
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114121426299751326, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7de88fd53e5186f43bfc02c6bd9b02ee, type: 2}
@@ -564,3 +552,9 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 43.129, y: 90, z: 0}
+--- !u!114 &1886243048 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114467799995047874, guid: 9f098573c46fe6d43986c86ca74b801b,
+    type: 2}
+  m_PrefabInternal: {fileID: 585743655}
+  m_Script: {fileID: 11500000, guid: acf4540c024b5a24d831c04269af0422, type: 3}

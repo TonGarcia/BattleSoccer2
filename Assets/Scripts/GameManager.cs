@@ -66,10 +66,10 @@ public static class GameManagerExtensions
     }
     public static PlayerController GetPlayerNear(this PlayerController controller, CampTeam team)
     {
-        return GameManager.instance.GetPlayerNear(controller,team);
+        return GameManager.instance.GetPlayerNear(controller, team);
 
     }
-    
+
     public static void SelectME(this PlayerController controller)
     {
         GameManager.instance.SelectPlayer(controller);
@@ -82,11 +82,51 @@ public static class GameManagerExtensions
     {
         return GameManager.instance.GetSelectionMode(team);
     }
-    public static ControllerInputType GetControllerInputType(this CampTeam team)
+    public static ControllerInputType GetInputType(this PlayerController controller)
+    {
+        return GameManager.instance.GetControllerType(controller.GetCampTeam());
+    }
+    public static ControllerInputType GetInputType(this CampTeam team)
     {
         return GameManager.instance.GetControllerType(team);
     }
+    public static bool IsIA(this PlayerController controller)
+    {
+        return GameManager.instance.IsIA(controller.GetCampTeam());
+    }
+    public static bool IsController1(this PlayerController controller)
+    {
+        return GameManager.instance.IsController1(controller.GetCampTeam());
+    }
+    public static bool IsController2(this PlayerController controller)
+    {
+        return GameManager.instance.IsController2(controller.GetCampTeam());
+    }
+    public static bool IsIA(this CampTeam team)
+    {
+        return GameManager.instance.IsIA(team);
+    }
+    public static bool IsController1(this CampTeam team)
+    {
+        return GameManager.instance.IsController1(team);
+
+    }
+    public static bool IsController2(this CampTeam team)
+    {
+        return GameManager.instance.IsController2(team);
+
+    }
+    public static PlayerInput GetInputs(this PlayerController controller)
+    {
+        return GameManager.instance.GetPlayerinput(controller.GetCampTeam());
+    }
+    public static PlayerInput GetInputs(this CampTeam team)
+    {
+        return GameManager.instance.GetPlayerinput(team);
+
+    }
 }
+
 public class GameManager : MonoBehaviour
 {
     [System.Serializable]
@@ -98,9 +138,13 @@ public class GameManager : MonoBehaviour
         public GameOptionMode selectionMode;
         public Transform goalPosition;
 
+        public PlayerInput playerInput;
+
         [SerializeField]
         private List<PlayerController> players;
         public List<PlayerController> Players { get { return new List<PlayerController>(players); } }
+
+        public bool autoFoundPlayers = false;
 
         [SerializeField]
         private MultiSelection multSelection;
@@ -117,7 +161,6 @@ public class GameManager : MonoBehaviour
 
             multSelection.SetTeam(team);
         }
-        public bool autoFoundPlayers = false;
         public void SetPlayers(List<PlayerController> players)
         {
             this.players.AddRange(players);
@@ -133,6 +176,7 @@ public class GameManager : MonoBehaviour
             }
             return result;
         }
+
     }
 
     public static GameManager instance;
@@ -143,12 +187,15 @@ public class GameManager : MonoBehaviour
     private TeamManager teamMananger1;
     [SerializeField]
     private TeamManager teamMananger2;
-
+    [SerializeField]
+    private PlayerIndicator indicator;
     public Transform midCampTransform;
+
 
     private void Awake()
     {
         instance = this;
+        ResetIndicator();
     }
     private void Start()
     {
@@ -363,14 +410,18 @@ public class GameManager : MonoBehaviour
     /// Pesquisa o jogador do time adversário mais proximo do jogador origem
     /// </summary>
     /// <param name="controller">jogador origem</param>
-    /// <returns>jogador proximo. nunca retorna nulo</returns>
+    /// <returns>jogador proximo. nulo somente se não exisitr time adversário em jogo</returns>
     public PlayerController GetEnemyPlayerNear(PlayerController controller)
     {
+        PlayerController result = null;
         TeamManager manager = GetEnemyTeamManager(controller.GetCampTeam());
         List<PlayerController> players = manager.Players;
-        float min = players.Min(r => r.Distance(controller));
-        PlayerController result = players.FirstOrDefault(r => r.Distance(controller) == min);
 
+        if (players.Count > 0)
+        {
+            float min = players.Min(r => r.Distance(controller));
+            result = players.FirstOrDefault(r => r.Distance(controller) == min);
+        }
         return result;
     }
     public PlayerController GetPlayerNear(PlayerController controller, CampTeam team)
@@ -421,6 +472,28 @@ public class GameManager : MonoBehaviour
         return otherTeam.goalPosition;
     }
 
+    public bool IsIA(CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+        return team.GetInputType() == ControllerInputType.ControllerCPU;
+    }
+    public bool IsController1(CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+        return team.GetInputType() == ControllerInputType.Controller1;
+    }
+    public bool IsController2(CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+        return team.GetInputType() == ControllerInputType.Controller2;
+    }
+    public PlayerInput GetPlayerinput(CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+
+        return manager.playerInput;
+    }
+
     public void SelectPlayer(PlayerController player)
     {
         if (player.IsSelected())
@@ -428,6 +501,15 @@ public class GameManager : MonoBehaviour
         TeamManager team = GetTeamManager(player.GetCampTeam());
         team.MultSelection.SelectPlayer(player);
     }
-
+    public void IndicatePlayer(PlayerController player)
+    {
+        indicator.gameObject.SetActive(true);
+        indicator.SelectPlayer(player);
+    }
+    public void ResetIndicator()
+    {
+        indicator.Unselect();
+        indicator.gameObject.SetActive(false);
+    }
 
 }

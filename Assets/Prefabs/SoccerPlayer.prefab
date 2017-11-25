@@ -238,7 +238,6 @@ GameObject:
   - component: {fileID: 136413091099531094}
   - component: {fileID: 195457362972814068}
   - component: {fileID: 114247506803361644}
-  - component: {fileID: 114489430451828410}
   - component: {fileID: 114806801671383424}
   - component: {fileID: 114835517219724040}
   - component: {fileID: 114009646031483948}
@@ -2262,7 +2261,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1206900691969080}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8561a5972f4af4f478ae9e4fe993415a, type: 3}
   m_Name: 
@@ -2307,23 +2306,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dfcc8f7a3b0fd34fa88dcb5f6be1350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114489430451828410
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1206900691969080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63aa500526f6a1f4a859f7c84a8ef8f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InputType: 2
-  InputJump: 0
-  InputPass: 0
-  InputKick: 0
-  InputStamina: 4
-  InputStrafe: 5
 --- !u!114 &114499525935763492
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2448,6 +2430,7 @@ MonoBehaviour:
     runCycleLegOffset: 0.2
   speed: 0
   dir: 0
+  IsIA: 1
   FovBallTryger: {fileID: 135573356509391444}
 --- !u!114 &114835517219724040
 MonoBehaviour:
