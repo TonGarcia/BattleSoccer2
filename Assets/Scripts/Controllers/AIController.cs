@@ -244,7 +244,7 @@ public class AIController : MonoBehaviour
         }
 
         AiToPass = null;
-       
+
 
 
     }
@@ -282,21 +282,21 @@ public class AIController : MonoBehaviour
         {
             if (SelectedAIState != AISelected)
             {
-                SelectedAIState.StopHandleStates();
 
+                SelectedAIState.StopHandleStates();
                 SelectedAIState = AISelected;
             }
         }
         else                            //Estado jogador sem bola e não selecionado
         {
+
             if (SelectedAIState != AIUnselected)
             {
-                SelectedAIState.StopHandleStates();
 
+                SelectedAIState.StopHandleStates();
                 SelectedAIState = AIUnselected;
             }
         }
-
 
         SelectedAIState.UpdateHandleStates();
     }

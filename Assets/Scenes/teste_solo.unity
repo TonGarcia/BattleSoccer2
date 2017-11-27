@@ -332,6 +332,16 @@ Prefab:
       propertyPath: placesManager
       value: 
       objectReference: {fileID: 1556369255}
+    - target: {fileID: 114467799995047874, guid: 9f098573c46fe6d43986c86ca74b801b,
+        type: 2}
+      propertyPath: offset.y
+      value: 2.67
+      objectReference: {fileID: 0}
+    - target: {fileID: 114467799995047874, guid: 9f098573c46fe6d43986c86ca74b801b,
+        type: 2}
+      propertyPath: offset.z
+      value: 0.26
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9f098573c46fe6d43986c86ca74b801b, type: 2}
   m_IsPrefabParent: 0

@@ -243,6 +243,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
     public override bool UpdateHandleStates()
     {
+        
         if (base.UpdateHandleStates() == false)
             return false;
 
@@ -470,13 +471,18 @@ public class SoccerAISelected : SoccerAIGeneric
 
     public override bool UpdateHandleStates()
     {
+        
         if (base.UpdateHandleStates() == false)
             return false;
+
+     
 
         if (!Agent.isActiveAndEnabled || !Agent.isOnNavMesh)
             return false;
 
         aiState = SoccerAIState.followBall;
+
+       
 
         switch (aiState)
         {
@@ -484,6 +490,7 @@ public class SoccerAISelected : SoccerAIGeneric
                 Handlle_NothingState();
                 break;
             case SoccerAIState.followBall:
+                
                 Handle_FollowBallState();
                 break;
             default:
@@ -496,6 +503,7 @@ public class SoccerAISelected : SoccerAIGeneric
 
     private void Handlle_NothingState()
     {
+        
 
         //Indo para a origem
         //Se eu estiver proximo do jogador que possui a bola vou correr atraz da bola
@@ -508,9 +516,7 @@ public class SoccerAISelected : SoccerAIGeneric
         }
 
         timeToSelect = 0;
-        Speed = 0;
-        Direction = 0;
-        Agent.destination = Player.transform.position;
+        Stop();
 
 
     }
@@ -522,25 +528,25 @@ public class SoccerAISelected : SoccerAIGeneric
 
         if (Player.IsMyBall() || !Player.IsSelected())
         {
-            Agent.destination = Player.transform.position;
-            Speed = 0;
-            Direction = 0;
+            Stop();
 
             aiState = SoccerAIState.nothing;
             return;
         }
-
-
+        
 
         BallController ball = BallController.instance;
         float balldistance = ball.transform.Distance(Player.transform);
 
         //Corre atraz da bola
+        Vector3 destination = BallController.GetPosition();
+        Agent.SetDestination(destination);
+
         Vector2 move = Locomotion.GetDirectionAI();
         Speed = move.y;
         Direction = move.x;
-        Vector3 destination = ball.transform.position;
-        Agent.SetDestination(destination);
+
+       
 
         //Verifica a distancia da bola, se estiver muito longe procuro outor jogador mais proximo para selecionar
         if (Player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric)

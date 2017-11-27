@@ -138,6 +138,9 @@ public class PlayerController : MonoBehaviour
         if (GameManager.instance == null)
             return;
 
+        if (this.GetCampTeam().GetInputType() == ControllerInputType.ControllerCPU)
+            IsIA = true;
+
         agent.enabled = IsIA;
         manualController.enabled = !IsIA;
         aicontroller.enabled = IsIA;
