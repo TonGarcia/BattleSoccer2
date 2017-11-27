@@ -184,6 +184,9 @@ public abstract class SoccerAIGeneric
         if (isForcedGoTo)
             return;
 
+        if (!Agent.isOnNavMesh && !Agent.enabled)
+            return;
+
         Stop();
 
         this.motionType = LocomotionType.strafe;
@@ -361,7 +364,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
             return;
         }
 
-        
+
 
         Transform defPos = Player.GetMarcationPosition(CampPlaceType.defense);
         Transform attkPos = Player.GetMarcationPosition(CampPlaceType.attack);
@@ -587,7 +590,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
     public SoccerAIwithBall(AIController owner, PlayerController controller) : base(owner, controller)
     {
         aiState = SoccerAIState.nothing;
-        
+
         PlayerAnimatorEvents animatorEvents = Player.GetComponent<PlayerAnimatorEvents>();
         animatorEvents.OnPassFinish += OnPassFinish;
 
@@ -628,7 +631,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
         timeToDrible += Time.deltaTime;
         timeToGoal += Time.deltaTime;
 
-      
+
         if (toPass != null)
         {
             motionType = LocomotionType.normal;

@@ -125,6 +125,20 @@ public static class GameManagerExtensions
         return GameManager.instance.GetPlayerinput(team);
 
     }
+    public static List<PlayerController> GetPlayers(this CampTeam team)
+    {
+        return GameManager.instance.GetPlayers(team);
+    }
+    public static List<PlayerController> GetPlayersNear(this PlayerController controller, float maxDistance)
+    {
+        List<PlayerController> players = GameManager.instance.GetPlayers(controller.GetCampTeam());
+        players.Remove(controller);
+
+        players.RemoveAll(r => r.Distance(controller) > maxDistance);
+
+        return players;
+
+    }
 }
 
 public class GameManager : MonoBehaviour
@@ -294,76 +308,6 @@ public class GameManager : MonoBehaviour
         }
 
     }
-    /// <summary>
-    /// Pesquisa o jogaodr do mesmo time e ação de campo especificada, que esteja mais proximo do jogador origem e que não tenha nenhum inimigo entre eles.
-    /// caso não exista nenhum jogador nestes critérios, nullo sera retornado
-    /// </summary>
-    /// <param name="player">Jogador origem</param>
-    /// <param name="campAcation">Tipo de ação de campo dos jogadores a serem pesquisados</param>
-    /// <returns>Jogador que tenha caminho livre entre o jogaodor origem e ele, ou nulo se os criterios nao forem sucetiveis</returns>
-    public PlayerController GetNearPlayerRaycast(PlayerController player, CampActionAttribute campAcation)
-    {
-        PlayerController result = null;
-        TeamManager manager = GetTeamManager(player.GetCampTeam());
-
-        List<PlayerController> players = manager.Players;
-        players.Remove(player);
-        players.RemoveAll(r => r.GetCampAction() != campAcation);
-
-        foreach (PlayerController p in new List<PlayerController>(players))
-        {
-            PlayerController hitedPlayer;
-            if (p.IsHitBetween(player, out hitedPlayer))
-            {
-                if (hitedPlayer.IsMyTeaM(player) == false)
-                    players.Remove(p);
-            }
-        }
-
-        if (players.Count > 0)
-        {
-            float min = players.Min(r => r.Distance(player));
-            result = players.FirstOrDefault(r => r.Distance(player) == min);
-        }
-
-        return result;
-
-    }
-    /// <summary>
-    /// Pesquisa o jogaodr do mesmo time, que esteja mais proximo do jogador origem e que não tenha nenhum inimigo entre eles.
-    /// caso não exista nenhum jogador nestes critérios, nullo sera retornado
-    /// </summary>
-    /// <param name="player">Jogador origem</param>
-    /// <param name="campAcation">Tipo de ação de campo dos jogadores a serem pesquisados</param>
-    /// <returns>Jogador que tenha caminho livre entre o jogaodor origem e ele, ou nulo se os criterios nao forem sucetiveis</returns>
-    public PlayerController GetNearPlayerRaycast(PlayerController player)
-    {
-        PlayerController result = null;
-        TeamManager manager = GetTeamManager(player.GetCampTeam());
-
-        List<PlayerController> players = manager.Players;
-        players.Remove(player);
-        //players.RemoveAll(r => r.GetCampAction() != campAcation);
-
-        foreach (PlayerController p in new List<PlayerController>(players))
-        {
-            PlayerController hitedPlayer;
-            if (p.IsHitBetween(player, out hitedPlayer))
-            {
-                if (hitedPlayer.IsMyTeaM(player) == false)
-                    players.Remove(p);
-            }
-        }
-
-        if (players.Count > 0)
-        {
-            float min = players.Min(r => r.Distance(player));
-            result = players.FirstOrDefault(r => r.Distance(player) == min);
-        }
-
-        return result;
-
-    }
     public GameOptionMode GetSelectionMode(CampTeam team)
     {
         TeamManager manager = GetTeamManager(team);
@@ -460,7 +404,10 @@ public class GameManager : MonoBehaviour
 
         return campPosition.transform;
     }
-
+    public List<PlayerController> GetPlayers(CampTeam team)
+    {
+        return GetTeamManager(team).Players;
+    }
     public Transform GetMyTeamGoalPosition(PlayerController player)
     {
         TeamManager team = GetTeamManager(player.GetCampTeam());

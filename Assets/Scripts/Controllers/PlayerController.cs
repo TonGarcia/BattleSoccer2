@@ -32,9 +32,7 @@ public static class PlayerControllerExtensions
     {
         return controller.GetCampTeam() == player.GetCampTeam();
     }
-
-
-
+    
     public static float LeftRightDir(this PlayerController player, Vector3 position)
     {
 
@@ -77,7 +75,7 @@ public static class PlayerControllerExtensions
         return player.IsLookAt(to.transform);
     }
 
-
+    
 
 }
 

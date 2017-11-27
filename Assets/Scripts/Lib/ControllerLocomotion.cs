@@ -44,7 +44,7 @@ namespace SoccerGame
         public bool inStumble { get { return m_Animator.GetCurrentAnimatorStateInfo(2).IsName("Stumble"); } }
         public bool inKick { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("LongKick"); } }
         public bool inPass { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("ShortPass"); } }
-
+        public bool inNormal { get { return inStrafe == false && inSoccer == false; } }
         public bool inStrafe { get { return motionType == LocomotionType.strafe; } }
         public bool inSoccer { get { return motionType == LocomotionType.soccer; } }
         public bool inTurn
@@ -297,47 +297,19 @@ namespace SoccerGame
 
             return result;
         }
-        public Vector2 GetDirectionAxis()
+        public Vector2 GetDirectionAxis1()
         {
-
-            float h = ControllerInput.GetAxisHorizontal(m_controller.GetInputType());
-            float v = ControllerInput.GetAxisVertical(m_controller.GetInputType());
-            Vector2 result = Vector2.zero;
-
-            Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-            Vector3 m_Move = v * m_CamForward + h * Camera.main.transform.right;
-
-            if (m_Move.magnitude > 1f) m_Move.Normalize();
-            m_Move = m_Rigidbody.transform.InverseTransformDirection(m_Move);
-            m_Move = Vector3.ProjectOnPlane(m_Move, m_Gravity.GroudNormal);
-
-            float direction = 0;
-            float speed = 0;
-
-            switch (motionType)
-            {
-                case LocomotionType.soccer:
-
-                    direction = (float)((Mathf.Atan2(m_Move.x, m_Move.z)) * 180 / 3.14159);
-                    speed = m_Move.z * 10.0f;
-                    break;
-                case LocomotionType.normal:
-
-                    direction = Mathf.Atan2(m_Move.x, m_Move.z);
-                    speed = m_Move.z;
-
-                    break;
-                case LocomotionType.strafe:
-
-                    direction = m_Move.x;
-                    speed = m_Move.z;
-
-                    break;
-            }
-
-            result = new Vector2(direction, speed);
-            return result;
+            float h = ControllerInput.GetAxisHorizontal1(m_controller.GetInputType());
+            float v = ControllerInput.GetAxisVertical1(m_controller.GetInputType());
+            return GetDirectionAxis(h, v);
         }
+        public Vector2 GetDirectionAxis2()
+        {
+            float h = ControllerInput.GetAxisHorizontal2(m_controller.GetInputType());
+            float v = ControllerInput.GetAxisVertical2(m_controller.GetInputType());
+            return GetDirectionAxis(h, v);
+        }
+
         public Vector3 GetMouseTarget(Transform transform)
         {
             Vector3 target = Vector3.zero;
@@ -407,6 +379,46 @@ namespace SoccerGame
         {
             if (!inStumble)
                 m_Animator.SetTrigger(m_StumbleId);
+        }
+
+        private Vector3 GetDirectionAxis(float h, float v)
+        {
+           
+            Vector2 result = Vector2.zero;
+
+            Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+            Vector3 m_Move = v * m_CamForward + h * Camera.main.transform.right;
+
+            if (m_Move.magnitude > 1f) m_Move.Normalize();
+            m_Move = m_Rigidbody.transform.InverseTransformDirection(m_Move);
+            m_Move = Vector3.ProjectOnPlane(m_Move, m_Gravity.GroudNormal);
+
+            float direction = 0;
+            float speed = 0;
+
+            switch (motionType)
+            {
+                case LocomotionType.soccer:
+
+                    direction = (float)((Mathf.Atan2(m_Move.x, m_Move.z)) * 180 / 3.14159);
+                    speed = m_Move.z * 10.0f;
+                    break;
+                case LocomotionType.normal:
+
+                    direction = Mathf.Atan2(m_Move.x, m_Move.z);
+                    speed = m_Move.z;
+
+                    break;
+                case LocomotionType.strafe:
+
+                    direction = m_Move.x;
+                    speed = m_Move.z;
+
+                    break;
+            }
+
+            result = new Vector2(direction, speed);
+            return result;
         }
     }
 }

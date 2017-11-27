@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 namespace SoccerGame
 {
     static class UtilityExtensions
@@ -30,5 +30,23 @@ namespace SoccerGame
 
             return Vector3.Distance(origem, destino);
         }
+
+
+        public static float Angle(this Vector3 from, Vector3 to)
+        {
+            return Vector3.Angle(from, to);
+        }
+        public static PlayerController MinAngle(this List<PlayerController> list, PlayerController player, Vector3 dirOrigim)
+        {
+            float min = list.Min(r => r.Direction(player).angle(dirOrigim));
+            return list.FirstOrDefault(r => r.Direction(player).angle(dirOrigim) == min);
+        }
+
+        public static Vector3 Direction(this PlayerController from, PlayerController to)
+        {
+            return from.transform.position - to.transform.position;
+        }
+
+
     }
 }

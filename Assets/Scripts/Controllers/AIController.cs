@@ -23,7 +23,7 @@ public class AIController : MonoBehaviour
     private float direction { get { return player.dir; } set { player.dir = value; } }
     private float speed { get { return player.speed; } set { player.speed = value; } }
 
-  
+
     private NavMeshAgent agent;
     private SoccerAIGeneric AIUnselected;
     private SoccerAIGeneric AISelected;
@@ -35,7 +35,6 @@ public class AIController : MonoBehaviour
     private bool waitingToPass = false;
     private AIController AiToPass = null; //Player que vai receber algum lance de passe
 
-    private float powerToPass = 0; //Potencia para disparar o pace
 
     private void Awake()
     {
@@ -100,13 +99,13 @@ public class AIController : MonoBehaviour
         UpdateAiStates();
 
     }
-  
+
     //Unity Events
     private void OnEnable()
     {
         SelectedAIState = AIUnselected;
         AIUnselected.StopHandleStates();
-        
+
         SignEvents();
     }
     private void OnDisable()
@@ -155,7 +154,7 @@ public class AIController : MonoBehaviour
     //Estes eventos são chamados apartir das animações rerentes em quadros espesificos
 
     //Change Direction
-    private void OnChangeDirectionStart()
+    private void EvChangeDirectionStart()
     {
         player.SetKinematic();
 
@@ -175,17 +174,17 @@ public class AIController : MonoBehaviour
 
 
     }
-    private void OnChangeDirectionOk()
+    private void EvChangeDirectionOk()
     {
         BallController.instance.SetBallDesprotectTo(player);
     }
-    private void OnChangeDirectionFinish()
+    private void EvChangeDirectionFinish()
     {
         BallController.instance.SetBallDesprotectTo(player);
         player.UnsetKinematic();
     }
     //Turn Direction
-    private void OnTurnDirectionStart()
+    private void EvTurnDirectionStart()
     {
         player.SetKinematic();
 
@@ -194,19 +193,19 @@ public class AIController : MonoBehaviour
 
         BallController.instance.SetBallProtectedTo(player);
     }
-    private void OnTurnDirectionFinish()
+    private void EvTurnDirectionFinish()
     {
         BallController.instance.SetBallDesprotectTo(player);
         player.UnsetKinematic();
     }
     //Kick
-    private void OnLongKickOk()
+    private void EvLongKickOk()
     {
         if (BallController.IsOwner(player))
             BallController.SetKick();
     }
     //Enttry
-    private void OnEntryStart()
+    private void EvEntryStart()
     {
         if (BallController.IsOwner(player))
             BallController.instance.SetBallProtectedTo(player);
@@ -214,7 +213,7 @@ public class AIController : MonoBehaviour
         player.SetKinematic();
 
     }
-    private void OnEntryFinish()
+    private void EvEntryFinish()
     {
 
         BallController.instance.SetBallDesprotectTo(player);
@@ -222,29 +221,43 @@ public class AIController : MonoBehaviour
 
     }
     //Pass
-    private void OnShortPassOk()
+    private void EvShortPassStart()
+    {
+        player.SetKinematic();
+    }
+    private void EvShortPassOk()
     {
 
 
         if (BallController.IsOwner(player))
         {
             if (AiToPass != null)
-                AiToPass.WaitPass();
+            {
+                Vector3 dir = AiToPass.transform.position - transform.position;
+                Quaternion rotation = Quaternion.LookRotation(dir, Vector3.up);
+                transform.rotation = rotation;
 
-            BallController.SetPass(powerToPass);
+                AiToPass.WaitPass();
+                BallController.SetPass(AiToPass.player.Distance(player) * 2.0f);
+            }
+            BallController.SetPass(12.0f);
         }
 
         AiToPass = null;
-        powerToPass = 0;
+       
 
 
     }
+    private void EvShortPassFinish()
+    {
+        player.UnsetKinematic();
+    }
     //Stumble
-    private void OnStumbleStart()
+    private void EvStumbleStart()
     {
         player.SetKinematic();
     }
-    private void OnStumbleFinish()
+    private void EvStumbleFinish()
     {
         player.UnsetKinematic();
     }
@@ -295,17 +308,20 @@ public class AIController : MonoBehaviour
     {
         //Animatro sign
         PlayerAnimatorEvents animatorEvents = GetComponent<PlayerAnimatorEvents>();
-        animatorEvents.OnChangeDirStart -= OnChangeDirectionStart;
-        animatorEvents.OnChangeDirOk -= OnChangeDirectionOk;
-        animatorEvents.OnChangeDirFinish -= OnChangeDirectionFinish;
-        animatorEvents.OnTurnStart -= OnTurnDirectionStart;
-        animatorEvents.OnTurnFinish -= OnTurnDirectionFinish;
-        animatorEvents.OnKickOk -= OnLongKickOk;
-        animatorEvents.OnEnttryStart -= OnEntryStart;
-        animatorEvents.OnEnttryFinish -= OnEntryFinish;
-        animatorEvents.OnPassOk -= OnShortPassOk;
-        animatorEvents.OnStumblesStart -= OnStumbleStart;
-        animatorEvents.OnStumblesFinish -= OnStumbleFinish;
+        animatorEvents.OnChangeDirStart -= EvChangeDirectionStart;
+        animatorEvents.OnChangeDirOk -= EvChangeDirectionOk;
+        animatorEvents.OnChangeDirFinish -= EvChangeDirectionFinish;
+        animatorEvents.OnTurnStart -= EvTurnDirectionStart;
+        animatorEvents.OnTurnFinish -= EvTurnDirectionFinish;
+        animatorEvents.OnKickOk -= EvLongKickOk;
+        animatorEvents.OnEnttryStart -= EvEntryStart;
+        animatorEvents.OnEnttryFinish -= EvEntryFinish;
+        animatorEvents.OnPassStart -= EvShortPassStart;
+        animatorEvents.OnPassOk -= EvShortPassOk;
+        animatorEvents.OnPassFinish += EvShortPassFinish;
+
+        animatorEvents.OnStumblesStart -= EvStumbleStart;
+        animatorEvents.OnStumblesFinish -= EvStumbleFinish;
 
         BallController.instance.onSetMyOwner -= OnBallSetOwner;
         BallController.instance.onRemoveMyOwner -= OnBallRemoveOwner;
@@ -330,17 +346,19 @@ public class AIController : MonoBehaviour
     {
         //Animatro sign
         PlayerAnimatorEvents animatorEvents = GetComponent<PlayerAnimatorEvents>();
-        animatorEvents.OnChangeDirStart += OnChangeDirectionStart;
-        animatorEvents.OnChangeDirOk += OnChangeDirectionOk;
-        animatorEvents.OnChangeDirFinish += OnChangeDirectionFinish;
-        animatorEvents.OnTurnStart += OnTurnDirectionStart;
-        animatorEvents.OnTurnFinish += OnTurnDirectionFinish;
-        animatorEvents.OnKickOk += OnLongKickOk;
-        animatorEvents.OnEnttryStart += OnEntryStart;
-        animatorEvents.OnEnttryFinish += OnEntryFinish;
-        animatorEvents.OnPassOk += OnShortPassOk;
-        animatorEvents.OnStumblesStart += OnStumbleStart;
-        animatorEvents.OnStumblesFinish += OnStumbleFinish;
+        animatorEvents.OnChangeDirStart += EvChangeDirectionStart;
+        animatorEvents.OnChangeDirOk += EvChangeDirectionOk;
+        animatorEvents.OnChangeDirFinish += EvChangeDirectionFinish;
+        animatorEvents.OnTurnStart += EvTurnDirectionStart;
+        animatorEvents.OnTurnFinish += EvTurnDirectionFinish;
+        animatorEvents.OnKickOk += EvLongKickOk;
+        animatorEvents.OnEnttryStart += EvEntryStart;
+        animatorEvents.OnEnttryFinish += EvEntryFinish;
+        animatorEvents.OnPassStart += EvShortPassStart;
+        animatorEvents.OnPassOk += EvShortPassOk;
+        animatorEvents.OnPassFinish += EvShortPassFinish;
+        animatorEvents.OnStumblesStart += EvStumbleStart;
+        animatorEvents.OnStumblesFinish += EvStumbleFinish;
 
 
         while (BallController.instance == null)
@@ -350,11 +368,13 @@ public class AIController : MonoBehaviour
         BallController.instance.onRemoveMyOwner += OnBallRemoveOwner;
     }
 
+
+
     //InternalMethods
     internal void TriggerPass(PlayerController toPlayer)
     {
         AiToPass = toPlayer.GetAiControlelr();
-        powerToPass = player.Distance(toPlayer) * 2;
+
         locomotion.TriggerPass();
     }
     internal void GoToPosition(Vector3 position)

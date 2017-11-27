@@ -61,32 +61,60 @@ namespace SoccerGame
             string str_input = userType.ToShortCutInput() + bt.ToString();
             return Input.GetButtonUp(str_input);
         }
-        public static float GetAxisHorizontal(ControllerInputType userType)
+        public static float GetAxisHorizontal1(ControllerInputType userType)
         {
             if (userType == ControllerInputType.ControllerCPU)
                 return 0;
-            string str_input_h = userType.ToShortCutInput() + "Horizontal";
+            string str_input_h = userType.ToShortCutInput() + "Horizontal1";
             return Input.GetAxis(str_input_h);
 
         }
-        public static float GetAxisVertical(ControllerInputType userType)
+        public static float GetAxisVertical1(ControllerInputType userType)
         {
             if (userType == ControllerInputType.ControllerCPU)
                 return 0;
-            string str_input_v = userType.ToShortCutInput() + "Vertical";
+            string str_input_v = userType.ToShortCutInput() + "Vertical1";
             return Input.GetAxis(str_input_v);
         }
-        public static Vector2 GetAxis(ControllerInputType userType)
+        public static Vector2 GetAxis1(ControllerInputType userType)
         {
             if (userType == ControllerInputType.ControllerCPU)
                 return Vector2.zero;
-            string str_input_h = userType.ToShortCutInput() + "Horizontal";
-            string str_input_v = userType.ToShortCutInput() + "Vertical";
+            string str_input_h = userType.ToShortCutInput() + "Horizontal1";
+            string str_input_v = userType.ToShortCutInput() + "Vertical1";
             float h = Input.GetAxis(str_input_h);
             float v = Input.GetAxis(str_input_v);
 
             return new Vector2(h, v);
         }
+
+        public static float GetAxisHorizontal2(ControllerInputType userType)
+        {
+            if (userType == ControllerInputType.ControllerCPU)
+                return 0;
+            string str_input_h = userType.ToShortCutInput() + "Horizontal2";
+            return Input.GetAxis(str_input_h);
+
+        }
+        public static float GetAxisVertical2(ControllerInputType userType)
+        {
+            if (userType == ControllerInputType.ControllerCPU)
+                return 0;
+            string str_input_v = userType.ToShortCutInput() + "Vertical2";
+            return Input.GetAxis(str_input_v);
+        }
+        public static Vector2 GetAxis2(ControllerInputType userType)
+        {
+            if (userType == ControllerInputType.ControllerCPU)
+                return Vector2.zero;
+            string str_input_h = userType.ToShortCutInput() + "Horizontal2";
+            string str_input_v = userType.ToShortCutInput() + "Vertical2";
+            float h = Input.GetAxis(str_input_h);
+            float v = Input.GetAxis(str_input_v);
+
+            return new Vector2(h, v);
+        }
+
         public static string ToShortCutInput(this ControllerInputType userType)
         {
             string result = "";
