@@ -28,7 +28,7 @@ public class ManualController : MonoBehaviour
         if (player == null)
             return;
 
-       
+
 
         //Seleciona outro jogador manual mais proximo se eu estiver muito longe da bola
         if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric)
@@ -162,13 +162,16 @@ public class ManualController : MonoBehaviour
         //Passe de bola
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Pass))
         {
+            //playerToPass = null;
+            //GameManager.instance.ResetIndicator();
+
             if (player.IsMyBall() == true && locomotion.inNormal)
             {
                 locomotion.TriggerPass();
             }
         }
 
-      
+
     }
 
     //Unity Events
@@ -265,11 +268,15 @@ public class ManualController : MonoBehaviour
     }
 
     private void EvPassStart()
-    {
+    {        
+        if(player.IsMyBall())
+            BallController.instance.SetBallProtectedTo(player);
         player.SetKinematic();
     }
     private void EvPassOk()
     {
+        BallController.instance.SetBallDesprotectTo(player);
+
         if (player.IsMyBall())
         {
             if (playerToPass != null)
@@ -283,6 +290,7 @@ public class ManualController : MonoBehaviour
             }
             else
             {
+                
                 BallController.SetPass(12.0f);
             }
 
