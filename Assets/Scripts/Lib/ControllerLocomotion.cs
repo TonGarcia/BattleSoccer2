@@ -148,9 +148,12 @@ namespace SoccerGame
 
             if (useExtraRotation && motionType == LocomotionType.normal)
             {
-                // help the character turn faster (this is in addition to root rotation in the animation)
-                float turnSpeed = Mathf.Lerp(m_StationaryTurnSpeed, m_MovingTurnSpeed, speed);
-                m_Rigidbody.transform.Rotate(0, direction * turnSpeed * Time.deltaTime, 0);
+                if (inNormal)
+                {
+                    // help the character turn faster (this is in addition to root rotation in the animation)
+                    float turnSpeed = Mathf.Lerp(m_StationaryTurnSpeed, m_MovingTurnSpeed, speed);
+                    m_Rigidbody.transform.Rotate(0, direction * turnSpeed * Time.deltaTime, 0);
+                }
             }
 
         }

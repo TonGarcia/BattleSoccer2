@@ -53,9 +53,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4940241925069920}
   m_Layer: 0
-  m_Name: GoalTeamA
+  m_Name: GoalTeamB
   m_TagString: Untagged
-  m_Icon: {fileID: -6488666005112524639, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -83,9 +83,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4357769947549254}
   m_Layer: 0
-  m_Name: GoalTeamB
+  m_Name: GoalTeamA
   m_TagString: Untagged
-  m_Icon: {fileID: -1577725955494882426, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 4485314709277528}
   - component: {fileID: 114328832952372530}
   m_Layer: 0
-  m_Name: TimeB
+  m_Name: TimeA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 4612492464428124}
   - component: {fileID: 114098962011075818}
   m_Layer: 0
-  m_Name: TimeA
+  m_Name: TimeB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -273,7 +273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameMananger: {fileID: 114925576742751908}
-  team: 0
+  team: 2
   selectorPrefab: {fileID: 1084094672766722, guid: 2f31681f75223b1408b2850c42bd3f92,
     type: 2}
 --- !u!114 &114328832952372530
@@ -302,7 +302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acf4540c024b5a24d831c04269af0422, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0, z: 0}
+  offset: {x: 0, y: 2.67, z: 0.26}
 --- !u!114 &114925576742751908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -316,9 +316,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placesManager: {fileID: 0}
   teamMananger1:
-    team: 0
+    team: 1
     side: 1
-    controllerType: 0
+    inputType: 0
     selectionMode: 0
     goalPosition: {fileID: 4357769947549254}
     playerInput:
@@ -332,9 +332,9 @@ MonoBehaviour:
     autoFoundPlayers: 1
     multSelection: {fileID: 114098962011075818}
   teamMananger2:
-    team: 1
+    team: 2
     side: 0
-    controllerType: 2
+    inputType: 2
     selectionMode: 0
     goalPosition: {fileID: 4940241925069920}
     playerInput:

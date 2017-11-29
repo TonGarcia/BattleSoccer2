@@ -125,6 +125,10 @@ public static class GameManagerExtensions
         return GameManager.instance.GetPlayerinput(team);
 
     }
+    public static PlayerController GetSelectedPlayer(this CampTeam team)
+    {
+        return GameManager.instance.GetSelectedPlayer(team);
+    }
     public static List<PlayerController> GetPlayers(this CampTeam team)
     {
         return GameManager.instance.GetPlayers(team);
@@ -139,6 +143,16 @@ public static class GameManagerExtensions
         return players;
 
     }
+    /// <summary>
+    /// Pesquisa time para o qual o controlador pertence. tenha em mente que NONE pode ser retornado caso o controlador nao 
+    /// tenha nenhum time vinculado a aele
+    /// </summary>
+    /// <param name="inputType">Entrada de controle</param>
+    /// <returns>Time vinculado ou NONE</returns>
+    public static CampTeam GetTeam(this ControllerInputType inputType)
+    {
+        return GameManager.instance.GetTeam(inputType);
+    }
 }
 
 public class GameManager : MonoBehaviour
@@ -148,7 +162,7 @@ public class GameManager : MonoBehaviour
     {
         public CampTeam team;
         public CampPlaceSide side;
-        public ControllerInputType controllerType;
+        public ControllerInputType inputType;
         public GameOptionMode selectionMode;
         public Transform goalPosition;
 
@@ -159,6 +173,15 @@ public class GameManager : MonoBehaviour
         public List<PlayerController> Players { get { return new List<PlayerController>(players); } }
 
         public bool autoFoundPlayers = false;
+
+        public bool isControllerType
+        {
+            get
+            {
+
+                return inputType == ControllerInputType.Controller1 || inputType == ControllerInputType.Controller2;
+            }
+        }
 
         [SerializeField]
         private MultiSelection multSelection;
@@ -222,6 +245,16 @@ public class GameManager : MonoBehaviour
         if (teamMananger1.team == team)
             manager = teamMananger1;
         else
+            manager = teamMananger2;
+
+        return manager;
+    }
+    private TeamManager GetTeamManager(ControllerInputType inputType)
+    {
+        TeamManager manager = null;
+        if (teamMananger1.inputType == inputType)
+            manager = teamMananger1;
+        else if (teamMananger2.inputType == inputType)
             manager = teamMananger2;
 
         return manager;
@@ -388,7 +421,7 @@ public class GameManager : MonoBehaviour
     public ControllerInputType GetControllerType(CampTeam team)
     {
         TeamManager manager = GetTeamManager(team);
-        return manager.controllerType;
+        return manager.inputType;
     }
     public CampPlaceSide GetTeamPlaceSide(CampTeam team)
     {
@@ -419,6 +452,7 @@ public class GameManager : MonoBehaviour
         return otherTeam.goalPosition;
     }
 
+
     public bool IsIA(CampTeam team)
     {
         TeamManager manager = GetTeamManager(team);
@@ -434,11 +468,27 @@ public class GameManager : MonoBehaviour
         TeamManager manager = GetTeamManager(team);
         return team.GetInputType() == ControllerInputType.Controller2;
     }
+    public bool HasTwoPlayers()
+    {
+        return teamMananger1.isControllerType && teamMananger2.isControllerType;
+    }
+    public bool HasOnlyAI()
+    {
+        return teamMananger1.isControllerType == false && teamMananger2.isControllerType == false;
+    }
     public PlayerInput GetPlayerinput(CampTeam team)
     {
         TeamManager manager = GetTeamManager(team);
 
         return manager.playerInput;
+    }
+    public CampTeam GetTeam(ControllerInputType inputType)
+    {
+        TeamManager manager = GetTeamManager(inputType);
+        if (manager != null)
+            return manager.team;
+        else
+            return CampTeam.None;
     }
 
     public void SelectPlayer(PlayerController player)
@@ -457,6 +507,18 @@ public class GameManager : MonoBehaviour
     {
         indicator.Unselect();
         indicator.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Ira aguardar todos os controladores estaticos estarem ok para retorar true.
+    /// Tenha em mente algusn controladores aguardados, GameManager, Ballcontroler, Etc.
+    /// </summary>
+    public static bool isReady
+    {
+        get
+        {
+            return instance != null && BallController.isReady;
+        }
     }
 
 }

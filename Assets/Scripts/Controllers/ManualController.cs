@@ -28,8 +28,6 @@ public class ManualController : MonoBehaviour
         if (player == null)
             return;
 
-
-
         //Seleciona outro jogador manual mais proximo se eu estiver muito longe da bola
         if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric)
         {
@@ -52,22 +50,35 @@ public class ManualController : MonoBehaviour
             }
         }
 
-        //Para ações manuais se estiver tropeçando
-        if (player.Locomotion.inStumble)//Tropeçando
-        {
-            speed = 0;
-            dir = 0;
-
-            return;
-        }
-
         //Loockat na bola se estiver em strafe
         if (locomotion.inStrafe)
         {
+            locomotion.ResetSpeedMultiples();
             Vector3 ballposition = BallController.GetPosition();
             ballposition.y = transform.position.y;
-
             transform.LookAt(ballposition);
+        }
+
+        if (locomotion.inSoccer)
+        {
+            SkillVar stamina = player.GetSkill_Stamina();
+            stamina.mode = SkillVarMode.autoSubtract;
+            if (stamina.IsMin)
+            {
+                player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
+                locomotion.ResetSpeedMultiples();
+                player.SetMotionNormal();
+            }
+        }
+
+
+        //Para ações manuais se estiver tropeçando
+        if (player.Locomotion.inStumble)//Tropeçando
+        {
+            locomotion.ResetSpeedMultiples();
+            speed = 0;
+            dir = 0;
+            return;
         }
 
         //Solicita avoid dos aliados a frente
@@ -76,9 +87,12 @@ public class ManualController : MonoBehaviour
             PlayerController allyBtw = null;
             if (player.IsHitForwad(5.5f, out allyBtw, player.GetCampTeam()))
             {
-                Vector3 origim = allyBtw.transform.position + (-allyBtw.transform.forward * 4.5f);
-                Vector3 freePos = locomotion.GetRandomNavCircle(origim, 4.5f);
-                allyBtw.GetComponent<AIController>().GoToPosition(freePos, BallController.instance.transform);
+                if (allyBtw.IsLookAt(player))
+                {
+                    Vector3 origim = allyBtw.transform.position + (-allyBtw.transform.forward * 4.5f);
+                    Vector3 freePos = locomotion.GetRandomNavCircle(origim, 4.5f);
+                    allyBtw.GetComponent<AIController>().GoToPosition(freePos, BallController.instance.transform);
+                }
             }
         }
 
@@ -92,6 +106,7 @@ public class ManualController : MonoBehaviour
                 GameManager.instance.ResetIndicator();
             }
         }
+
 
         Vector2 move = locomotion.GetDirectionAxis1();
         dir = move.x;
@@ -110,6 +125,11 @@ public class ManualController : MonoBehaviour
         //Soccer Motion
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
+            SkillVar Stamina = player.GetSkill_Stamina();
+            float critical = (Stamina.MaxValue / 2);
+            if (Stamina.CurrentValue < critical)
+                return;
+
             playerToPass = null;
             GameManager.instance.ResetIndicator();
             player.SetMotionSoccer();
@@ -122,6 +142,7 @@ public class ManualController : MonoBehaviour
             GameManager.instance.ResetIndicator();
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
+            player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
 
         }
 
@@ -268,8 +289,8 @@ public class ManualController : MonoBehaviour
     }
 
     private void EvPassStart()
-    {        
-        if(player.IsMyBall())
+    {
+        if (player.IsMyBall())
             BallController.instance.SetBallProtectedTo(player);
         player.SetKinematic();
     }
@@ -290,7 +311,7 @@ public class ManualController : MonoBehaviour
             }
             else
             {
-                
+
                 BallController.SetPass(12.0f);
             }
 

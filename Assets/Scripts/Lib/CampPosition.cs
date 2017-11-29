@@ -61,8 +61,10 @@ namespace SoccerGame
     
     public enum CampTeam
     {
+        None,
         Team_A,
-        Team_B
+        Team_B,
+        
     }
     /// <summary>
     /// Representa o lado do campo específico. Direito ou Esquerdo. 

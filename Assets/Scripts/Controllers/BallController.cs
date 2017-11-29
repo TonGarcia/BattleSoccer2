@@ -14,6 +14,10 @@ public static class BallControllerExtensions
     {
         return BallController.IsOwner(player);
     }
+    public static bool IsMyBall(this CampTeam team)
+    {
+        return BallController.instance.IsMyTeam(team);
+    }
     /// <summary>
     /// Verifica se a boal esta de poce de algum do time do jogador pesquisado
     /// Tenha em mente que falso sera retornado se a bola não tiver dono ou se o dono não for
@@ -312,6 +316,15 @@ public class BallController : MonoBehaviour
 
         return result;
     }
+    public bool IsMyTeam(CampTeam team)
+    {
+        bool result = false;
+        if (owner != null)
+            if (owner.GetCampTeam() == team)
+                result = true;
+
+        return result;
+    }
 
     public static void ChangeDirection()
     {
@@ -352,6 +365,7 @@ public class BallController : MonoBehaviour
     {
         return BallController.instance.IsMyTeam(player);
     }
+   
     public static Vector3 GetPosition()
     {
         return instance.transform.position;
@@ -363,6 +377,10 @@ public class BallController : MonoBehaviour
     public static PlayerController GetLastOwner()
     {
         return instance.GetMyLastOwner();
+    }
+    public static bool isReady
+    {
+        get { return instance != null; }
     }
     private void SetKinematic()
     {

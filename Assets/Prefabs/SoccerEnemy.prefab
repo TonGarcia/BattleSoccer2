@@ -382,6 +382,7 @@ GameObject:
   - component: {fileID: 114840751440000430}
   - component: {fileID: 114923713653273266}
   - component: {fileID: 114175090587763036}
+  - component: {fileID: 114601647321561870}
   - component: {fileID: 114721281799209404}
   m_Layer: 8
   m_Name: SoccerEnemy
@@ -2223,7 +2224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b79878bbf220214d9010c5cb14e1e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 1
+  team: 2
   placeAction: 2
   placeMarcation: 10
 --- !u!114 &114129326979397108
@@ -2356,6 +2357,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distanceToEntry: 2.5
+--- !u!114 &114601647321561870
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1311895783170454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a569e21c5ec2d64985ae78cd72d025d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  perfil: {fileID: 11400000, guid: ed2986c269aaf634390c08eb71dad0a1, type: 2}
 --- !u!114 &114654495107616274
 MonoBehaviour:
   m_ObjectHideFlags: 1
