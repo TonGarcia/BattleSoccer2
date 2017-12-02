@@ -8,11 +8,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 286ac81cfbce29a4784a9dd0fb316923, type: 3}
-  m_Name: ProDefault
+  m_Script: {fileID: 11500000, guid: b97a4bd4d2649164dab3c0ed5e62916b, type: 3}
+  m_Name: BasicPass
   m_EditorClassIdentifier: 
-  playerClass: {fileID: 0}
-  Ability1: {fileID: 0}
-  Ability2: {fileID: 0}
-  Ability3: {fileID: 0}
-  Ability4: {fileID: 0}
+  uiSprite: {fileID: 21300000, guid: a0430699807c82c498dc4a976fd72ac4, type: 3}
+  CoolDown: 1
+  range: 100
+  power: 10

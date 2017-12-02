@@ -43,24 +43,10 @@ namespace SoccerGame
             float min = list.Min(r => r.Direction(player).angle(dirOrigim));
             return list.FirstOrDefault(r => r.Direction(player).angle(dirOrigim) == min);
         }
+
         public static Vector3 Direction(this PlayerController from, PlayerController to)
         {
             return from.transform.position - to.transform.position;
-        }
-        public static SkillVar Clone(this SkillVar skillFrom)
-        {
-            SkillVar skill = new SkillVar();
-            skill.coolDownDuration = skillFrom.coolDownDuration;
-            skill.CriticalValue = skillFrom.CriticalValue;
-            skill.dampTime = skillFrom.dampTime;
-            skill.imageCooldownFillAmout = skillFrom.imageCooldownFillAmout;
-            skill.imageValueFillAmount = skillFrom.imageValueFillAmount;
-            skill.mode = skillFrom.mode;
-            skill.regenDuration = skillFrom.regenDuration;
-            skill.subtractDuration = skillFrom.subtractDuration;
-
-
-            return skill;
         }
     }
 
