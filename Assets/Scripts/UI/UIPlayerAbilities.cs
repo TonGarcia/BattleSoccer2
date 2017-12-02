@@ -18,12 +18,9 @@ public class UIPlayerAbilities : MonoBehaviour
         }
         public CampTeam team;
         public RectTransform container;
-        public Image imageStamina;
-        public Image imageSpelKick;
-        public Image imageSpelPass;
-        public Image imageStaminaCooldownMask;
-        public Image imageKickCooldownMask;
-        public Image imagePassCooldownMask;
+        public UIAbilitySkill ui_locomotionSkill;
+        public UIAbilitySkill ui_atkSkill;
+        public UIAbilitySkill ui_defSkill;
 
         public void ActiveHud()
         {
@@ -33,7 +30,7 @@ public class UIPlayerAbilities : MonoBehaviour
         {
             container.gameObject.SetActive(false);
         }
-        public void Update(Sprite staminaSprite, Sprite kickSprite, Sprite hitSprite, Sprite passSprite, Sprite defenseSprite, bool showIA)
+        public void Update(bool showIA)
         {
             //Esconde HUD se FOR AI e não estiver habilitado
             if (showIA == false && inputType == ControllerInputType.ControllerCPU)
@@ -43,59 +40,90 @@ public class UIPlayerAbilities : MonoBehaviour
 
             }
 
-            //Ativamos HUD
-            container.gameObject.SetActive(true);
-
-            //Modifica as sprites para mostrar as imagens corretas de ações com Bola e ações sem bola
-            if (team.IsMyBall())//Sprites Ações com bola
-            {
-                imageStamina.sprite = staminaSprite;
-                imageSpelKick.sprite = kickSprite;
-                imageSpelPass.sprite = passSprite;
-            }
-            else //Sprites Ações sem bola
-            {
-                imageStamina.sprite = staminaSprite;
-                imageSpelKick.sprite = hitSprite;
-                imageSpelPass.sprite = defenseSprite;
-            }
-
             //Atualiza a mascara de cooldown das ações
             PlayerController player = team.GetSelectedPlayer();
             if (player == null)
+            {
+                container.gameObject.SetActive(false);
                 return;
+            }
 
-            SkillVar stamina = player.GetSkill_Stamina();
-            imageStaminaCooldownMask.fillAmount = stamina.FillAmounValue;
-            float staminCritical = (stamina.MaxValue / 2);
-            if (stamina.IsCritical)
-                imageStaminaCooldownMask.color = Color.red;
+            //Ativamos HUD
+            container.gameObject.SetActive(true);
+
+            //Locomotion skill
+            Ability abilityLocomotion = player.GetAbility(0);
+            HandleAbility(player, abilityLocomotion);
+
+        }
+
+        private bool CheckAbility(PlayerController controller, Ability ability)
+        {
+            bool result = false;
+
+            if (ability != null)
+            {
+                switch (ability.mode)
+                {
+                    case AbilityMode.witBall:
+                        if (controller.IsMyBall())
+                            result = true;
+
+                        break;
+
+                    case AbilityMode.witOutBall:
+                        if (!controller.IsMyBall())
+                            result = true;
+
+                        break;
+                    case AbilityMode.both:
+                        result = true;
+                        break;
+                }
+            }
+
+            return result;
+
+        }
+        private void HandleAbility(PlayerController controller, Ability ability)
+        {
+            if (CheckAbility(controller,ability))
+            {
+                SkillVar skill = ability.Skill;
+                ui_locomotionSkill.SetIcon(ability.Sprite);
+                ui_locomotionSkill.EnableCooldown();
+                ui_locomotionSkill.EnableValue();
+
+                ui_locomotionSkill.SetValue(skill.FillAmounValue);
+                ui_locomotionSkill.SetCooldown(skill.FillAmountCooldown);
+
+                if (skill.IsCritical)
+                    ui_locomotionSkill.SetValueColor(Color.red);
+                else
+                    ui_locomotionSkill.ResetValueColor();
+            }
             else
-                imageStaminaCooldownMask.color = Color.blue;
-
-
+            {
+                ui_locomotionSkill.ResetIcon();
+                ui_locomotionSkill.DisableCooldown();
+                ui_locomotionSkill.DisableValue();
+            }
         }
     }
 
-    public Sprite staminaSprite;
-    public Sprite kickSprite;
-    public Sprite hitSprite;
-    public Sprite passSprite;
-    public Sprite defenseSprite;
 
     public AbilitiesTeamHud abilitiesTeamA;
     public AbilitiesTeamHud abilitiesTeamB;
 
     public bool showAIHud = false;
 
-
     public void Update()
     {
         if (!GameManager.isReady)
             return;
 
-        abilitiesTeamA.Update(staminaSprite, kickSprite, hitSprite, passSprite, defenseSprite, showAIHud);
-        abilitiesTeamB.Update(staminaSprite, kickSprite, hitSprite, passSprite, defenseSprite, showAIHud);
+        abilitiesTeamA.Update(showAIHud);
+        abilitiesTeamB.Update(showAIHud);
 
     }
 
@@ -103,12 +131,12 @@ public class UIPlayerAbilities : MonoBehaviour
     private void OnEnable()
     {
         DisableAllHuds();
-           }
+    }
     private void OnDisable()
     {
         DisableAllHuds();
     }
-   
+
     private void DisableAllHuds()
     {
         abilitiesTeamA.DesactiveHud();
@@ -122,7 +150,7 @@ public class UIPlayerAbilities : MonoBehaviour
         else
             return abilitiesTeamB;
     }
- 
+
 
 
 }

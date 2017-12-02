@@ -59,18 +59,23 @@ public class ManualController : MonoBehaviour
             transform.LookAt(ballposition);
         }
 
+        //Gerenciamento de stamina em movimento acelerado
+        /*
         if (locomotion.inSoccer)
         {
-            SkillVar stamina = player.GetSkill_Stamina();
+            //Se a stamina alcançar o nivel zero, vamos resetar o movimento de soccer e 
+            //e ativa a stamina para se auto regenerar. Tenha em mente que o tempo de regeneração é setado
+            //no profile do player na skill especifica            
             stamina.mode = SkillVarMode.autoSubtract;
+
             if (stamina.IsMin)
             {
-                player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
+                stamina.mode = SkillVarMode.autoRegen;
                 locomotion.ResetSpeedMultiples();
                 player.SetMotionNormal();
             }
         }
-
+        */
 
         //Para ações manuais se estiver tropeçando
         if (player.Locomotion.inStumble)//Tropeçando
@@ -107,12 +112,11 @@ public class ManualController : MonoBehaviour
             }
         }
 
-
         Vector2 move = locomotion.GetDirectionAxis1();
         dir = move.x;
         speed = move.y;
 
-        //Ações de chute
+        //Ações basica de chute
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Kick))
         {
             playerToPass = null;
@@ -125,39 +129,47 @@ public class ManualController : MonoBehaviour
         //Soccer Motion
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
-            SkillVar Stamina = player.GetSkill_Stamina();
-            float critical = (Stamina.MaxValue / 2);
-            if (Stamina.CurrentValue < critical)
-                return;
-
-            playerToPass = null;
-            GameManager.instance.ResetIndicator();
-            player.SetMotionSoccer();
-            player.Locomotion.SetSpeedMultiplies(1.2f);
+            //Se houver stamina suficiente ativo movimento soccer e aceleração.
+            //Tenha em mente que a stamina suficiente é acima do nivel critico setado pela skill. Se a 
+            //stamina nao estiver acima do nivel critico não podera ser utilizada
+            if (!stamina.IsCritical)
+            {
+                playerToPass = null;
+                GameManager.instance.ResetIndicator();
+                player.SetMotionSoccer();
+                player.Locomotion.SetSpeedMultiplies(1.2f);
+            }
 
         }
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
+            //Se o jogador estiver indicado para passe de bola, resetemaos a indicação
             playerToPass = null;
             GameManager.instance.ResetIndicator();
+            //Retornamos aceleração normal do personagem e setamos animação de movimento normal
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
-            player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
+            //Se a stamina estiver em auto subtract revertemos para auto regen
+            // stamina.mode = SkillVarMode.autoRegen;
 
         }
 
         //Strafe Motion
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
+            //Se o jogador estiver indicado para passe de bola, resetemaos a indicação
             playerToPass = null;
             GameManager.instance.ResetIndicator();
+            //Modificamos animação de movimento para strafe e aplicamos aceleração ao movimento
             player.SetMotionStrafe();
             player.Locomotion.SetSpeedMultiplies(1.2f);
         }
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
+            //Se o jogador estiver indicado para passe de bola, resetemaos a indicação
             playerToPass = null;
             GameManager.instance.ResetIndicator();
+            //Retornamos aceleração normal do personagem e setamos animação de movimento normal
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
 
@@ -312,7 +324,7 @@ public class ManualController : MonoBehaviour
             else
             {
 
-                BallController.SetPass(12.0f);
+                BallController.SetPass(20.0f);
             }
 
             playerToPass = null;
@@ -355,6 +367,8 @@ public class ManualController : MonoBehaviour
     }
 
     //Private methods
+    private SkillVar stamina;
+
     private void SignEvents()
     {
         StartCoroutine(IESignevents());
