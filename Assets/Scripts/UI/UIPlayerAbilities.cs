@@ -18,12 +18,9 @@ public class UIPlayerAbilities : MonoBehaviour
         }
         public CampTeam team;
         public RectTransform container;
-        public Image imageStamina;
-        public Image imageSpelKick;
-        public Image imageSpelPass;
-        public Image imageStaminaCooldownMask;
-        public Image imageKickCooldownMask;
-        public Image imagePassCooldownMask;
+        public UISkillAbility UIStamina;
+        public UISkillAbility UIAttack;
+        public UISkillAbility UIDeffense;     
 
         public void ActiveHud()
         {
@@ -33,55 +30,51 @@ public class UIPlayerAbilities : MonoBehaviour
         {
             container.gameObject.SetActive(false);
         }
-        public void Update(Sprite staminaSprite, Sprite kickSprite, Sprite hitSprite, Sprite passSprite, Sprite defenseSprite, bool showIA)
+        public void Update(bool showIA)
         {
             //Esconde HUD se FOR AI e não estiver habilitado
             if (showIA == false && inputType == ControllerInputType.ControllerCPU)
+            {                
+                container.gameObject.SetActive(false);
+                return;
+            }
+            
+            PlayerController player = team.GetSelectedPlayer();
+            if (player == null)
             {
                 container.gameObject.SetActive(false);
                 return;
-
             }
 
             //Ativamos HUD
             container.gameObject.SetActive(true);
 
-            //Modifica as sprites para mostrar as imagens corretas de ações com Bola e ações sem bola
-            if (team.IsMyBall())//Sprites Ações com bola
-            {
-                imageStamina.sprite = staminaSprite;
-                imageSpelKick.sprite = kickSprite;
-                imageSpelPass.sprite = passSprite;
-            }
-            else //Sprites Ações sem bola
-            {
-                imageStamina.sprite = staminaSprite;
-                imageSpelKick.sprite = hitSprite;
-                imageSpelPass.sprite = defenseSprite;
-            }
-
-            //Atualiza a mascara de cooldown das ações
-            PlayerController player = team.GetSelectedPlayer();
-            if (player == null)
-                return;
-
-            SkillVar stamina = player.GetSkill_Stamina();
-            imageStaminaCooldownMask.fillAmount = stamina.FillAmounValue;
-            float staminCritical = (stamina.MaxValue / 2);
-            if (stamina.IsCritical)
-                imageStaminaCooldownMask.color = Color.red;
-            else
-                imageStaminaCooldownMask.color = Color.blue;
+            HandleStamina(player);
 
 
         }
+        private void HandleStamina(PlayerController player)
+        {
+            SkillVar stamina = player.GetSkill_Stamina();
+
+            //Modifica as sprites para mostrar as imagens corretas de ações com Bola e ações sem bola
+            if (team.IsMyBall())//Sprites Ações com bola
+            {
+                UIStamina.SetIcon(stamina.ability.icon_withBall);
+            }
+            else //Sprites Ações sem bola
+            {
+                UIStamina.SetIcon(stamina.ability.icon_withOutBall);
+            }
+
+            UIStamina.SetValue(stamina.FillAmounValue);
+            if (stamina.IsCritical)
+                UIStamina.SetValueColor(Color.red);
+            else
+                UIStamina.ResetValueColor();
+        }
     }
 
-    public Sprite staminaSprite;
-    public Sprite kickSprite;
-    public Sprite hitSprite;
-    public Sprite passSprite;
-    public Sprite defenseSprite;
 
     public AbilitiesTeamHud abilitiesTeamA;
     public AbilitiesTeamHud abilitiesTeamB;
@@ -94,8 +87,8 @@ public class UIPlayerAbilities : MonoBehaviour
         if (!GameManager.isReady)
             return;
 
-        abilitiesTeamA.Update(staminaSprite, kickSprite, hitSprite, passSprite, defenseSprite, showAIHud);
-        abilitiesTeamB.Update(staminaSprite, kickSprite, hitSprite, passSprite, defenseSprite, showAIHud);
+        abilitiesTeamA.Update(showAIHud);
+        abilitiesTeamB.Update(showAIHud);
 
     }
 
@@ -103,12 +96,12 @@ public class UIPlayerAbilities : MonoBehaviour
     private void OnEnable()
     {
         DisableAllHuds();
-           }
+    }
     private void OnDisable()
     {
         DisableAllHuds();
     }
-   
+
     private void DisableAllHuds()
     {
         abilitiesTeamA.DesactiveHud();
@@ -122,7 +115,7 @@ public class UIPlayerAbilities : MonoBehaviour
         else
             return abilitiesTeamB;
     }
- 
+
 
 
 }

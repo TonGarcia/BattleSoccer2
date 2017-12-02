@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using System;
 
 namespace SoccerGame
 {
@@ -48,6 +49,10 @@ namespace SoccerGame
         {
             return from.transform.position - to.transform.position;
         }
+        public static LocomotionAbility ToLocomotion(this Ability ability)
+        {
+            return (LocomotionAbility)ability;
+        }
     }
 
     public enum SkillVarMode
@@ -58,8 +63,11 @@ namespace SoccerGame
     }
 
     [System.Serializable]
-    public class SkillVar
+    public class SkillVar: ICloneable
     {
+        [HideInInspector]
+        public Ability ability;
+
         [SerializeField]
         private float maxValue = 100;
         public float MaxValue { get { return maxValue; } }
@@ -226,6 +234,11 @@ namespace SoccerGame
                 imageCooldownFillAmout.enabled = true;
                 imageCooldownFillAmout.fillAmount = FillAmountCooldown;
             }
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

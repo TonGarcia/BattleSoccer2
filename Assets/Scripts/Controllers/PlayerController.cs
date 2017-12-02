@@ -74,9 +74,9 @@ public static class PlayerControllerExtensions
     {
         return player.IsLookAt(to.transform);
     }
-    public static PlayerProfile GetProfile (this PlayerController player)
+    public static PlayerSkills GetProfile (this PlayerController player)
     {
-        return player.gameObject.GetComponent<PlayerProfile>();
+        return player.gameObject.GetComponent<PlayerSkills>();
     }
     
 

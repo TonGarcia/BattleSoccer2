@@ -243,8 +243,8 @@ GameObject:
   - component: {fileID: 114009646031483948}
   - component: {fileID: 114121426299751326}
   - component: {fileID: 114799380950069286}
-  - component: {fileID: 114143241732565380}
   - component: {fileID: 114211424814624382}
+  - component: {fileID: 114044466253474002}
   m_Layer: 8
   m_Name: SoccerPlayer
   m_TagString: Untagged
@@ -2229,6 +2229,30 @@ MonoBehaviour:
   distanceToPass: 10
   timeTodrible: 0.5
   FovBallTryger: {fileID: 135573356509391444}
+--- !u!114 &114044466253474002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1206900691969080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a377a4a7e986be4fab374efd735cede, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  perfil: {fileID: 11400000, guid: c12af41dcea27fa468b97b03f67e1d0c, type: 2}
+  stamina:
+    ability: {fileID: 0}
+    maxValue: 100
+    currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 1
+    regenDuration: 10
+    subtractDuration: 5
+    dampTime: 3.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
 --- !u!114 &114097883948009840
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2268,21 +2292,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Stamina:
+    ability: {fileID: 0}
     maxValue: 100
     currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 1
+    regenDuration: 10
+    subtractDuration: 5
     dampTime: 1.5
---- !u!114 &114143241732565380
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1206900691969080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a569e21c5ec2d64985ae78cd72d025d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  perfil: {fileID: 11400000, guid: ed2986c269aaf634390c08eb71dad0a1, type: 2}
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
 --- !u!114 &114211424814624382
 MonoBehaviour:
   m_ObjectHideFlags: 1

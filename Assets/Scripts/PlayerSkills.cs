@@ -5,18 +5,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using SoccerGame;
 
-public static class PlayerProfileExtensions
+public static class PlayerSkillsExtensions
 {
 
     public static SkillVar GetSkill_Stamina(this PlayerController controller)
     {
-        return controller.GetComponent<PlayerProfile>().stamina;
+        return controller.GetComponent<PlayerSkills>().stamina;
     }
 }
-public class PlayerProfile : MonoBehaviour
+public class PlayerSkills : MonoBehaviour
 {
     [SerializeField]
-    private PlayerPerfil perfil;
+    private PlayerProfile perfil;
 
     [HideInInspector]
     public SkillVar stamina;
@@ -24,10 +24,7 @@ public class PlayerProfile : MonoBehaviour
 
     private void Awake()
     {
-        stamina.regenDuration = 30.0f;
-        stamina.subtractDuration = 5.0f;
-        stamina.CriticalValue = 0.5f;
-        stamina.SetCurrentValue(stamina.MaxValue);
+        perfil.stamina.Initialzie(out stamina);        
     }
     private void Update()
     {

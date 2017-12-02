@@ -382,8 +382,8 @@ GameObject:
   - component: {fileID: 114840751440000430}
   - component: {fileID: 114923713653273266}
   - component: {fileID: 114175090587763036}
-  - component: {fileID: 114601647321561870}
   - component: {fileID: 114721281799209404}
+  - component: {fileID: 114157004446200136}
   m_Layer: 8
   m_Name: SoccerEnemy
   m_TagString: Untagged
@@ -2240,6 +2240,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scaleSize: 0.1
   dampingTime: 10.5
+--- !u!114 &114157004446200136
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1311895783170454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a377a4a7e986be4fab374efd735cede, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  perfil: {fileID: 11400000, guid: c12af41dcea27fa468b97b03f67e1d0c, type: 2}
+  stamina:
+    ability: {fileID: 0}
+    maxValue: 100
+    currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 1
+    regenDuration: 10
+    subtractDuration: 5
+    dampTime: 3.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
 --- !u!114 &114175090587763036
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2357,18 +2381,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   distanceToEntry: 2.5
---- !u!114 &114601647321561870
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1311895783170454}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a569e21c5ec2d64985ae78cd72d025d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  perfil: {fileID: 11400000, guid: ed2986c269aaf634390c08eb71dad0a1, type: 2}
 --- !u!114 &114654495107616274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2440,9 +2452,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Stamina:
+    ability: {fileID: 0}
     maxValue: 100
     currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 1
+    regenDuration: 10
+    subtractDuration: 5
     dampTime: 1.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
 --- !u!114 &114945925683078354
 MonoBehaviour:
   m_ObjectHideFlags: 1

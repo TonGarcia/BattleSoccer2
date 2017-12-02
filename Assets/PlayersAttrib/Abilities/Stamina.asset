@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1205b85208236ab40a1fac3978537ccc, type: 3}
+  m_Name: Stamina
+  m_EditorClassIdentifier: 
+  icon_withBall: {fileID: 0}
+  icon_withOutBall: {fileID: 0}
+  skill:
+    ability: {fileID: 11400000}
+    maxValue: 100
+    currentValue: 100
+    CriticalValue: 0.5
+    coolDownDuration: 1
+    regenDuration: 30
+    subtractDuration: 5
+    dampTime: 3.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
+  speedMultiply: 0
