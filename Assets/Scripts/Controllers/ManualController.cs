@@ -8,6 +8,7 @@ public class ManualController : MonoBehaviour
 {
     [Tooltip("Se o jogador tomar a bola e estiver a uma distancia igual ou menor, a animação de tomada de bola sera executada")]
     public float distanceToEntry = 2.5f;
+    public float distanceToDrop = 1.5f;
 
     private PlayerController player;
     private ControllerLocomotion locomotion { get { return player.Locomotion; } }
@@ -59,6 +60,7 @@ public class ManualController : MonoBehaviour
             transform.LookAt(ballposition);
         }
 
+        //Gerenciamento de stamina
         if (locomotion.inSoccer)
         {
             SkillVar stamina = player.GetSkill_Stamina();
@@ -70,7 +72,6 @@ public class ManualController : MonoBehaviour
                 player.SetMotionNormal();
             }
         }
-
 
         //Para ações manuais se estiver tropeçando
         if (player.Locomotion.inStumble)//Tropeçando
@@ -115,11 +116,13 @@ public class ManualController : MonoBehaviour
         //Ações de chute
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Kick))
         {
+
             playerToPass = null;
             GameManager.instance.ResetIndicator();
 
             locomotion.TriggerKick();
             GameManager.instance.ResetIndicator();
+
         }
 
         //Soccer Motion
@@ -127,13 +130,14 @@ public class ManualController : MonoBehaviour
         {
             SkillVar Stamina = player.GetSkill_Stamina();
             float critical = (Stamina.MaxValue / 2);
-            if (Stamina.CurrentValue < critical)
-                return;
+            if (Stamina.CurrentValue > critical)
+            {
 
-            playerToPass = null;
-            GameManager.instance.ResetIndicator();
-            player.SetMotionSoccer();
-            player.Locomotion.SetSpeedMultiplies(1.2f);
+                playerToPass = null;
+                GameManager.instance.ResetIndicator();
+                player.SetMotionSoccer();
+                player.Locomotion.SetSpeedMultiplies(1.2f);
+            }
 
         }
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Stamina))
@@ -149,10 +153,12 @@ public class ManualController : MonoBehaviour
         //Strafe Motion
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
+
             playerToPass = null;
             GameManager.instance.ResetIndicator();
             player.SetMotionStrafe();
             player.Locomotion.SetSpeedMultiplies(1.2f);
+
         }
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
@@ -186,7 +192,7 @@ public class ManualController : MonoBehaviour
             //playerToPass = null;
             //GameManager.instance.ResetIndicator();
 
-            if (player.IsMyBall() == true && locomotion.inNormal)
+            if (locomotion.inNormal)
             {
                 locomotion.TriggerPass();
             }
@@ -211,15 +217,7 @@ public class ManualController : MonoBehaviour
 
         UnsignEvents();
     }
-    private void OnCollisionEnter(Collision collision)
-    {
-        PlayerController colPlayer = collision.gameObject.GetComponent<PlayerController>();
-        if (colPlayer)
-        {
-            locomotion.TriggerEntry();
-        }
 
-    }
     //BallEvents
     private void OnBallSetOwner(PlayerController owner, PlayerController lasOwner)
     {
@@ -323,8 +321,7 @@ public class ManualController : MonoBehaviour
     {
         player.UnsetKinematic();
     }
-
-
+    
     private void EvLongKickOk()
     {
         if (BallController.IsOwner(player))
@@ -347,6 +344,9 @@ public class ManualController : MonoBehaviour
     }
     private void EvStumbleStart()
     {
+        if (player.IsMyBall())
+            BallController.SetPass(8.0f);
+
         player.SetKinematic();
     }
     private void EvStumbleFinish()
@@ -354,6 +354,41 @@ public class ManualController : MonoBehaviour
         player.UnsetKinematic();
     }
 
+    //Traking
+    private void EvTrakStart()
+    {
+
+    }
+    private void EvTrakOkt()
+    {       
+        List<PlayerController> enemys = player.GetEnemysNear(distanceToDrop);
+        if (enemys.Count > 0)
+            foreach (PlayerController enemy in enemys)
+                enemy.Locomotion.SetTrip();
+    }
+    private void EvTrakFinish()
+    {
+
+    }
+    //Triping
+    private void EvTripFinish()
+    {
+
+    }
+    private void EvTripStart()
+    {
+        if (player.IsMyBall())
+        {
+            BallController.instance.SetBallDesprotectTo(player);
+            BallController.SetPass(8.0f);
+        }
+
+        player.SetKinematic();
+    }
+    private void EvStandup()
+    {
+        player.UnsetKinematic();
+    }
     //Private methods
     private void SignEvents()
     {
@@ -379,6 +414,13 @@ public class ManualController : MonoBehaviour
         BallController.instance.onSetMyOwner -= OnBallSetOwner;
         BallController.instance.onRemoveMyOwner -= OnBallRemoveOwner;
 
+        animatorEvents.OnTrackingStart -= EvTrakStart;
+        animatorEvents.OnTrackingOk -= EvTrakOkt;
+        animatorEvents.OnTrackingFinish -= EvTrakFinish;
+        animatorEvents.OnTripingStart -= EvTripStart;
+        animatorEvents.OnTripingFinish -= EvTripFinish;
+        animatorEvents.OnOnStandingupFinish += EvStandup;
+
     }
 
     private IEnumerator IESignevents()
@@ -399,7 +441,12 @@ public class ManualController : MonoBehaviour
         animatorEvents.OnEnttryFinish += EvEntryFinish;
         animatorEvents.OnStumblesStart += EvStumbleStart;
         animatorEvents.OnStumblesFinish += EvStumbleFinish;
-
+        animatorEvents.OnTrackingStart += EvTrakStart;
+        animatorEvents.OnTrackingOk += EvTrakOkt;
+        animatorEvents.OnTrackingFinish += EvTrakFinish;
+        animatorEvents.OnTripingStart += EvTripStart;
+        animatorEvents.OnTripingFinish += EvTripFinish;
+        animatorEvents.OnOnStandingupFinish += EvStandup;
 
         while (BallController.instance == null)
             yield return null;

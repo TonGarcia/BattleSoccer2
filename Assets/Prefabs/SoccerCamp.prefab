@@ -642,7 +642,7 @@ GameObject:
   - component: {fileID: 33805467311129624}
   - component: {fileID: 64599921743112210}
   - component: {fileID: 23959409742661462}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: SoccerCamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1916,7 +1916,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1965944086526846}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d3e58b97ef2a2fa42b20327b45a89087, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1928,7 +1928,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1427432265822520}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d3e58b97ef2a2fa42b20327b45a89087, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1940,7 +1940,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1647153795994954}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d3e58b97ef2a2fa42b20327b45a89087, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1952,7 +1952,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1671213316196014}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d3e58b97ef2a2fa42b20327b45a89087, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

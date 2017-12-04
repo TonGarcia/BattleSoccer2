@@ -44,6 +44,20 @@ namespace SoccerGame
         public bool inStumble { get { return m_Animator.GetCurrentAnimatorStateInfo(2).IsName("Stumble"); } }
         public bool inKick { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("LongKick"); } }
         public bool inPass { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("ShortPass"); } }
+        public bool inTrip
+        {
+            get
+            {
+                AnimatorStateInfo state = m_Animator.GetCurrentAnimatorStateInfo(0);
+
+                bool result =
+                    state.IsName("Trip.Trip") ||
+                    state.IsName("Trip.Lay") ||
+                    state.IsName("Trip.Stand");
+                return result;
+            }
+        }
+        public bool inTrack { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Track"); } }
         public bool inNormal { get { return inStrafe == false && inSoccer == false; } }
         public bool inStrafe { get { return motionType == LocomotionType.strafe; } }
         public bool inSoccer { get { return motionType == LocomotionType.soccer; } }
@@ -60,7 +74,7 @@ namespace SoccerGame
                 return result;
             }
         }
-
+       
 
         private Animator m_Animator = null;
         private NavMeshAgent m_Agent = null;
@@ -80,6 +94,7 @@ namespace SoccerGame
         private int m_EntryId = 0;
         private int m_StumbleId = 0;
         private int m_OwnerBall = 0;
+        private int m_Trip = 0;
 
         public void Start(PlayerController controller, ControllerGravity gravity)
         {
@@ -88,7 +103,7 @@ namespace SoccerGame
             m_Rigidbody = m_controller.transform.GetComponent<Rigidbody>();
             m_Agent = m_controller.transform.GetComponent<NavMeshAgent>();
             m_Gravity = gravity;
-            
+
             m_SpeedId = Animator.StringToHash("Speed");
             m_AgularSpeedId = Animator.StringToHash("AngularSpeed");
             m_DirectionId = Animator.StringToHash("Direction");
@@ -100,10 +115,15 @@ namespace SoccerGame
             m_EntryId = Animator.StringToHash("Entry");
             m_StumbleId = Animator.StringToHash("Stumble");
             m_OwnerBall = Animator.StringToHash("OwnerBall");
+            m_Trip = Animator.StringToHash("Trip");
+
 
         }
         public void DoAnimator(float speed, float direction, bool ownerBall, bool isAI)
         {
+            if (inStumble || inTrip || inTrack)
+                return;
+
             m_ai = isAI;
 
             bool inTransition = m_Animator.IsInTransition(0);
@@ -159,6 +179,7 @@ namespace SoccerGame
         }
         public void OnAnimatorMove()
         {
+            
             // we implement this function to override the default root motion.
             // this allows us to modify the positional speed before it's applied.
             if (m_Gravity.IsGrounded)
@@ -183,7 +204,7 @@ namespace SoccerGame
                     if (m_ai)
                     {
 
-                        m_Rigidbody.GetComponent<NavMeshAgent>().velocity = Vector3.Lerp(m_Rigidbody.GetComponent<NavMeshAgent>().velocity, v, animatorSpeedDamp * Time.deltaTime); 
+                        m_Rigidbody.GetComponent<NavMeshAgent>().velocity = Vector3.Lerp(m_Rigidbody.GetComponent<NavMeshAgent>().velocity, v, animatorSpeedDamp * Time.deltaTime);
 
                     }
                     else
@@ -378,6 +399,15 @@ namespace SoccerGame
             if (!inEntry)
                 m_Animator.SetTrigger(m_EntryId);
         }
+        public void SetTrip()
+        {
+
+            m_Animator.SetBool(m_Trip, true);
+        }
+        public void ResetTrip()
+        {
+            m_Animator.SetBool(m_Trip, false);
+        }
         public void TriggerStumb()
         {
             if (!inStumble)
@@ -386,7 +416,7 @@ namespace SoccerGame
 
         private Vector3 GetDirectionAxis(float h, float v)
         {
-           
+
             Vector2 result = Vector2.zero;
 
             Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;

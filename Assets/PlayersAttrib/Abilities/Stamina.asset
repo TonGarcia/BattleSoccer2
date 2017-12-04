@@ -11,8 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1205b85208236ab40a1fac3978537ccc, type: 3}
   m_Name: Stamina
   m_EditorClassIdentifier: 
-  icon_withBall: {fileID: 0}
-  icon_withOutBall: {fileID: 0}
+  icon_withBall: {fileID: 21300000, guid: b1e1faebbfac182468e00baf7f6a0730, type: 3}
+  icon_withOutBall: {fileID: 21300000, guid: b1e1faebbfac182468e00baf7f6a0730, type: 3}
   skill:
     ability: {fileID: 11400000}
     maxValue: 100

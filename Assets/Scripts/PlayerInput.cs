@@ -8,7 +8,9 @@ public class PlayerInput
 {
    
     [SerializeField]
-    private ButtomInputType InputJump;
+    private ButtomInputType InputSkillAttack;
+    [SerializeField]
+    private ButtomInputType InputSkillDefense;
     [SerializeField]
     private ButtomInputType InputPass;
     [SerializeField]
@@ -20,7 +22,8 @@ public class PlayerInput
     [SerializeField]
     private ButtomInputType InputSelection;
 
-    public ButtomInputType Input_Jump { get { return InputJump; } }
+    public ButtomInputType Input_SkillAttack { get { return InputSkillAttack; } }
+    public ButtomInputType Input_SkillDefense { get { return InputSkillAttack; } }
     public ButtomInputType Input_Pass { get { return InputPass; } }
     public ButtomInputType Input_Kick { get { return InputKick; } }
     public ButtomInputType Input_Stamina { get { return InputStamina; } }

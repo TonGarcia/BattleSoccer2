@@ -8,7 +8,7 @@ using UnityEditor;
 public static class PlayerControllerExtensions
 {
 
-   
+
     public static CampTeam GetCampTeam(this PlayerController controller)
     {
         PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
@@ -32,7 +32,7 @@ public static class PlayerControllerExtensions
     {
         return controller.GetCampTeam() == player.GetCampTeam();
     }
-    
+
     public static float LeftRightDir(this PlayerController player, Vector3 position)
     {
 
@@ -74,11 +74,11 @@ public static class PlayerControllerExtensions
     {
         return player.IsLookAt(to.transform);
     }
-    public static PlayerSkills GetProfile (this PlayerController player)
+    public static PlayerSkills GetProfile(this PlayerController player)
     {
         return player.gameObject.GetComponent<PlayerSkills>();
     }
-    
+
 
 }
 
@@ -110,15 +110,16 @@ public class PlayerController : MonoBehaviour
     public bool IsIA = true;
 
     public Collider FovBallTryger;
-        
+
     public bool isMovie { get { return (speed > 0.0f || dir > 0.0f); } }
+    public bool isOk { get { return locomotion.inTrip==false; } }
 
     private new Rigidbody rigidbody;
     private Animator animator;
     private NavMeshAgent agent;
     private ManualController manualController;
     private AIController aicontroller;
-    
+
 
     private void Awake()
     {
@@ -147,8 +148,8 @@ public class PlayerController : MonoBehaviour
         agent.enabled = IsIA;
         manualController.enabled = !IsIA;
         aicontroller.enabled = IsIA;
-        locomotion.DoAnimator(speed, dir, this.IsMyBall(), IsIA); 
-        
+        locomotion.DoAnimator(speed, dir, this.IsMyBall(), IsIA);
+
 
     }
     private void FixedUpdate()
@@ -160,6 +161,18 @@ public class PlayerController : MonoBehaviour
     void OnAnimatorMove()
     {
         locomotion.OnAnimatorMove();
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        PlayerController colPlayer = collision.gameObject.GetComponent<PlayerController>();
+        if (colPlayer)
+        {
+            if (colPlayer.locomotion.inTrack && colPlayer.IsMyTeaM(this) == false)
+                locomotion.SetTrip();
+            else
+                locomotion.TriggerEntry();
+        }
+
     }
 
     public void SetKinematic()
@@ -356,7 +369,7 @@ public class PlayerController : MonoBehaviour
 
     public bool GetFreeHitRight(float distance, out Vector3 FreePosition)
     {
-       
+
         bool result = false;
         Vector3 resultPosition = Vector3.zero;
 
@@ -393,7 +406,7 @@ public class PlayerController : MonoBehaviour
     }
     public bool GetFreeHitLeft(float distance, out Vector3 FreePosition)
     {
-       
+
         bool result = false;
         Vector3 resultPosition = Vector3.zero;
 

@@ -143,6 +143,16 @@ public static class GameManagerExtensions
         return players;
 
     }
+    public static List<PlayerController> GetEnemysNear(this PlayerController controller, float maxDistance)
+    {
+        List<PlayerController> players = GameManager.instance.GetPlayers(controller.GetCampTeam().Enemy());
+        players.Remove(controller);
+
+        players.RemoveAll(r => r.Distance(controller) > maxDistance);
+
+        return players;
+
+    }
     /// <summary>
     /// Pesquisa time para o qual o controlador pertence. tenha em mente que NONE pode ser retornado caso o controlador nao 
     /// tenha nenhum time vinculado a aele

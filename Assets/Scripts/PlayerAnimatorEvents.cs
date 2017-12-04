@@ -29,7 +29,17 @@ public class PlayerAnimatorEvents : MonoBehaviour
     //Stumble
     public event EvntAnimatorArgs OnStumblesStart;
     public event EvntAnimatorArgs OnStumblesFinish;
+    //Attack
+    public event EvntAnimatorArgs OnTrackingStart;
+    public event EvntAnimatorArgs OnTrackingOk;
+    public event EvntAnimatorArgs OnTrackingFinish;
+    //Triping
+    public event EvntAnimatorArgs OnTripingStart;
+    public event EvntAnimatorArgs OnTripingFinish;
+    //StandUP
+    public event EvntAnimatorArgs OnOnStandingupFinish;
     //Hello
+
 
     private void OnChangeDirectionStart()
     {
@@ -116,5 +126,38 @@ public class PlayerAnimatorEvents : MonoBehaviour
     {
         if (OnStumblesFinish != null)
             OnStumblesFinish();
+    }
+
+    private void OnTrackStart()
+    {
+        if (OnTrackingStart != null)
+            OnTrackingStart();
+    }
+    private void OnTrackOk()
+    {
+        if (OnTrackingOk != null)
+            OnTrackingOk();
+    }
+    private void OnTrackFinish()
+    {
+        if (OnTrackingFinish != null)
+            OnTrackingFinish();
+    }
+
+    private void OnTripStart()
+    {
+        if (OnTripingStart != null)
+            OnTripingStart();
+    }
+    private void OnTripFinish()
+    {
+        if (OnTripingFinish != null)
+            OnTripingFinish();
+    }
+
+    private void OnStandupFinish()
+    {
+        if (OnOnStandingupFinish != null)
+            OnStandupFinish();
     }
 }

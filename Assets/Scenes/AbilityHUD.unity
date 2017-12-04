@@ -334,6 +334,16 @@ Prefab:
       propertyPath: placesManager
       value: 
       objectReference: {fileID: 1556369255}
+    - target: {fileID: 114925576742751908, guid: 9f098573c46fe6d43986c86ca74b801b,
+        type: 2}
+      propertyPath: teamMananger1.playerInput.InputSkillAttack
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114925576742751908, guid: 9f098573c46fe6d43986c86ca74b801b,
+        type: 2}
+      propertyPath: teamMananger1.playerInput.InputSkillDefense
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9f098573c46fe6d43986c86ca74b801b, type: 2}
   m_IsPrefabParent: 0

@@ -10,6 +10,8 @@ public class AIController : MonoBehaviour
 
     [Tooltip("Se o jogador tomar a bola e estiver a uma distancia igual ou menor, a animação de tomada de bola sera executada")]
     public float distanceToEntry = 2.5f;
+    public float distanceToDrop = 1.5f;
+
     [Range(0.0f, 10.0f)]
     public float distanceToDrible = 5.5f;
     [Range(0.0f, 10.0f)]
@@ -112,15 +114,7 @@ public class AIController : MonoBehaviour
     {
         UnsignEvents();
     }
-    private void OnCollisionEnter(Collision collision)
-    {
-        PlayerController colPlayer = collision.gameObject.GetComponent<PlayerController>();
-        if (colPlayer)
-        {
-            locomotion.TriggerEntry();
-        }
 
-    }
 
     //BallEvents
     private void OnBallSetOwner(PlayerController owner, PlayerController lasOwner)
@@ -128,10 +122,10 @@ public class AIController : MonoBehaviour
         //Animação de entrada de bola
         if (owner == player)
         {
-            if (!agent.enabled || !agent.isOnNavMesh)
+            if ((player.IsIA && !agent.enabled) || (player.IsIA && !agent.isOnNavMesh))
                 return;
 
-            agent.SetDestination(BallController.GetPosition());
+            //agent.SetDestination(BallController.GetPosition());
 
             if (lasOwner != null)
             {
@@ -255,13 +249,55 @@ public class AIController : MonoBehaviour
     //Stumble
     private void EvStumbleStart()
     {
+        if (player.IsMyBall())
+        {
+            BallController.instance.SetBallDesprotectTo(player);
+            BallController.SetPass(8.0f);
+        }
+
         player.SetKinematic();
     }
     private void EvStumbleFinish()
     {
         player.UnsetKinematic();
     }
+    //Traking
+    private void EvTrakStart()
+    {
+      
+    }
+    private void EvTrakOkt()
+    {
+       
+        List<PlayerController> enemys = player.GetEnemysNear(distanceToDrop);
+        if (enemys.Count > 0)
+            foreach (PlayerController enemy in enemys)
+                enemy.Locomotion.SetTrip();
+    }
+    private void EvTrakFinish()
+    {
 
+    }
+    //Triping
+    private void EvTripFinish()
+    {
+      
+    }
+    private void EvTripStart()
+    {
+        if (player.IsMyBall())
+        {
+            BallController.instance.SetBallDesprotectTo(player);
+            BallController.SetPass(8.0f);
+        }
+
+        player.SetKinematic();
+    }
+
+    private void EvStandup()
+    {
+        player.UnsetKinematic();
+    }
     //Private methods
     private void UpdateAiStates()
     {
@@ -326,6 +362,14 @@ public class AIController : MonoBehaviour
         BallController.instance.onSetMyOwner -= OnBallSetOwner;
         BallController.instance.onRemoveMyOwner -= OnBallRemoveOwner;
 
+        animatorEvents.OnTrackingStart -= EvTrakStart;
+        animatorEvents.OnTrackingOk -= EvTrakOkt;
+        animatorEvents.OnTrackingFinish -= EvTrakFinish;
+
+        animatorEvents.OnTripingStart -= EvTripStart;
+        animatorEvents.OnTripingFinish -= EvTripFinish;
+        animatorEvents.OnOnStandingupFinish += EvStandup;
+
     }
     private void UpdateNavMeshAgent()
     {
@@ -359,7 +403,12 @@ public class AIController : MonoBehaviour
         animatorEvents.OnPassFinish += EvShortPassFinish;
         animatorEvents.OnStumblesStart += EvStumbleStart;
         animatorEvents.OnStumblesFinish += EvStumbleFinish;
-
+        animatorEvents.OnTrackingStart += EvTrakStart;
+        animatorEvents.OnTrackingOk += EvTrakOkt;
+        animatorEvents.OnTrackingFinish += EvTrakFinish;
+        animatorEvents.OnTripingStart += EvTripStart;
+        animatorEvents.OnTripingFinish += EvTripFinish;
+        animatorEvents.OnOnStandingupFinish += EvStandup;
 
         while (BallController.instance == null)
             yield return null;
@@ -367,9 +416,7 @@ public class AIController : MonoBehaviour
         BallController.instance.onSetMyOwner += OnBallSetOwner;
         BallController.instance.onRemoveMyOwner += OnBallRemoveOwner;
     }
-
-
-
+    
     //InternalMethods
     internal void TriggerPass(PlayerController toPlayer)
     {

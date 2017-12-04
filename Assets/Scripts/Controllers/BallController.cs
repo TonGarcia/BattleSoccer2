@@ -37,7 +37,7 @@ public static class BallControllerExtensions
     /// <returns></returns>
     public static bool IsBallMostNear(this PlayerController player)
     {
-       
+
         PlayerController mostNeat = GameManager.instance.GetPlayerNearBall(player.GetCampTeam());
         if (mostNeat != null)
             return player == mostNeat;
@@ -133,8 +133,7 @@ public class BallController : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < 0)
-            transform.position = new Vector3(transform.position.x, 0.2f, transform.position.z);
+
 
         if (owner)
         {
@@ -164,7 +163,13 @@ public class BallController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-
+        if (transform.position.y < 0)
+        {
+            transform.position = new Vector3(transform.position.x, 0.2f, transform.position.z);
+            rigidbody.velocity = Vector3.zero;
+            SetBallDesprotectTo();
+            return;
+        }
     }
 
     void OnAnimatorMove()
@@ -183,20 +188,20 @@ public class BallController : MonoBehaviour
         if (player == null)
             return;
 
-        if (timeToSetOwner <= 0.5f)
+        if (player.Locomotion.inTrip || player.Locomotion.inStumble)
             return;
 
-
-
-
+        if (timeToSetOwner <= 0.5f)
+            return;
+                
         if (onSetMyOwner != null)
             onSetMyOwner(player, owner);
 
-        
+
         lastOwner = owner;
         owner = player;
 
-               
+
         SetKinematic();
 
         timeToSetOwner = 0.0f;
@@ -221,6 +226,7 @@ public class BallController : MonoBehaviour
             return;
 
         PlayerController playerFromKick = owner;
+        // SetBallDesprotectTo();
         UnsetmeOwner();
         rigidbody.AddForce(playerFromKick.transform.forward * 20, ForceMode.Impulse);
         rigidbody.AddForce(playerFromKick.transform.up * 8, ForceMode.Impulse);
@@ -233,6 +239,7 @@ public class BallController : MonoBehaviour
             return;
 
         PlayerController playerFromKick = owner;
+        // SetBallDesprotectTo();
         UnsetmeOwner();
         rigidbody.AddForce(playerFromKick.transform.forward * distance, ForceMode.Impulse);
         rigidbody.AddForce(playerFromKick.transform.up * distance / 4, ForceMode.Impulse);
@@ -272,6 +279,15 @@ public class BallController : MonoBehaviour
         if (protectedTo != player)
             return;
 
+        int maskPlayer = LayerMask.NameToLayer("SoccerPlayer");
+        int maskBall = LayerMask.NameToLayer("SoccerBall");
+
+        Physics.IgnoreLayerCollision(maskPlayer, maskBall, false);
+        protectedTo = null;
+        fovTriger.enabled = true;
+    }
+    private void SetBallDesprotectTo()
+    {
         int maskPlayer = LayerMask.NameToLayer("SoccerPlayer");
         int maskBall = LayerMask.NameToLayer("SoccerBall");
 
@@ -365,7 +381,7 @@ public class BallController : MonoBehaviour
     {
         return BallController.instance.IsMyTeam(player);
     }
-   
+
     public static Vector3 GetPosition()
     {
         return instance.transform.position;
