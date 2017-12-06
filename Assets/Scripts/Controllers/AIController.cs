@@ -158,10 +158,8 @@ public class AIController : MonoBehaviour
         BallController.instance.SetBallProtectedTo(player);
         BallController.ChangeDirection();
 
-        //Se o jogador selecionado do time adversario estiver proximo a mim na hora do lésinho, vou fazer ele tropeçar
-        CampTeam adversary = player.GetCampTeam() == CampTeam.Team_A ? CampTeam.Team_B : CampTeam.Team_A;
-
-        List<PlayerController> enemys = GameManager.instance.GetPlayersNearBall(adversary, 2.5f);
+        //Se o jogador selecionado do time adversario estiver proximo a mim na hora do lésinho, vou fazer ele tropeçar       
+        List<PlayerController> enemys = player.GetEnemysNear(2.5f);
         if (enemys.Count > 0)
             foreach (PlayerController enemy in enemys)
                 enemy.Locomotion.TriggerStumb();

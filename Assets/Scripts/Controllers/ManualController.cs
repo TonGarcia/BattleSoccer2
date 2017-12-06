@@ -30,12 +30,12 @@ public class ManualController : MonoBehaviour
             return;
 
         //Seleciona outro jogador manual mais proximo se eu estiver muito longe da bola
-        if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric)
+        if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric && player.GetCampTeam().HasPlayerOk())
         {
             timeToSelect += Time.deltaTime;
             if (timeToSelect > 1.5f)
             {
-                if (player.Distance(BallController.GetPosition()) > 3.5f) //Procurando jogador mais proximo
+                if (player.Distance(BallController.GetPosition()) > 3.5f || player.isOk == false) //Procurando jogador mais proximo
                 {
                     PlayerController nearBall = GameManager.instance.GetPlayerNearBall(player.GetCampTeam());
                     if (nearBall != player)
@@ -321,7 +321,7 @@ public class ManualController : MonoBehaviour
     {
         player.UnsetKinematic();
     }
-    
+
     private void EvLongKickOk()
     {
         if (BallController.IsOwner(player))
@@ -360,7 +360,7 @@ public class ManualController : MonoBehaviour
 
     }
     private void EvTrakOkt()
-    {       
+    {
         List<PlayerController> enemys = player.GetEnemysNear(distanceToDrop);
         if (enemys.Count > 0)
             foreach (PlayerController enemy in enemys)

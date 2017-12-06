@@ -48,6 +48,9 @@ namespace SoccerGame
         {
             get
             {
+                if (m_Animator == null)
+                    return false;
+
                 AnimatorStateInfo state = m_Animator.GetCurrentAnimatorStateInfo(0);
 
                 bool result =

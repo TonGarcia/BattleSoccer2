@@ -10,7 +10,7 @@ public static class PlayerControllerExtensions
 
 
     public static CampTeam GetCampTeam(this PlayerController controller)
-    {
+    {        
         PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
         return pinput.Team;
     }
@@ -112,7 +112,16 @@ public class PlayerController : MonoBehaviour
     public Collider FovBallTryger;
 
     public bool isMovie { get { return (speed > 0.0f || dir > 0.0f); } }
-    public bool isOk { get { return locomotion.inTrip==false; } }
+    public bool isOk
+    {
+        get
+        {
+            if (locomotion == null)
+                return false;
+            else
+                return (locomotion.inTrip == false);
+        }
+    }
 
     private new Rigidbody rigidbody;
     private Animator animator;

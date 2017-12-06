@@ -243,7 +243,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
     public override bool UpdateHandleStates()
     {
-        
+
         if (base.UpdateHandleStates() == false)
             return false;
 
@@ -471,18 +471,18 @@ public class SoccerAISelected : SoccerAIGeneric
 
     public override bool UpdateHandleStates()
     {
-        
+
         if (base.UpdateHandleStates() == false)
             return false;
 
-     
+
 
         if (!Agent.isActiveAndEnabled || !Agent.isOnNavMesh)
             return false;
 
         aiState = SoccerAIState.followBall;
 
-       
+
 
         switch (aiState)
         {
@@ -490,7 +490,7 @@ public class SoccerAISelected : SoccerAIGeneric
                 Handlle_NothingState();
                 break;
             case SoccerAIState.followBall:
-                
+
                 Handle_FollowBallState();
                 break;
             default:
@@ -503,7 +503,7 @@ public class SoccerAISelected : SoccerAIGeneric
 
     private void Handlle_NothingState()
     {
-        
+
 
         //Indo para a origem
         //Se eu estiver proximo do jogador que possui a bola vou correr atraz da bola
@@ -533,7 +533,7 @@ public class SoccerAISelected : SoccerAIGeneric
             aiState = SoccerAIState.nothing;
             return;
         }
-        
+
 
         BallController ball = BallController.instance;
         float balldistance = ball.transform.Distance(Player.transform);
@@ -546,15 +546,15 @@ public class SoccerAISelected : SoccerAIGeneric
         Speed = move.y;
         Direction = move.x;
 
-       
+
 
         //Verifica a distancia da bola, se estiver muito longe procuro outor jogador mais proximo para selecionar
-        if (Player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric)
+        if (Player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric && Player.GetCampTeam().HasPlayerOk())
         {
             timeToSelect += Time.deltaTime;
             if (timeToSelect > 1.5f)
             {
-                if (balldistance > 3.5f) //Procurando jogador mais proximo
+                if (balldistance > 3.5f || Player.isOk == false) //Procurando jogador mais proximo
                 {
                     PlayerController nearBall = GameManager.instance.GetPlayerNearBall(Player.GetCampTeam());
                     if (nearBall != Player)
