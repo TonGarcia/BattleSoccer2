@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using SoccerGame;
 using UnityEditor;
+using RootMotion.FinalIK;
 
 public static class PlayerControllerExtensions
 {
@@ -110,6 +111,7 @@ public class PlayerController : MonoBehaviour
     public bool IsIA = true;
 
     public Collider FovBallTryger;
+    public BipedIK BipedIK;
 
     public bool isMovie { get { return (speed > 0.0f || dir > 0.0f); } }
     public bool isOk
@@ -146,10 +148,10 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        if (BallController.instance == null)
+        if (GameManager.isReady == false)
             return;
-        if (GameManager.instance == null)
-            return;
+
+      
 
         if (this.GetCampTeam().GetInputType() == ControllerInputType.ControllerCPU)
             IsIA = true;
@@ -159,7 +161,17 @@ public class PlayerController : MonoBehaviour
         aicontroller.enabled = IsIA;
         locomotion.DoAnimator(speed, dir, this.IsMyBall(), IsIA);
 
+        //Lookat
+        if (isOk)
+        {
+            BipedIK.solvers.lookAt.target = BallController.instance.transform;
+            BipedIK.solvers.lookAt.SetLookAtWeight(1.0f);
 
+        }
+        else
+        {
+            BipedIK.solvers.lookAt.SetLookAtWeight(0.0f);
+        }
     }
     private void FixedUpdate()
     {
