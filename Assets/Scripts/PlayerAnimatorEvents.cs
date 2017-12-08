@@ -158,6 +158,6 @@ public class PlayerAnimatorEvents : MonoBehaviour
     private void OnStandupFinish()
     {
         if (OnOnStandingupFinish != null)
-            OnStandupFinish();
+            OnOnStandingupFinish();
     }
 }

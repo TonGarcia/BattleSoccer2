@@ -11,7 +11,7 @@ public static class PlayerControllerExtensions
 
 
     public static CampTeam GetCampTeam(this PlayerController controller)
-    {        
+    {
         PlayerTeam pinput = controller.GetComponent<PlayerTeam>();
         return pinput.Team;
     }
@@ -151,8 +151,6 @@ public class PlayerController : MonoBehaviour
         if (GameManager.isReady == false)
             return;
 
-      
-
         if (this.GetCampTeam().GetInputType() == ControllerInputType.ControllerCPU)
             IsIA = true;
 
@@ -161,8 +159,9 @@ public class PlayerController : MonoBehaviour
         aicontroller.enabled = IsIA;
         locomotion.DoAnimator(speed, dir, this.IsMyBall(), IsIA);
 
+
         //Lookat
-        if (isOk)
+        if (isOk && this.IsMyBall() == false)
         {
             BipedIK.solvers.lookAt.target = BallController.instance.transform;
             BipedIK.solvers.lookAt.SetLookAtWeight(1.0f);

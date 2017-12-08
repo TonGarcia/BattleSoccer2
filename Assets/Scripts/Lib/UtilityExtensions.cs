@@ -63,8 +63,11 @@ namespace SoccerGame
     }
 
     [System.Serializable]
-    public class SkillVar: ICloneable
+    public class SkillVar : ICloneable
     {
+        public delegate void EventCallback();
+        public event EventCallback OnCooldown;
+
         [HideInInspector]
         public Ability ability;
 
@@ -100,10 +103,12 @@ namespace SoccerGame
 
         public Image imageValueFillAmount;
         public Image imageCooldownFillAmout;
+        public RectTransform panel;
 
         public float ElapsedValue { get { return elapsedValue; } }
         public float FillAmounValue { get { return elapsedValue / MaxValue; } }
         public float FillAmountCooldown { get { return coolDownTimeLeft / coolDownDuration; } }
+        public float ValuePerRegenDuration { get { return (maxValue / regenDuration) * Time.deltaTime; } }
         /// <summary>
         /// Verdadeiro se não estiver em Cooldown
         /// </summary>
@@ -120,6 +125,7 @@ namespace SoccerGame
         private float coolDownTimeLeft = 0;
         private float nextReadyTime = 0;
         private bool isReady = true;
+        private bool isEvCooldown = true;
 
         public void SetCurrentValue(float v)
         {
@@ -167,7 +173,6 @@ namespace SoccerGame
             imageCooldownFillAmout = image;
         }
 
-
         public void Update()
         {
             if (mode == SkillVarMode.autoRegen)
@@ -214,6 +219,8 @@ namespace SoccerGame
             if (isReady == false)
                 return;
 
+            isEvCooldown = false;
+
             nextReadyTime = coolDownDuration + Time.time;
             coolDownTimeLeft = coolDownDuration;
             if (imageCooldownFillAmout != null)
@@ -221,14 +228,26 @@ namespace SoccerGame
         }
         private void SkillReady()
         {
+
             isReady = true;
             if (imageCooldownFillAmout != null)
                 imageCooldownFillAmout.enabled = false;
+
+            if (isEvCooldown == false)
+            {
+                if (OnCooldown != null)
+                    OnCooldown();
+
+                isEvCooldown = true;
+            }
         }
         private void CoolDown()
         {
             isReady = false;
             coolDownTimeLeft -= Time.deltaTime;
+
+
+
             if (imageCooldownFillAmout != null)
             {
                 imageCooldownFillAmout.enabled = true;
@@ -240,5 +259,6 @@ namespace SoccerGame
         {
             return this.MemberwiseClone();
         }
+
     }
 }

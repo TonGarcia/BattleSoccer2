@@ -131,6 +131,11 @@ public abstract class SoccerAIGeneric
             return false;
         }
 
+        if (motionType == LocomotionType.soccer)
+            Player.GetSkill_Stamina().mode = SkillVarMode.autoSubtract;
+        else
+            Player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
+
         if (isForcedGoTo)
         {
             if (Player.IsMyBall())
@@ -529,7 +534,6 @@ public class SoccerAISelected : SoccerAIGeneric
         if (Player.IsMyBall() || !Player.IsSelected())
         {
             Stop();
-
             aiState = SoccerAIState.nothing;
             return;
         }
@@ -546,6 +550,16 @@ public class SoccerAISelected : SoccerAIGeneric
         Speed = move.y;
         Direction = move.x;
 
+        //Ativa movimento soccer se tiver stamina e estiver muito longe da bola
+        if (balldistance > 5.0f)
+        {
+            if (Player.GetSkill_Stamina().IsCritical == false)
+                motionType = LocomotionType.soccer;
+            else if (Player.GetSkill_Stamina().IsMin)
+                motionType = LocomotionType.normal;
+        }
+        else
+            motionType = LocomotionType.normal;
 
 
         //Verifica a distancia da bola, se estiver muito longe procuro outor jogador mais proximo para selecionar
@@ -665,9 +679,16 @@ public class SoccerAIwithBall : SoccerAIGeneric
 
         if (enemyNear != null)
             if (enemyNear.Distance(Player) <= 5.5f && enemyNear.IsSelected())
-                motionType = LocomotionType.soccer;
+            {
+                if (Player.GetSkill_Stamina().IsCritical == false)
+                    motionType = LocomotionType.soccer;
+                else if (Player.GetSkill_Stamina().IsMin)
+                    motionType = LocomotionType.normal;
+            }
             else
                 motionType = LocomotionType.normal;
+
+
 
         //Vou passar a bola se existir um cara livre entre e o gol. Esta e a prioridade ja q ele tem caminho livre
         if (Player.IsHitForwad(checkDistanceToPass, out playerBtw))

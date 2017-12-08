@@ -129,10 +129,9 @@ public class ManualController : MonoBehaviour
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
             SkillVar Stamina = player.GetSkill_Stamina();
-            float critical = (Stamina.MaxValue / 2);
-            if (Stamina.CurrentValue > critical)
+           
+            if (Stamina.IsCritical==false)
             {
-
                 playerToPass = null;
                 GameManager.instance.ResetIndicator();
                 player.SetMotionSoccer();
