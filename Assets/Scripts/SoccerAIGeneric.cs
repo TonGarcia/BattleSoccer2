@@ -551,7 +551,8 @@ public class SoccerAISelected : SoccerAIGeneric
         Direction = move.x;
 
         //Ativa movimento soccer se tiver stamina e estiver muito longe da bola
-        if (balldistance > 5.0f)
+
+        if (balldistance > 5.0f && Player.isOk)
         {
             if (Player.GetSkill_Stamina().IsCritical == false)
                 motionType = LocomotionType.soccer;
@@ -678,7 +679,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
         }
 
         if (enemyNear != null)
-            if (enemyNear.Distance(Player) <= 5.5f && enemyNear.IsSelected())
+            if (enemyNear.Distance(Player) <= 5.5f && enemyNear.IsSelected() && Player.isOk)
             {
                 if (Player.GetSkill_Stamina().IsCritical == false)
                     motionType = LocomotionType.soccer;

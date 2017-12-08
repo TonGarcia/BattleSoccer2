@@ -65,7 +65,7 @@ public class ManualController : MonoBehaviour
         {
             SkillVar stamina = player.GetSkill_Stamina();
             stamina.mode = SkillVarMode.autoSubtract;
-            if (stamina.IsMin)
+            if (stamina.IsMin || player.isOk == false)
             {
                 player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
                 locomotion.ResetSpeedMultiples();
@@ -129,8 +129,8 @@ public class ManualController : MonoBehaviour
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
             SkillVar Stamina = player.GetSkill_Stamina();
-           
-            if (Stamina.IsCritical==false)
+
+            if (Stamina.IsCritical == false && player.isOk)
             {
                 playerToPass = null;
                 GameManager.instance.ResetIndicator();

@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
             if (locomotion == null)
                 return false;
             else
-                return (locomotion.inTrip == false);
+                return (locomotion.inTrip == false && locomotion.inStumble ==false);
         }
     }
 

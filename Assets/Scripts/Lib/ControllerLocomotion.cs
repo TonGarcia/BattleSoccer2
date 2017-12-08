@@ -41,7 +41,17 @@ namespace SoccerGame
         public bool inIdle { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"); } }
         public bool inWalkRun { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("WalkRun"); } }
         public bool inEntry { get { return m_Animator.GetCurrentAnimatorStateInfo(1).IsName("Entry"); } }
-        public bool inStumble { get { return m_Animator.GetCurrentAnimatorStateInfo(2).IsName("Stumble"); } }
+        public bool inStumble
+        {
+            get
+            {
+
+                if (m_Animator == null)
+                    return false;
+
+                return m_Animator.GetCurrentAnimatorStateInfo(2).IsName("Stumble");
+            }
+        }
         public bool inKick { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("LongKick"); } }
         public bool inPass { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("ShortPass"); } }
         public bool inTrip
@@ -77,7 +87,7 @@ namespace SoccerGame
                 return result;
             }
         }
-       
+
 
         private Animator m_Animator = null;
         private NavMeshAgent m_Agent = null;
@@ -182,7 +192,7 @@ namespace SoccerGame
         }
         public void OnAnimatorMove()
         {
-            
+
             // we implement this function to override the default root motion.
             // this allows us to modify the positional speed before it's applied.
             if (m_Gravity.IsGrounded)
