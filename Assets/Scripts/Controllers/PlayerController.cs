@@ -114,6 +114,10 @@ public class PlayerController : MonoBehaviour
     public BipedIK BipedIK;
 
     public bool isMovie { get { return (speed > 0.0f || dir > 0.0f); } }
+    /// <summary>
+    /// Ok se o jogador não estiver nos seguintes estados de animação:
+    /// Trip, Lay, Stumble, StandUP, Track
+    /// </summary>
     public bool isOk
     {
         get
@@ -121,7 +125,7 @@ public class PlayerController : MonoBehaviour
             if (locomotion == null)
                 return false;
             else
-                return (locomotion.inTrip == false && locomotion.inStumble ==false);
+                return (locomotion.inTrip == false && locomotion.inStumble ==false && locomotion.inTrack == false);
         }
     }
 

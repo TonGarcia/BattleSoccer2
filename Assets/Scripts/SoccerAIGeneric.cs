@@ -678,6 +678,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
             return;
         }
 
+        //Ativação de movimento soccer e uso de stamina
         if (enemyNear != null)
             if (enemyNear.Distance(Player) <= 5.5f && enemyNear.IsSelected() && Player.isOk)
             {
