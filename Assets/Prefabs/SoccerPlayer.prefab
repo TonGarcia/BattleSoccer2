@@ -2357,7 +2357,7 @@ MonoBehaviour:
     dampTime: 3.5
     mode: 0
     imageValueFillAmount: {fileID: 0}
-    imageCooldownFillAmout: {fileID: 114088066574595896}
+    imageCooldownFillAmout: {fileID: 114507371022709736}
     panel: {fileID: 224249798947193188}
 --- !u!114 &114507371022709736
 MonoBehaviour:
@@ -2420,14 +2420,14 @@ MonoBehaviour:
     eyes: []
   solvers:
     leftFoot:
-      IKPosition: {x: -0.12124488, y: 0.104922, z: 2.2736983}
+      IKPosition: {x: -0.09124488, y: 0.104922, z: -13.696301}
       IKPositionWeight: 0
       root: {fileID: 4573405893184542}
       target: {fileID: 0}
       IKRotationWeight: 0
       IKRotation: {x: -0.0000000046475335, y: -0.000000028664589, z: -0.00000010021836,
         w: 1}
-      bendNormal: {x: 0.0061912946, y: -0.000063000356, z: 0.0020220736}
+      bendNormal: {x: 0.0061914953, y: -0.00006299919, z: 0.0020220736}
       bone1:
         transform: {fileID: 4394097447395672}
         weight: 1
@@ -2467,14 +2467,14 @@ MonoBehaviour:
       bendModifierWeight: 1
       bendGoal: {fileID: 0}
     rightFoot:
-      IKPosition: {x: 0.0612444, y: 0.104922295, z: 2.2736979}
+      IKPosition: {x: 0.0912444, y: 0.104922295, z: -13.696302}
       IKPositionWeight: 0
       root: {fileID: 4573405893184542}
       target: {fileID: 0}
       IKRotationWeight: 0
       IKRotation: {x: -0.000000029802557, y: -0.000000013763432, z: -0.000000099287035,
         w: 1}
-      bendNormal: {x: 0.006202332, y: 0.00006299903, z: -0.0020220731}
+      bendNormal: {x: 0.0062029236, y: 0.00006299903, z: -0.0020220731}
       bone1:
         transform: {fileID: 4547992338587060}
         weight: 1
@@ -2514,7 +2514,7 @@ MonoBehaviour:
       bendModifierWeight: 1
       bendGoal: {fileID: 0}
     leftHand:
-      IKPosition: {x: -0.7677994, y: 1.4356561, z: 2.238285}
+      IKPosition: {x: -0.7377994, y: 1.4356561, z: -13.731715}
       IKPositionWeight: 0
       root: {fileID: 4573405893184542}
       target: {fileID: 0}
@@ -2561,7 +2561,7 @@ MonoBehaviour:
       bendModifierWeight: 1
       bendGoal: {fileID: 0}
     rightHand:
-      IKPosition: {x: 0.7077995, y: 1.4356557, z: 2.2382855}
+      IKPosition: {x: 0.73779947, y: 1.4356557, z: -13.731714}
       IKPositionWeight: 0
       root: {fileID: 4573405893184542}
       target: {fileID: 0}
@@ -2608,7 +2608,7 @@ MonoBehaviour:
       bendModifierWeight: 1
       bendGoal: {fileID: 0}
     spine:
-      IKPosition: {x: -0.029998485, y: 1.2136084, z: 2.2735033}
+      IKPosition: {x: 0.0000015139049, y: 1.2136084, z: -13.696497}
       IKPositionWeight: 0
       root: {fileID: 4573405893184542}
       target: {fileID: 0}
@@ -2619,18 +2619,18 @@ MonoBehaviour:
       bones:
       - transform: {fileID: 4033563015692128}
         weight: 1
-        solverPosition: {x: -0.029999897, y: 1.097154, z: 2.2877266}
+        solverPosition: {x: 0.000000101736134, y: 1.097154, z: -13.682274}
         solverRotation: {x: -8.8399755e-15, y: -0.00000001376344, z: -0.000000099287945,
           w: 1}
         defaultLocalPosition: {x: -0.0000000056483196, y: 0.09923459, z: -0.012273348}
         defaultLocalRotation: {x: -1.3930783e-15, y: -0.00000001376344, z: 0.00000044177568,
           w: 1}
-        length: 0.11731974
+        length: 0.11731971
         sqrMag: 0
-        axis: {x: 0.0000013883684, y: 0.11645436, z: -0.014223337}
+        axis: {x: 0.0000013886522, y: 0.11645436, z: -0.014223099}
       - transform: {fileID: 4992039575312480}
         weight: 1
-        solverPosition: {x: -0.029998485, y: 1.2136084, z: 2.2735033}
+        solverPosition: {x: 0.0000015139049, y: 1.2136084, z: -13.696497}
         solverRotation: {x: -8.839988e-15, y: -0.000000013763483, z: -0.00000009928726,
           w: 1}
         defaultLocalPosition: {x: 0.0000013886521, y: 0.1164544, z: -0.014223412}
@@ -2638,9 +2638,9 @@ MonoBehaviour:
           w: 1}
         length: 0
         sqrMag: 0
-        axis: {x: 0.0000013883687, y: 0.11645436, z: -0.014223337}
+        axis: {x: 0.0000013886524, y: 0.11645436, z: -0.014223099}
     lookAt:
-      IKPosition: {x: -0.029998485, y: 1.2136084, z: 5.2735033}
+      IKPosition: {x: 0.0000015139049, y: 1.2136084, z: -10.696497}
       IKPositionWeight: 0
       root: {fileID: 4573405893184542}
       target: {fileID: 0}
@@ -2743,7 +2743,7 @@ MonoBehaviour:
       transform: {fileID: 4678912249136462}
       target: {fileID: 0}
       positionOffset: {x: 0, y: 0, z: 0}
-      position: {x: -0.03, y: 0.9979194, z: 2.3}
+      position: {x: 0, y: 0.9979194, z: -13.67}
       positionWeight: 0
       rotationOffset: {x: 0, y: 0, z: 0}
       rotation: {x: -0, y: 0, z: -0.00006200132}

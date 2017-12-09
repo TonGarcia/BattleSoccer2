@@ -607,6 +607,11 @@ Prefab:
     - target: {fileID: 114925576742751908, guid: 9f098573c46fe6d43986c86ca74b801b,
         type: 2}
       propertyPath: teamMananger1.controllerType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114925576742751908, guid: 9f098573c46fe6d43986c86ca74b801b,
+        type: 2}
+      propertyPath: teamMananger1.inputType
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1069,6 +1074,11 @@ Prefab:
     - target: {fileID: 4573405893184542, guid: 7de88fd53e5186f43bfc02c6bd9b02ee, type: 2}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114247506803361644, guid: 7de88fd53e5186f43bfc02c6bd9b02ee,
+        type: 2}
+      propertyPath: placeMarcation
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7de88fd53e5186f43bfc02c6bd9b02ee, type: 2}

@@ -102,6 +102,10 @@ public static class GameManagerExtensions
     {
         return GameManager.instance.IsController2(controller.GetCampTeam());
     }
+    public static bool IsControllerCPU(this PlayerController controller)
+    {
+        return GameManager.instance.IsControllerCPU(controller.GetCampTeam());
+    }
     public static bool IsIA(this CampTeam team)
     {
         return GameManager.instance.IsIA(team);
@@ -488,6 +492,11 @@ public class GameManager : MonoBehaviour
     {
         TeamManager manager = GetTeamManager(team);
         return team.GetInputType() == ControllerInputType.Controller2;
+    }
+    public bool IsControllerCPU(CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+        return team.GetInputType() == ControllerInputType.ControllerCPU;
     }
     public bool HasTwoPlayers()
     {

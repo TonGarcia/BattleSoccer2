@@ -239,7 +239,7 @@ public class BallController : MonoBehaviour
             return;
 
         PlayerController playerFromKick = owner;
-        // SetBallDesprotectTo();
+        SetBallDesprotectTo();
         UnsetmeOwner();
         rigidbody.AddForce(playerFromKick.transform.forward * distance, ForceMode.Impulse);
         rigidbody.AddForce(playerFromKick.transform.up * distance / 4, ForceMode.Impulse);

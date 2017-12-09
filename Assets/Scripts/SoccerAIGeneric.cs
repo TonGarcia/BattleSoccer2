@@ -240,6 +240,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 {
     public SoccerAIState AiState { get { return aiState; } }
     private SoccerAIState aiState;
+    private float timeToTrak = 0.0f;
 
     public SoccerAIUnSelected(AIController owner, PlayerController controller) : base(owner, controller)
     {
@@ -407,11 +408,26 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         Vector3 ballPosition = BallController.GetPosition();
         ballPosition.y = Player.transform.position.y;
 
+        //Rasteira
+        PlayerController enemyforward;
+        timeToTrak += Time.deltaTime;
+        if (Player.IsHitForwad(0.2f, out enemyforward, Player.GetCampTeam().Enemy()))
+        {
+            if (timeToTrak > 1.5f)
+            {
+                motionType = LocomotionType.normal;
+                Locomotion.TriggerPass();
+                timeToTrak = 0.0f;
+            }
+        }
 
         Vector2 move = Locomotion.GetDirectionAI();
         Direction = move.x;
         Speed = move.y;
         Agent.SetDestination(ballPosition);
+
+       
+
 
     }
     private void Handle_MarcandoState()
@@ -468,7 +484,7 @@ public class SoccerAISelected : SoccerAIGeneric
     public SoccerAIState AiState { get { return aiState; } }
     private SoccerAIState aiState;
     private float timeToSelect = 0;
-
+    private float timeToTrak = 0;
     public SoccerAISelected(AIController owner, PlayerController controller) : base(owner, controller)
     {
         aiState = SoccerAIState.nothing;
@@ -562,6 +578,19 @@ public class SoccerAISelected : SoccerAIGeneric
         else
             motionType = LocomotionType.normal;
 
+        //Rasteira
+        PlayerController enemyforward;
+        timeToTrak += Time.deltaTime;
+        if (Player.IsHitForwad(0.2f, out enemyforward, Player.GetCampTeam().Enemy()))
+        {
+           
+            if (timeToTrak > 1.5f)
+            {
+                motionType = LocomotionType.normal;
+                Locomotion.TriggerPass();
+                timeToTrak = 0.0f;
+            }
+        }
 
         //Verifica a distancia da bola, se estiver muito longe procuro outor jogador mais proximo para selecionar
         if (Player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric && Player.GetCampTeam().HasPlayerOk())

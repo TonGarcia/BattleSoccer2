@@ -125,7 +125,15 @@ public class PlayerController : MonoBehaviour
             if (locomotion == null)
                 return false;
             else
-                return (locomotion.inTrip == false && locomotion.inStumble ==false && locomotion.inTrack == false);
+            {
+                if (this.IsControllerCPU())
+                {
+                    return (locomotion.inTrip == false && locomotion.inStumble==false);
+                }
+                else
+                    return (locomotion.inTrip == false);
+            }
+
         }
     }
 
@@ -241,7 +249,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsHitBetween(to.transform, out hitedPlayer))
         {
-            if (hitedPlayer != to)
+            if (hitedPlayer != to && hitedPlayer.isOk)
                 result = true;
         }
 
@@ -256,7 +264,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsHitBetween(to, out hitedPlayer))
         {
-            if (transform.position.Equals(to) == false)
+            if (transform.position.Equals(to) == false && hitedPlayer.isOk)
                 result = true;
         }
 
@@ -271,7 +279,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsHitBetween(to.transform, out hitedPlayer))
         {
-            if (hitedPlayer != to)
+            if (hitedPlayer != to && hitedPlayer.isOk)
                 result = true;
         }
 
@@ -286,7 +294,7 @@ public class PlayerController : MonoBehaviour
 
         if (IsHitBetween(to.position, out hitedPlayer))
         {
-            if (hitedPlayer.transform != to)
+            if (hitedPlayer.transform != to && hitedPlayer.isOk)
                 result = true;
         }
 
@@ -314,14 +322,14 @@ public class PlayerController : MonoBehaviour
             if (hitInfo.transform.GetComponent<PlayerController>() != null)
             {
                 hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
-                if (hitedPlayer.transform.position != to)
+                if (hitedPlayer.transform.position != to && hitedPlayer.isOk)
                     result = true;
             }
 
             ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
         }
 
-        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
+        //  ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
 
         hitPlayer = hitedPlayer;
         return result;
@@ -340,17 +348,19 @@ public class PlayerController : MonoBehaviour
         RaycastHit hitInfo;
         if (Physics.BoxCast(origem, halfExtents, direction, out hitInfo, orientation, distance, LayerMask.GetMask("SoccerPlayer")))
         {
-
             if (hitInfo.transform.GetComponent<PlayerController>() != null)
             {
-                hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
-                result = true;
+                if (hitInfo.transform.GetComponent<PlayerController>().isOk)
+                {
+                    hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
+                    result = true;
+                }
             }
 
             ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
         }
 
-        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
+        // ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
 
         hitPlayer = hitedPlayer;
         return result;
@@ -375,17 +385,17 @@ public class PlayerController : MonoBehaviour
 
                 hitedPlayer = hitInfo.transform.GetComponent<PlayerController>();
 
-                if (hitedPlayer.GetCampTeam() == team)
+                if (hitedPlayer.GetCampTeam() == team && hitedPlayer.isOk)
                     result = true;
 
                 ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
             }
 
 
-            ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
+            //ExtDebug.DrawBoxCastOnHit(origem, halfExtents, orientation, direction, hitInfo.distance, Color.red);
         }
 
-        ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
+        //ExtDebug.DrawBox(origem, halfExtents, orientation, Color.red);
         hitPlayer = hitedPlayer;
         return result;
 

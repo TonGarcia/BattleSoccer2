@@ -70,7 +70,15 @@ namespace SoccerGame
                 return result;
             }
         }
-        public bool inTrack { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Track"); } }
+        public bool inTrack
+        {
+            get
+            {
+                if (m_Animator == null)
+                    return false;
+                return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Track");
+            }
+        }
         public bool inNormal { get { return inStrafe == false && inSoccer == false; } }
         public bool inStrafe { get { return motionType == LocomotionType.strafe; } }
         public bool inSoccer { get { return motionType == LocomotionType.soccer; } }

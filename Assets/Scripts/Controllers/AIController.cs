@@ -232,7 +232,10 @@ public class AIController : MonoBehaviour
                 AiToPass.WaitPass();
                 BallController.SetPass(AiToPass.player.Distance(player) * 2.0f);
             }
-            BallController.SetPass(12.0f);
+            else
+            {
+                BallController.SetPass(12.0f);
+            }
         }
 
         AiToPass = null;
