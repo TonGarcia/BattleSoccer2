@@ -224,7 +224,7 @@ public abstract class SoccerAIGeneric
         if (Agent.isOnNavMesh && Agent.enabled)
             Agent.destination = Player.transform.position;
 
-
+        Locomotion.jump = false;
         Speed = 0;
         Direction = 0;
         motionType = LocomotionType.normal;
@@ -277,6 +277,9 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
     private void Handlle_NothingState()
     {
+        if (Agent.isOnNavMesh == false || Agent.enabled == false)
+            return;
+
         //Indo para a origem
         //Se eu não estiver no ponto de origem vou ir para ele.
         //Se a bola estiver com o time o ponto de marcao é o de ataque
@@ -426,7 +429,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         Speed = move.y;
         Agent.SetDestination(ballPosition);
 
-       
+
 
 
     }
@@ -583,7 +586,7 @@ public class SoccerAISelected : SoccerAIGeneric
         timeToTrak += Time.deltaTime;
         if (Player.IsHitForwad(0.2f, out enemyforward, Player.GetCampTeam().Enemy()))
         {
-           
+
             if (timeToTrak > 1.5f)
             {
                 motionType = LocomotionType.normal;

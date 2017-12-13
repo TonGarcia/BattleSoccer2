@@ -110,8 +110,14 @@ public class MultiSelection : MonoBehaviour
         if (selector == null)
             return;
 
+     
+
         if (selectedPlayer != null)
-            selector.transform.position = selectedPlayer.transform.position;
+        {
+            Vector3 target = selectedPlayer.transform.position;
+            target.y = 0;
+            selector.transform.position = target;
+        }
         else
             selector.transform.position = new Vector3(100, 100, 100);
     }

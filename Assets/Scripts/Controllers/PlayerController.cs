@@ -186,8 +186,13 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        if (locomotion == null)
+            return;
+
         //Atualiza forças da gravidade
-        gravity.Update(false);
+        gravity.Update(locomotion.jump);
+        //gravity.Update(true);
+
 
     }
     void OnAnimatorMove()

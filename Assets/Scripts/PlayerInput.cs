@@ -21,6 +21,8 @@ public class PlayerInput
     private ButtomInputType InputStrafe;
     [SerializeField]
     private ButtomInputType InputSelection;
+    [SerializeField]
+    private ButtomInputType InputJump;
 
     public ButtomInputType Input_SkillAttack { get { return InputSkillAttack; } }
     public ButtomInputType Input_SkillDefense { get { return InputSkillAttack; } }
@@ -30,6 +32,7 @@ public class PlayerInput
     public ButtomInputType Input_Strafe { get { return InputStrafe; } }
     public ButtomInputType Input_Selection { get { return InputSelection; } }
 
+    public ButtomInputType Input_Jump { get { return InputJump; } }
 
 
 

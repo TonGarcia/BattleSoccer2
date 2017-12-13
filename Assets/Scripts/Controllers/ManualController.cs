@@ -198,6 +198,14 @@ public class ManualController : MonoBehaviour
         }
 
 
+        if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Jump))
+        {
+            locomotion.jump = true;
+        }
+        if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Jump))
+        {
+            locomotion.jump = false;
+        }
     }
 
     //Unity Events
@@ -287,6 +295,9 @@ public class ManualController : MonoBehaviour
 
     private void EvPassStart()
     {
+        if (player.Locomotion.inAir)
+            return;
+
         if (player.IsMyBall())
             BallController.instance.SetBallProtectedTo(player);
         player.SetKinematic();

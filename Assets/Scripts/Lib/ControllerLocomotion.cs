@@ -38,6 +38,9 @@ namespace SoccerGame
         [SerializeField]
         private bool useExtraRotation = false;
 
+        [HideInInspector]
+        public bool jump = false;
+
         public bool inIdle { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"); } }
         public bool inWalkRun { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("WalkRun"); } }
         public bool inEntry { get { return m_Animator.GetCurrentAnimatorStateInfo(1).IsName("Entry"); } }
@@ -95,6 +98,7 @@ namespace SoccerGame
                 return result;
             }
         }
+        public bool inAir { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Airborne"); } }
 
 
         private Animator m_Animator = null;
@@ -174,6 +178,7 @@ namespace SoccerGame
             m_Animator.SetBool("Strafe", inStrafe);
             m_Animator.SetBool("Locomotion", inSoccer);
             m_Animator.SetBool("OwnerBall", ownerBall);
+
             if (!isGrounded)
                 m_Animator.SetFloat(m_JumpId, m_Rigidbody.velocity.y);
             else
@@ -203,6 +208,7 @@ namespace SoccerGame
 
             // we implement this function to override the default root motion.
             // this allows us to modify the positional speed before it's applied.
+            
             if (m_Gravity.IsGrounded)
             {
                 if (m_Rigidbody.isKinematic)
@@ -221,7 +227,6 @@ namespace SoccerGame
                     Vector3 v = (m_Animator.deltaPosition * animSpeedMultiplier) / Time.deltaTime;
                     v.y = m_Rigidbody.velocity.y;
 
-
                     if (m_ai)
                     {
 
@@ -239,6 +244,12 @@ namespace SoccerGame
                         m_Rigidbody.transform.rotation = m_Animator.rootRotation;
                 }
             }
+            else
+            {
+           
+
+            }
+            
         }
         public bool IsAgentDone
         {
@@ -399,7 +410,7 @@ namespace SoccerGame
         {
             if (inSoccer == false && inStrafe == false && inStumble == false)
             {
-                if (inWalkRun == true || inIdle == true)
+                if (inWalkRun == true || inIdle == true || inAir == true)
                 {
                     m_Animator.SetTrigger(m_KickId);
                 }
@@ -409,7 +420,7 @@ namespace SoccerGame
         {
             if (inSoccer == false && inStrafe == false && inStumble == false)
             {
-                if (inWalkRun == true || inIdle == true)
+                if (inWalkRun == true || inIdle == true || inAir == true)
                 {
                     m_Animator.SetTrigger(m_PassId);
                 }
@@ -434,7 +445,16 @@ namespace SoccerGame
             if (!inStumble)
                 m_Animator.SetTrigger(m_StumbleId);
         }
+        public void Jump()
+        {
+            // check whether conditions are right to allow a jump:
+            if (inAir == false)
+            {
+               // m_Gravity.Update
 
+            }
+
+        }
         private Vector3 GetDirectionAxis(float h, float v)
         {
 

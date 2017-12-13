@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SoccerGame
 {
@@ -12,7 +13,7 @@ namespace SoccerGame
 
         [SerializeField]
         private float groundCheckDistance = 0.25f;
-       
+
         [SerializeField]
         private float jumpPower = 12f;
         [SerializeField]
@@ -38,7 +39,7 @@ namespace SoccerGame
         /// <summary>
         /// Aplique no fixedUpdate para atualizar o motor de gravidade a cada frame
         /// </summary>
-        /// <param name="jump"></param>
+
         public void Update(bool jump)
         {
             UpdateGroundStatus();
@@ -49,7 +50,7 @@ namespace SoccerGame
                 HandleAirborneMovement();
         }
 
-        
+
         //Atualiza as variaveis responsaveis pela gravidade
         private void UpdateGroundStatus()
         {
@@ -74,6 +75,13 @@ namespace SoccerGame
                 m_GroundNormal = hitInfo.normal;
                 m_IsGrounded = true;
                 animator.applyRootMotion = true;
+                if (rigidbody.GetComponent<NavMeshAgent>())
+                {
+                    if (rigidbody.GetComponent<PlayerController>())
+                        if (rigidbody.GetComponent<PlayerController>().IsIA)
+                            rigidbody.GetComponent<NavMeshAgent>().updatePosition = true;
+                }
+
             }
             else
             {
@@ -93,10 +101,13 @@ namespace SoccerGame
         private void HandleGroundedMovement(bool jump)
         {
             // check whether conditions are right to allow a jump:
-            if (jump && animator.GetCurrentAnimatorStateInfo(0).IsName("Normal.WalkRun"))
+            if (jump && animator.GetCurrentAnimatorStateInfo(0).IsName("WalkRun"))
             {
 
                 // jump!
+                if (rigidbody.GetComponent<NavMeshAgent>())
+                    rigidbody.GetComponent<NavMeshAgent>().updatePosition = false;
+
                 rigidbody.velocity = new Vector3(rigidbody.velocity.x, jumpPower, rigidbody.velocity.z);
                 m_IsGrounded = false;
                 animator.applyRootMotion = false;

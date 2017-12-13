@@ -322,12 +322,14 @@ MonoBehaviour:
     selectionMode: 0
     goalPosition: {fileID: 4357769947549254}
     playerInput:
-      InputJump: 2
+      InputSkillAttack: 0
+      InputSkillDefense: 0
       InputPass: 1
       InputKick: 0
       InputStamina: 4
       InputStrafe: 5
       InputSelection: 6
+      InputJump: 2
     players: []
     autoFoundPlayers: 1
     multSelection: {fileID: 114098962011075818}
@@ -338,12 +340,14 @@ MonoBehaviour:
     selectionMode: 0
     goalPosition: {fileID: 4940241925069920}
     playerInput:
-      InputJump: 2
+      InputSkillAttack: 0
+      InputSkillDefense: 0
       InputPass: 1
       InputKick: 0
       InputStamina: 4
       InputStrafe: 6
       InputSelection: 0
+      InputJump: 2
     players: []
     autoFoundPlayers: 1
     multSelection: {fileID: 114328832952372530}
