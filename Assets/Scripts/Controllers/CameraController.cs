@@ -25,24 +25,27 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        PlayerController p1, p2;
+        p1 = GameManager.instance.GetSelectedPlayer(CampTeam.Team_A);
+        p2 = GameManager.instance.GetSelectedPlayer(CampTeam.Team_B);
+
         //Controle de zom automatico
         if (automaticZoom)
         {
-            PlayerController p1, p2;
-            p1 = GameManager.instance.GetSelectedPlayer(CampTeam.Team_A);
-            p2 = GameManager.instance.GetSelectedPlayer(CampTeam.Team_B);
+
             if (p1 && p2)
             {
                 float playersDistance = p1.Distance(p2);
-                
                 zoom = playersDistance / 4;
+
             }
         }
 
         Vector3 to = targetOffsetPos;
         to.x -= zoom;
         to.y += zoom;
-       // to.z -= zoom;
+
+        //  to.z -= Mathf.Cos(to.x - to.y)/180;
 
         oldPos = transform.position;
         Vector3 newPos = target.position + to;

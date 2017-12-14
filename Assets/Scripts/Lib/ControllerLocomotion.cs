@@ -16,10 +16,7 @@ namespace SoccerGame
     [System.Serializable]
     public class ControllerLocomotion
     {
-
-
         public LocomotionType motionType;
-
         [SerializeField]
         private float m_MovingTurnSpeed = 360;
         [SerializeField]
@@ -34,6 +31,7 @@ namespace SoccerGame
         private float animatorSpeedDamp = 5.5f;
         [SerializeField]
         private float animSpeedMultiplier = 1.0f;
+        public float speedMultply { get { return animSpeedMultiplier; } }
 
         [SerializeField]
         private bool useExtraRotation = false;
@@ -63,13 +61,14 @@ namespace SoccerGame
             {
                 if (m_Animator == null)
                     return false;
-
+                
                 AnimatorStateInfo state = m_Animator.GetCurrentAnimatorStateInfo(0);
 
                 bool result =
                     state.IsName("Trip.Trip") ||
                     state.IsName("Trip.Lay") ||
-                    state.IsName("Trip.Stand");
+                    state.IsName("Trip.Stand") ||
+                    m_Animator.GetBool(m_Trip);
                 return result;
             }
         }
@@ -98,14 +97,26 @@ namespace SoccerGame
                 return result;
             }
         }
-        public bool inAir { get { return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Airborne"); } }
+        public bool inAir
+        {
+            get
+            {
 
+                if (m_Gravity != null)
+                    return !m_Gravity.IsGrounded;
+                else
+                    return m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Airborne");
+
+            }
+        }
+        
 
         private Animator m_Animator = null;
         private NavMeshAgent m_Agent = null;
         private Rigidbody m_Rigidbody = null;
         private ControllerGravity m_Gravity = null;
         private PlayerController m_controller = null;
+        private PlayerController m_jointedController = null;
         private bool m_ai = false;
 
         private int m_SpeedId = 0;
@@ -120,6 +131,7 @@ namespace SoccerGame
         private int m_StumbleId = 0;
         private int m_OwnerBall = 0;
         private int m_Trip = 0;
+
 
         public void Start(PlayerController controller, ControllerGravity gravity)
         {
@@ -208,7 +220,7 @@ namespace SoccerGame
 
             // we implement this function to override the default root motion.
             // this allows us to modify the positional speed before it's applied.
-            
+
             if (m_Gravity.IsGrounded)
             {
                 if (m_Rigidbody.isKinematic)
@@ -246,10 +258,10 @@ namespace SoccerGame
             }
             else
             {
-           
+
 
             }
-            
+
         }
         public bool IsAgentDone
         {
@@ -408,7 +420,7 @@ namespace SoccerGame
         }
         public void TriggerKick()
         {
-            if (inSoccer == false && inStrafe == false && inStumble == false)
+            if (inSoccer == false && inStrafe == false && inStumble == false && inTrip == false)
             {
                 if (inWalkRun == true || inIdle == true || inAir == true)
                 {
@@ -433,7 +445,6 @@ namespace SoccerGame
         }
         public void SetTrip()
         {
-
             m_Animator.SetBool(m_Trip, true);
         }
         public void ResetTrip()
@@ -445,14 +456,30 @@ namespace SoccerGame
             if (!inStumble)
                 m_Animator.SetTrigger(m_StumbleId);
         }
-        public void Jump()
+        public void JointTo(PlayerController playerToJoint)
         {
-            // check whether conditions are right to allow a jump:
-            if (inAir == false)
-            {
-               // m_Gravity.Update
 
-            }
+            FixedJoint joint = m_Rigidbody.gameObject.GetComponent<FixedJoint>();
+            if(joint==null)
+                joint = m_Rigidbody.gameObject.AddComponent<FixedJoint>();
+
+            joint.connectedBody = playerToJoint.GetComponent<Rigidbody>();
+            joint.enableCollision = false;
+            m_jointedController = playerToJoint;
+           
+
+        }
+        public void RemoveJoint()
+        {
+
+            FixedJoint joint = m_Rigidbody.gameObject.GetComponent<FixedJoint>();
+            if (joint != null)
+                MonoBehaviour.Destroy(joint);
+
+            m_jointedController = null;
+
+           
+
 
         }
         private Vector3 GetDirectionAxis(float h, float v)

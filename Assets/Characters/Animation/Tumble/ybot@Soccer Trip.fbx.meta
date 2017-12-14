@@ -195,14 +195,14 @@ ModelImporter:
       curves: []
       events:
       - time: 0
-        functionName: OnTripStart
+        functionName: Anim_OnTripStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.9941053
-        functionName: OnTripFinish
+        functionName: Anim_OnTripFinish
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

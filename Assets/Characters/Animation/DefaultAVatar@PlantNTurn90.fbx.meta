@@ -530,21 +530,21 @@ ModelImporter:
       curves: []
       events:
       - time: 0
-        functionName: OnTurnDirectionStart
+        functionName: Anim_OnTurnDirectionStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.48816028
-        functionName: OnTurnDirectionOk
+        functionName: Anim_OnTurnDirectionOk
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.9868957
-        functionName: OnTurnDirectionFinish
+        functionName: Anim_OnTurnDirectionFinish
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
@@ -579,21 +579,21 @@ ModelImporter:
       curves: []
       events:
       - time: 0
-        functionName: OnTurnDirectionStart
+        functionName: Anim_OnTurnDirectionStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.45801556
-        functionName: OnTurnDirectionOk
+        functionName: Anim_OnTurnDirectionOk
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.99448645
-        functionName: OnTurnDirectionFinish
+        functionName: Anim_OnTurnDirectionFinish
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

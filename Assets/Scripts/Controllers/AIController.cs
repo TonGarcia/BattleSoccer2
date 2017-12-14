@@ -101,7 +101,7 @@ public class AIController : MonoBehaviour
         UpdateAiStates();
 
     }
-   
+
 
     //Unity Events
     private void OnEnable()
@@ -153,7 +153,7 @@ public class AIController : MonoBehaviour
     {
         player.SetKinematic();
 
-        if (!player.IsMyBall())
+        if (!player.IsMyBall() || !player.isOk)
             return;
 
         BallController.instance.SetBallProtectedTo(player);
@@ -163,7 +163,8 @@ public class AIController : MonoBehaviour
         List<PlayerController> enemys = player.GetEnemysNear(2.5f);
         if (enemys.Count > 0)
             foreach (PlayerController enemy in enemys)
-                enemy.Locomotion.TriggerStumb();
+                if (enemy.Locomotion.inAir == false)
+                    enemy.Locomotion.TriggerStumb();
 
 
     }
@@ -181,8 +182,9 @@ public class AIController : MonoBehaviour
     {
         player.SetKinematic();
 
-        if (!player.IsMyBall())
+        if (!player.IsMyBall() || !player.isOk)
             return;
+
 
         BallController.instance.SetBallProtectedTo(player);
     }
@@ -266,15 +268,16 @@ public class AIController : MonoBehaviour
     //Traking
     private void EvTrakStart()
     {
-      
+
     }
     private void EvTrakOkt()
     {
-       
+
         List<PlayerController> enemys = player.GetEnemysNear(distanceToDrop);
         if (enemys.Count > 0)
             foreach (PlayerController enemy in enemys)
-                enemy.Locomotion.SetTrip();
+                if (enemy.Locomotion.inAir == false)
+                    enemy.Locomotion.SetTrip();
     }
     private void EvTrakFinish()
     {
@@ -283,7 +286,7 @@ public class AIController : MonoBehaviour
     //Triping
     private void EvTripFinish()
     {
-      
+
     }
     private void EvTripStart()
     {
@@ -418,7 +421,7 @@ public class AIController : MonoBehaviour
         BallController.instance.onSetMyOwner += OnBallSetOwner;
         BallController.instance.onRemoveMyOwner += OnBallRemoveOwner;
     }
-    
+
     //InternalMethods
     internal void TriggerPass(PlayerController toPlayer)
     {

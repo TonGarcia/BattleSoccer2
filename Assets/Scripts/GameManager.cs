@@ -69,6 +69,11 @@ public static class GameManagerExtensions
         return GameManager.instance.GetPlayerNear(controller, team);
 
     }
+    public static PlayerController GetPlayerNear(this PlayerController controller)
+    {
+        return GameManager.instance.GetPlayerNear(controller);
+
+    }
 
     public static void SelectME(this PlayerController controller)
     {
@@ -142,6 +147,8 @@ public static class GameManagerExtensions
         List<PlayerController> players = GameManager.instance.GetPlayers(controller.GetCampTeam());
         players.Remove(controller);
         players.RemoveAll(r => r.isOk == false);
+      //  players.RemoveAll(r => r.Locomotion.inAir);
+
         players.RemoveAll(r => r.Distance(controller) > maxDistance);
 
         return players;
@@ -152,6 +159,8 @@ public static class GameManagerExtensions
         List<PlayerController> players = GameManager.instance.GetPlayers(controller.GetCampTeam().Enemy());
         players.Remove(controller);
         players.RemoveAll(r => r.isOk == false);
+       // players.RemoveAll(r => r.Locomotion.inAir);
+
         players.RemoveAll(r => r.Distance(controller) > maxDistance);
 
         return players;
@@ -300,7 +309,8 @@ public class GameManager : MonoBehaviour
         TeamManager manager = GetTeamManager(team);
 
         List<PlayerController> players = manager.Players;
-        players.RemoveAll(r=>r.isOk==false);
+        players.RemoveAll(r => r.isOk == false);
+       // players.RemoveAll(r => r.Locomotion.inAir);
 
         if (players.Count > 0)
         {
@@ -327,6 +337,8 @@ public class GameManager : MonoBehaviour
         TeamManager manager = GetTeamManager(controller.GetCampTeam());
         List<PlayerController> players = manager.Players;
         players.Remove(controller);
+       // players.RemoveAll(r => r.Locomotion.inAir);
+
         players.RemoveAll(r => r.isOk == false);
         float min = players.Min(r => r.Distance(controller));
         PlayerController result = players.FirstOrDefault(r => r.Distance(controller) == min);
@@ -339,6 +351,9 @@ public class GameManager : MonoBehaviour
         TeamManager manager = GetTeamManager(team);
         List<PlayerController> players = manager.Players;
         players.RemoveAll(r => r.isOk == false);
+        //players.RemoveAll(r => r.Locomotion.inAir);
+
+
         players.RemoveAll(r => r.transform.Distance(BallController.instance.transform) > near);
 
         return players;
@@ -349,6 +364,8 @@ public class GameManager : MonoBehaviour
 
         List<PlayerController> players = manager.Players;
         players.RemoveAll(r => r.isOk == false);
+        //players.RemoveAll(r => r.Locomotion.inAir);
+
         players.RemoveAll(r => r.GetCampAction() != campAcation);
 
         if (players.Count > 0)
@@ -418,6 +435,8 @@ public class GameManager : MonoBehaviour
         TeamManager manager = GetEnemyTeamManager(controller.GetCampTeam());
         List<PlayerController> players = manager.Players;
         players.RemoveAll(r => r.isOk == false);
+        //players.RemoveAll(r => r.Locomotion.inAir);
+
         if (players.Count > 0)
         {
             float min = players.Min(r => r.Distance(controller));
@@ -430,12 +449,29 @@ public class GameManager : MonoBehaviour
         TeamManager manager = GetTeamManager(team);
         List<PlayerController> players = manager.Players;
         players.RemoveAll(r => r.isOk == false);
+       // players.RemoveAll(r => r.Locomotion.inAir);
+
         if (team == controller.GetCampTeam())
             players.Remove(controller);
 
         float min = players.Min(r => r.Distance(controller));
         PlayerController result = players.FirstOrDefault(r => r.Distance(controller) == min);
 
+        return result;
+    }
+    public PlayerController GetPlayerNear(PlayerController controller)
+    {
+        PlayerController result = null;
+        List<PlayerController> players = GetPlayers();
+        players.RemoveAll(r => r.isOk == false);
+        players.Remove(controller);
+        //players.RemoveAll(r => r.Locomotion.inAir);
+
+        if (players.Count > 0)
+        {
+            float min = players.Min(r => r.Distance(controller));
+            result = players.FirstOrDefault(r => r.Distance(controller) == min);
+        }
         return result;
     }
     /// <summary>
@@ -465,6 +501,13 @@ public class GameManager : MonoBehaviour
     public List<PlayerController> GetPlayers(CampTeam team)
     {
         return GetTeamManager(team).Players;
+    }
+    public List<PlayerController> GetPlayers()
+    {
+        List<PlayerController> players = teamMananger1.Players;
+        players.AddRange(teamMananger2.Players);
+
+        return players;
     }
     public Transform GetMyTeamGoalPosition(PlayerController player)
     {

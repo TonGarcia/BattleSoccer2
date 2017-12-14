@@ -29,6 +29,10 @@ public static class PlayerControllerExtensions
     {
         return controller.GetComponent<AIController>();
     }
+    public static PlayerAnimatorEvents GetAnimatorEvents(this PlayerController controller)
+    {
+        return controller.GetComponent<PlayerAnimatorEvents>();
+    }
     public static bool IsMyTeaM(this PlayerController controller, PlayerController player)
     {
         return controller.GetCampTeam() == player.GetCampTeam();
@@ -183,6 +187,10 @@ public class PlayerController : MonoBehaviour
         {
             BipedIK.solvers.lookAt.SetLookAtWeight(0.0f);
         }
+
+        //BugFix
+        if (isOk == false || locomotion.inStumble)
+            locomotion.jump = false;
     }
     private void FixedUpdate()
     {
@@ -204,9 +212,9 @@ public class PlayerController : MonoBehaviour
         PlayerController colPlayer = collision.gameObject.GetComponent<PlayerController>();
         if (colPlayer)
         {
-            if (colPlayer.locomotion.inTrack && colPlayer.IsMyTeaM(this) == false)
-                locomotion.SetTrip();
-            else
+            //if (colPlayer.locomotion.inTrack && colPlayer.IsMyTeaM(this) == false)
+            //    locomotion.SetTrip();
+            //else
                 locomotion.TriggerEntry();
         }
 

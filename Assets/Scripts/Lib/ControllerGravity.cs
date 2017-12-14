@@ -29,12 +29,15 @@ namespace SoccerGame
         private bool m_IsGrounded;
         public bool IsGrounded { get { return m_IsGrounded; } }
         private float m_OrigGroundCheckDistance;
+        private float defaultHeifht;
 
         public void Start(Rigidbody rigidbody, Animator animator)
         {
             this.rigidbody = rigidbody;
             this.animator = animator;
             m_OrigGroundCheckDistance = groundCheckDistance;
+            CapsuleCollider col = rigidbody.GetComponent<CapsuleCollider>();
+            defaultHeifht = col.height;
         }
         /// <summary>
         /// Aplique no fixedUpdate para atualizar o motor de gravidade a cada frame
@@ -97,12 +100,19 @@ namespace SoccerGame
             rigidbody.AddForce(extraGravityForce);
 
             groundCheckDistance = rigidbody.velocity.y < 0 ? m_OrigGroundCheckDistance : 0.01f;
+
+            CapsuleCollider col = rigidbody.GetComponent<CapsuleCollider>();
+            col.height = 0.2f;
         }
         private void HandleGroundedMovement(bool jump)
         {
             // check whether conditions are right to allow a jump:
+            CapsuleCollider col = rigidbody.GetComponent<CapsuleCollider>();
+            col.height = defaultHeifht;
             if (jump && animator.GetCurrentAnimatorStateInfo(0).IsName("WalkRun"))
             {
+               
+                col.height = 0.2f;
 
                 // jump!
                 if (rigidbody.GetComponent<NavMeshAgent>())

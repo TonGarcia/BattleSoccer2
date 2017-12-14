@@ -195,21 +195,21 @@ ModelImporter:
       curves: []
       events:
       - time: 0.0070397947
-        functionName: OnTrackStart
+        functionName: Anim_OnTrackStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.17632665
-        functionName: OnTrackOk
+        functionName: Anim_OnTrackOk
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 0.9870228
-        functionName: OnTrackFinish
+        functionName: Anim_OnTrackFinish
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

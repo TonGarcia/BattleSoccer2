@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class PlayerAnimatorEvents : MonoBehaviour
 {
-    
-    public delegate void EvntAnimatorArgs();    
+
+    public delegate void EvntAnimatorArgs();
+    public delegate void EvntAnimatorArgsStr(string arg);
 
     //Pass
     public event EvntAnimatorArgs OnPassStart;
@@ -38,126 +39,156 @@ public class PlayerAnimatorEvents : MonoBehaviour
     public event EvntAnimatorArgs OnTripingFinish;
     //StandUP
     public event EvntAnimatorArgs OnOnStandingupFinish;
+    //Hand Attack
+    /// <summary>
+    /// Triger event when handing attack has startet. Use argument to hand side attack
+    /// </summary>
+    public event EvntAnimatorArgsStr OnHandingAttackStart;
+    /// <summary>
+    /// Triger event when handing attack has trigered. Use argument to hand side attack
+    /// </summary>
+    public event EvntAnimatorArgsStr OnHandingAttackOk;
+    /// <summary>
+    /// Triger event when handing attack has finishied. Use argument to hand side attack
+    /// </summary>
+    public event EvntAnimatorArgsStr OnHandingAttackFinish;
+
     //Hello
 
-
-    private void OnChangeDirectionStart()
+    //Change direction
+    private void Anim_OnChangeDirectionStart()
     {
         if (OnChangeDirStart != null)
             OnChangeDirStart();
     }
-    private void OnChangeDirectionOk()
+    private void Anim_OnChangeDirectionOk()
     {
         if (OnChangeDirOk != null)
             OnChangeDirOk();
     }
-    private void OnChangeDirectionFinish()
+    private void Anim_OnChangeDirectionFinish()
     {
         if (OnChangeDirFinish != null)
             OnChangeDirFinish();
     }
-
-    private void OnTurnDirectionStart()
+    //Turn direction
+    private void Anim_OnTurnDirectionStart()
     {
         if (OnTurnStart != null)
             OnTurnStart();
     }
-    private void OnTurnDirectionOk()
+    private void Anim_OnTurnDirectionOk()
     {
         if (OnTurnOk != null)
             OnTurnOk();
     }
-    private void OnTurnDirectionFinish()
+    private void Anim_OnTurnDirectionFinish()
     {
         if (OnTurnFinish != null)
             OnTurnFinish();
     }
-
-    private void OnLongKickOk()
+    //Kick
+    private void Anim_OnLongKickOk()
     {
         if (OnKickOk != null)
             OnKickOk();
     }
-    private void OnLongKickStart()
+    private void Anim_OnLongKickStart()
     {
         if (OnKickStart != null)
             OnKickStart();
     }
-    private void OnLongKickFinish()
+    private void Anim_OnLongKickFinish()
     {
         if (OnKickFinish != null)
             OnKickFinish();
     }
-
-    private void OnEntryStart()
+    //Enttry - Esbarrão
+    private void Anim_OnEntryStart()
     {
         if (OnEnttryStart != null)
             OnEnttryStart();
     }
-    private void OnEntryFinish()
+    private void Anim_OnEntryFinish()
     {
         if (OnEnttryFinish != null)
             OnEnttryFinish();
     }
-
-    private void OnShortPassStart()
+    //Pass
+    private void Anim_OnShortPassStart()
     {
         if (OnPassStart != null)
             OnPassStart();
     }
-    private void OnShortPassOk()
+    private void Anim_OnShortPassOk()
     {
         if (OnPassOk != null)
-            OnPassOk();   
+            OnPassOk();
 
     }
-    private void OnShortPassFinish()
+    private void Anim_OnShortPassFinish()
     {
         if (OnPassFinish != null)
             OnPassFinish();
     }
-
-    private void OnStumbleStart()
+    //Stumble - Tropeçar
+    private void Anim_OnStumbleStart()
     {
         if (OnStumblesStart != null)
             OnStumblesStart();
     }
-    private void OnStumbleFinish()
+    private void Anim_OnStumbleFinish()
     {
         if (OnStumblesFinish != null)
             OnStumblesFinish();
     }
-
-    private void OnTrackStart()
+    //Track - Rasteira
+    private void Anim_OnTrackStart()
     {
         if (OnTrackingStart != null)
             OnTrackingStart();
     }
-    private void OnTrackOk()
+    private void Anim_OnTrackOk()
     {
         if (OnTrackingOk != null)
             OnTrackingOk();
     }
-    private void OnTrackFinish()
+    private void Anim_OnTrackFinish()
     {
         if (OnTrackingFinish != null)
             OnTrackingFinish();
     }
-
-    private void OnTripStart()
+    //Trip - Cair
+    private void Anim_OnTripStart()
     {
         if (OnTripingStart != null)
             OnTripingStart();
     }
-    private void OnTripFinish()
+    private void Anim_OnTripFinish()
     {
         if (OnTripingFinish != null)
             OnTripingFinish();
     }
-
-    private void OnStandupFinish()
+    //StandUp - Levantar
+    private void Anim_OnStandupFinish()
     {
         if (OnOnStandingupFinish != null)
             OnOnStandingupFinish();
+    }
+    //Hand attack
+    private void Anim_OnHandAtk_Start(string side)
+    {
+        if (OnHandingAttackStart != null)
+            OnHandingAttackStart(side);
+    }
+    private void Anim_OnHandAtk_Ok(string side)
+    {
+        if (OnHandingAttackOk != null)
+            OnHandingAttackOk(side);
+    }
+    private void Anim_OnHandAtk_Finish(string side)
+    {
+        if (OnHandingAttackFinish != null)
+            OnHandingAttackFinish(side);
     }
 }

@@ -374,7 +374,10 @@ public class ManualController : MonoBehaviour
         List<PlayerController> enemys = player.GetEnemysNear(distanceToDrop);
         if (enemys.Count > 0)
             foreach (PlayerController enemy in enemys)
-                enemy.Locomotion.SetTrip();
+            {
+                if (enemy.Locomotion.inAir == false)
+                    enemy.Locomotion.SetTrip();
+            }
     }
     private void EvTrakFinish()
     {
@@ -383,7 +386,7 @@ public class ManualController : MonoBehaviour
     //Triping
     private void EvTripFinish()
     {
-
+        BallController.instance.SetBallDesprotectTo(player);
     }
     private void EvTripStart()
     {

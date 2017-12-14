@@ -195,14 +195,14 @@ ModelImporter:
       curves: []
       events:
       - time: 0
-        functionName: OnStumbleStart
+        functionName: Anim_OnStumbleStart
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
       - time: 1
-        functionName: OnStumbleFinish
+        functionName: Anim_OnStumbleFinish
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

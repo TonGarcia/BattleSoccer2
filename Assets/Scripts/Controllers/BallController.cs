@@ -134,7 +134,6 @@ public class BallController : MonoBehaviour
     void Update()
     {
 
-
         if (owner)
         {
             if (owner.isMovie == false)
@@ -158,6 +157,11 @@ public class BallController : MonoBehaviour
 
 
             }
+        }
+        else
+        {
+            if (protectedTo != null)
+                SetBallDesprotectTo();
         }
         timeToSetOwner += Time.deltaTime;
     }
@@ -265,6 +269,9 @@ public class BallController : MonoBehaviour
     public void SetBallProtectedTo(PlayerController player)
     {
         if (protectedTo != null)
+            return;
+
+        if (player.isOk == false)
             return;
 
         protectedTo = player;
