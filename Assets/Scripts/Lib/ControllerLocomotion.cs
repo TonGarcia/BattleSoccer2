@@ -61,14 +61,14 @@ namespace SoccerGame
             {
                 if (m_Animator == null)
                     return false;
-                
+
                 AnimatorStateInfo state = m_Animator.GetCurrentAnimatorStateInfo(0);
 
                 bool result =
                     state.IsName("Trip.Trip") ||
                     state.IsName("Trip.Lay") ||
                     state.IsName("Trip.Stand") ||
-                    m_Animator.GetBool(m_Trip);
+                    m_Animator.GetBool(m_TripId);
                 return result;
             }
         }
@@ -84,6 +84,7 @@ namespace SoccerGame
         public bool inNormal { get { return inStrafe == false && inSoccer == false; } }
         public bool inStrafe { get { return motionType == LocomotionType.strafe; } }
         public bool inSoccer { get { return motionType == LocomotionType.soccer; } }
+        public bool inHandAttak { get { return m_Animator.GetCurrentAnimatorStateInfo(1).IsName("HandAttack"); } }
         public bool inTurn
         {
             get
@@ -109,7 +110,6 @@ namespace SoccerGame
 
             }
         }
-        
 
         private Animator m_Animator = null;
         private NavMeshAgent m_Agent = null;
@@ -117,6 +117,7 @@ namespace SoccerGame
         private ControllerGravity m_Gravity = null;
         private PlayerController m_controller = null;
         private PlayerController m_jointedController = null;
+
         private bool m_ai = false;
 
         private int m_SpeedId = 0;
@@ -129,8 +130,9 @@ namespace SoccerGame
         private int m_PassId = 0;
         private int m_EntryId = 0;
         private int m_StumbleId = 0;
-        private int m_OwnerBall = 0;
-        private int m_Trip = 0;
+        private int m_OwnerBallId = 0;
+        private int m_TripId = 0;
+        private int m_TugId = 0;
 
 
         public void Start(PlayerController controller, ControllerGravity gravity)
@@ -151,8 +153,9 @@ namespace SoccerGame
             m_PassId = Animator.StringToHash("ShortPass");
             m_EntryId = Animator.StringToHash("Entry");
             m_StumbleId = Animator.StringToHash("Stumble");
-            m_OwnerBall = Animator.StringToHash("OwnerBall");
-            m_Trip = Animator.StringToHash("Trip");
+            m_OwnerBallId = Animator.StringToHash("OwnerBall");
+            m_TripId = Animator.StringToHash("Trip");
+            m_TugId = Animator.StringToHash("TugOfWar");
 
 
         }
@@ -425,6 +428,7 @@ namespace SoccerGame
                 if (inWalkRun == true || inIdle == true || inAir == true)
                 {
                     m_Animator.SetTrigger(m_KickId);
+
                 }
             }
         }
@@ -445,28 +449,42 @@ namespace SoccerGame
         }
         public void SetTrip()
         {
-            m_Animator.SetBool(m_Trip, true);
+            if (!inPass && !inKick && !inAir && !inTrip && !inTrack)
+                m_Animator.SetBool(m_TripId, true);
         }
         public void ResetTrip()
         {
-            m_Animator.SetBool(m_Trip, false);
+            m_Animator.SetBool(m_TripId, false);
         }
         public void TriggerStumb()
         {
-            if (!inStumble)
+            if (!inStumble && !inPass && !inKick && !inTrack && !inTrip)
                 m_Animator.SetTrigger(m_StumbleId);
+        }
+        public void SetTugAnimator()
+        {
+            m_Animator.SetBool(m_TugId, true);
+        }
+        public void ResetTugAnimator()
+        {
+            m_Animator.SetBool(m_TugId, false);
         }
         public void JointTo(PlayerController playerToJoint)
         {
+            if (playerToJoint == null)
+                return;
 
             FixedJoint joint = m_Rigidbody.gameObject.GetComponent<FixedJoint>();
-            if(joint==null)
+            if (joint == null)
                 joint = m_Rigidbody.gameObject.AddComponent<FixedJoint>();
 
             joint.connectedBody = playerToJoint.GetComponent<Rigidbody>();
             joint.enableCollision = false;
             m_jointedController = playerToJoint;
-           
+            // SetTugAnimator();
+            // playerToJoint.Locomotion.SetTugAnimator();
+
+
 
         }
         public void RemoveJoint()
@@ -476,10 +494,11 @@ namespace SoccerGame
             if (joint != null)
                 MonoBehaviour.Destroy(joint);
 
+
+            ResetTugAnimator();
+            // if (m_jointedController != null)
+            //     m_jointedController.Locomotion.ResetTugAnimator();
             m_jointedController = null;
-
-           
-
 
         }
         private Vector3 GetDirectionAxis(float h, float v)

@@ -11,7 +11,8 @@ public class TugOfWar : MonoBehaviour
     public BipedIK biped;
     public Transform spline;
     public float speedIKDump = 3.5f;
-    public float handDistance = 1.2f;
+    public float handDistance = 1.5f;
+    public float tugWarDistance = 1.0f;
 
     public bool activeWithBall = false;
     PlayerController player;
@@ -44,13 +45,25 @@ public class TugOfWar : MonoBehaviour
         //Estica maos para o jogaodr mais proximo
         HandleHandsTo(mnPlayer);
 
-        if(jointPlayer)
+        if (jointPlayer)
         {
-            if (player.isOk == false || player.Locomotion.inStumble || player.IsMyBall())
+            if (player.isOk == false || player.Locomotion.inStumble || player.Locomotion.inTrack)
                 RemoveJoint();
-            
         }
-      
+        else if (player.Locomotion.inHandAttak)
+        {
+            if (mnPlayer != null && !player.Locomotion.inAir && player.isOk && !mnPlayer.IsMyTeaM(player))
+            {
+                float dist = mnPlayer.Distance(player);
+                if (dist <= handDistance && dist > 0.5f && mnPlayer.isOk && !mnPlayer.Locomotion.inAir)
+                {
+                    player.Locomotion.JointTo(mnPlayer);
+                    jointPlayer = mnPlayer;
+                    jointPlayer.GetAnimatorEvents().OnChangeDirStart += EnemyOnChangeDir;
+                }
+            }
+        }
+
     }
 
 
@@ -60,22 +73,6 @@ public class TugOfWar : MonoBehaviour
         {
             RemoveJoint();
             return;
-
-        }
-
-        PlayerController mnPlayer;
-        mnPlayer = player.GetPlayerNear();
-
-        if (mnPlayer != null && !player.Locomotion.inAir && player.isOk)
-        {
-            float dist = mnPlayer.Distance(player);
-            if (dist <= handDistance && dist > 0.5f && mnPlayer.isOk && !mnPlayer.Locomotion.inAir)
-            {
-                player.Locomotion.JointTo(mnPlayer);
-                jointPlayer = mnPlayer;
-                jointPlayer.GetAnimatorEvents().OnChangeDirStart += EnemyOnChangeDir;
-            }
-
 
         }
     }

@@ -194,6 +194,7 @@ public class ManualController : MonoBehaviour
             if (locomotion.inNormal)
             {
                 locomotion.TriggerPass();
+
             }
         }
 
@@ -300,7 +301,9 @@ public class ManualController : MonoBehaviour
 
         if (player.IsMyBall())
             BallController.instance.SetBallProtectedTo(player);
+
         player.SetKinematic();
+
     }
     private void EvPassOk()
     {
@@ -330,12 +333,20 @@ public class ManualController : MonoBehaviour
     private void EvPassFinish()
     {
         player.UnsetKinematic();
+
+        //BUGFIX - previne tompo atrazado
+        locomotion.ResetTrip();
     }
 
     private void EvLongKickOk()
     {
         if (BallController.IsOwner(player))
             BallController.SetKick();
+    }
+    private void EvKickFinish()
+    {
+        //BUGFIX - previne tompo atrazado
+        locomotion.ResetTrip();
     }
     private void EvEntryStart()
     {
@@ -416,6 +427,7 @@ public class ManualController : MonoBehaviour
         animatorEvents.OnTurnStart -= EvTurnDirectionStart;
         animatorEvents.OnTurnFinish -= EvTurnDirectionFinish;
         animatorEvents.OnKickOk -= EvLongKickOk;
+        animatorEvents.OnKickFinish -= EvKickFinish;
         animatorEvents.OnPassStart -= EvPassStart;
         animatorEvents.OnPassOk -= EvPassOk;
         animatorEvents.OnPassFinish -= EvPassFinish;
@@ -423,6 +435,7 @@ public class ManualController : MonoBehaviour
         animatorEvents.OnEnttryFinish -= EvEntryFinish;
         animatorEvents.OnStumblesStart -= EvStumbleStart;
         animatorEvents.OnStumblesFinish -= EvStumbleFinish;
+        
 
         BallController.instance.onSetMyOwner -= OnBallSetOwner;
         BallController.instance.onRemoveMyOwner -= OnBallRemoveOwner;
@@ -447,6 +460,7 @@ public class ManualController : MonoBehaviour
         animatorEvents.OnTurnStart += EvTurnDirectionStart;
         animatorEvents.OnTurnFinish += EvTurnDirectionFinish;
         animatorEvents.OnKickOk += EvLongKickOk;
+        animatorEvents.OnKickFinish += EvKickFinish;
         animatorEvents.OnPassStart += EvPassStart;
         animatorEvents.OnPassOk += EvPassOk;
         animatorEvents.OnPassFinish += EvPassFinish;
@@ -468,5 +482,5 @@ public class ManualController : MonoBehaviour
         BallController.instance.onRemoveMyOwner += OnBallRemoveOwner;
     }
 
-
+   
 }

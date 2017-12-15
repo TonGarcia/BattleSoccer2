@@ -199,6 +199,11 @@ public class AIController : MonoBehaviour
         if (BallController.IsOwner(player))
             BallController.SetKick();
     }
+    private void EvKickFinish()
+    {
+        //BUGFIX - previne tompo atrazado
+        locomotion.ResetTrip();
+    }
     //Enttry
     private void EvEntryStart()
     {
@@ -249,6 +254,8 @@ public class AIController : MonoBehaviour
     private void EvShortPassFinish()
     {
         player.UnsetKinematic();
+        //BUGFIX - previne tompo atrazado
+        locomotion.ResetTrip();
     }
     //Stumble
     private void EvStumbleStart()
@@ -355,6 +362,7 @@ public class AIController : MonoBehaviour
         animatorEvents.OnTurnStart -= EvTurnDirectionStart;
         animatorEvents.OnTurnFinish -= EvTurnDirectionFinish;
         animatorEvents.OnKickOk -= EvLongKickOk;
+        animatorEvents.OnKickFinish -= EvKickFinish;
         animatorEvents.OnEnttryStart -= EvEntryStart;
         animatorEvents.OnEnttryFinish -= EvEntryFinish;
         animatorEvents.OnPassStart -= EvShortPassStart;
@@ -401,6 +409,7 @@ public class AIController : MonoBehaviour
         animatorEvents.OnTurnStart += EvTurnDirectionStart;
         animatorEvents.OnTurnFinish += EvTurnDirectionFinish;
         animatorEvents.OnKickOk += EvLongKickOk;
+        animatorEvents.OnKickFinish += EvKickFinish;
         animatorEvents.OnEnttryStart += EvEntryStart;
         animatorEvents.OnEnttryFinish += EvEntryFinish;
         animatorEvents.OnPassStart += EvShortPassStart;
@@ -421,6 +430,8 @@ public class AIController : MonoBehaviour
         BallController.instance.onSetMyOwner += OnBallSetOwner;
         BallController.instance.onRemoveMyOwner += OnBallRemoveOwner;
     }
+
+   
 
     //InternalMethods
     internal void TriggerPass(PlayerController toPlayer)

@@ -2842,7 +2842,7 @@ MonoBehaviour:
   biped: {fileID: 114637463844485072}
   spline: {fileID: 4277273198223718}
   speedIKDump: 4.5
-  tugDistance: 1.5
+  handDistance: 2.5
   activeWithBall: 0
 --- !u!114 &114957667873465180
 MonoBehaviour:
