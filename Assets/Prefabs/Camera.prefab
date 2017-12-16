@@ -100,7 +100,7 @@ MonoBehaviour:
   dampPosition: 5.5
   dampRotation: 2.5
   zoom: 0
-  targetOffsetPos: {x: -6, y: 6, z: 0}
+  targetOffsetPos: {x: -7, y: 10, z: 0}
   automaticZoom: 1
 --- !u!124 &124754882749566924
 Behaviour:

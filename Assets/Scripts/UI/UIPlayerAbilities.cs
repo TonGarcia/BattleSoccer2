@@ -50,7 +50,8 @@ public class UIPlayerAbilities : MonoBehaviour
             container.gameObject.SetActive(true);
 
             HandleStamina(player);
-
+            HandleActionOne(player);
+            HandleActionTwo(player);
 
         }
         private void HandleStamina(PlayerController player)
@@ -72,6 +73,48 @@ public class UIPlayerAbilities : MonoBehaviour
                 UIStamina.SetValueColor(Color.red);
             else
                 UIStamina.ResetValueColor();
+        }
+        private void HandleActionOne(PlayerController player)
+        {
+            SkillVar skill_kick = player.GetSkill_BasicKick();
+            SkillVar skill_ActionOne = player.GetSkill_BasicActionOne();
+            SkillVar skill_selected = null;
+          
+            //Select usage skill
+            if (team.IsMyBall())          
+                skill_selected = skill_kick;            
+            else            
+                skill_selected = skill_ActionOne;            
+
+            UIAttack.SetIcon(skill_selected.ability.icon_withBall);
+            UIAttack.SetValue(skill_selected.FillAmounValue);
+            UIAttack.SetCooldown(skill_selected.FillAmountCooldown);
+
+            if (skill_selected.IsCritical)
+                UIAttack.SetValueColor(Color.red);
+            else
+                UIAttack.ResetValueColor();
+        }
+        private void HandleActionTwo(PlayerController player)
+        {
+            SkillVar skill_pass = player.GetSkill_BasicPass();
+            SkillVar skill_ActionTwo = player.GetSkill_BasicActionTwo();
+            SkillVar skill_selected = null;
+
+            //Select usage skill
+            if (team.IsMyBall())
+                skill_selected = skill_pass;
+            else
+                skill_selected = skill_ActionTwo;
+
+            UIDeffense.SetIcon(skill_selected.ability.icon_withBall);
+            UIDeffense.SetValue(skill_selected.FillAmounValue);
+            UIDeffense.SetCooldown(skill_selected.FillAmountCooldown);
+
+            if (skill_selected.IsCritical)
+                UIDeffense.SetValueColor(Color.red);
+            else
+                UIDeffense.ResetValueColor();
         }
     }
 

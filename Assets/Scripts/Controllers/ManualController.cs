@@ -113,20 +113,51 @@ public class ManualController : MonoBehaviour
         dir = move.x;
         speed = move.y;
 
-        //Ações de chute
-        if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Kick))
+        
+        //Fill kick power amount 
+        if (ControllerInput.GetButton(player.GetInputType(), player.GetInputs().Input_Kick))
         {
+            //Fill kick power or fill action2 power
+            SkillVar skillKick = player.GetSkill_BasicKick();
+           
+
+            if (player.IsMyBall())
+            {
+                if (skillKick.IsReady)
+                {
+                    skillKick.mode = SkillVarMode.autoRegen;
+                }
+            }
+           
+        }
+        //Kick ball
+        if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Kick))
+        {
+            //Fill kick power if is myBall
+            SkillVar skillKick = player.GetSkill_BasicKick();
+            skillKick.mode = SkillVarMode.nothing;
+            skillKick.SetCurrentValue(0);
+
+           
+
+            if (player.IsMyBall())
+            {
+                if (skillKick.IsReady)
+                {
+                    if (locomotion.TriggerKick())
+                    {
+                        skillKick.TriggerCooldown();
+                    }
+                }
+            }
+           
 
             playerToPass = null;
             GameManager.instance.ResetIndicator();
-
-            locomotion.TriggerKick();
-            GameManager.instance.ResetIndicator();
-
         }
 
         //Soccer Motion
-        if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Stamina))
+        if (ControllerInput.GetButton(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
             SkillVar Stamina = player.GetSkill_Stamina();
 
@@ -185,20 +216,36 @@ public class ManualController : MonoBehaviour
                 }
             }
         }
-        //Passe de bola
+
+        //Passe de bola ou Action Two
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Pass))
         {
             //playerToPass = null;
             //GameManager.instance.ResetIndicator();
-
-            if (locomotion.inNormal)
+            SkillVar selectedSkill = GetSkillsActionTwo();
+            if (selectedSkill.IsReady)
             {
-                locomotion.TriggerPass();
-
+                if (locomotion.inNormal)
+                {
+                    if (locomotion.TriggerPass())
+                    {
+                        selectedSkill.TriggerCooldown();
+                    }
+                    else
+                    {
+                        playerToPass = null;
+                        GameManager.instance.ResetIndicator();
+                    }
+                }
+            }
+            else
+            {
+                playerToPass = null;
+                GameManager.instance.ResetIndicator();
             }
         }
 
-
+        //JUMP
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Jump))
         {
             locomotion.jump = true;
@@ -435,7 +482,7 @@ public class ManualController : MonoBehaviour
         animatorEvents.OnEnttryFinish -= EvEntryFinish;
         animatorEvents.OnStumblesStart -= EvStumbleStart;
         animatorEvents.OnStumblesFinish -= EvStumbleFinish;
-        
+
 
         BallController.instance.onSetMyOwner -= OnBallSetOwner;
         BallController.instance.onRemoveMyOwner -= OnBallRemoveOwner;
@@ -448,7 +495,22 @@ public class ManualController : MonoBehaviour
         animatorEvents.OnOnStandingupFinish += EvStandup;
 
     }
+    private SkillVar GetSkillsActionTwo()
+    {
+        SkillVar pass = player.GetSkill_BasicPass();
+        SkillVar actionTwo = player.GetSkill_BasicActionTwo();
+        SkillVar selectedSkill = player.IsMyBall() ? pass : actionTwo;
 
+        return selectedSkill;
+    }
+    private SkillVar GetSkillsActioOne()
+    {
+        SkillVar pass = player.GetSkill_BasicKick();
+        SkillVar actionOne = player.GetSkill_BasicActionOne();
+        SkillVar selectedSkill = player.IsMyBall() ? pass : actionOne;
+
+        return selectedSkill;
+    }
     private IEnumerator IESignevents()
     {
 
@@ -482,5 +544,5 @@ public class ManualController : MonoBehaviour
         BallController.instance.onRemoveMyOwner += OnBallRemoveOwner;
     }
 
-   
+
 }

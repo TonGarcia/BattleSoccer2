@@ -224,6 +224,12 @@ public class AIController : MonoBehaviour
     private void EvShortPassStart()
     {
         player.SetKinematic();
+        if(AiToPass!=null)
+        {
+            Vector3 dir = AiToPass.transform.position - transform.position;
+            Quaternion rotation = Quaternion.LookRotation(dir, Vector3.up);
+            transform.rotation = rotation;
+        }
     }
     private void EvShortPassOk()
     {
@@ -431,14 +437,18 @@ public class AIController : MonoBehaviour
         BallController.instance.onRemoveMyOwner += OnBallRemoveOwner;
     }
 
-   
+
 
     //InternalMethods
-    internal void TriggerPass(PlayerController toPlayer)
+    internal bool TriggerPass(PlayerController toPlayer)
     {
-        AiToPass = toPlayer.GetAiControlelr();
-
-        locomotion.TriggerPass();
+        bool result = false;
+        if (locomotion.TriggerPass())
+        {
+            AiToPass = toPlayer.GetAiControlelr();
+            result = true;
+        }
+        return result;
     }
     internal void GoToPosition(Vector3 position)
     {

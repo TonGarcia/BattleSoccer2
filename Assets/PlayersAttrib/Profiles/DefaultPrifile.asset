@@ -13,5 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerClass: {fileID: 11400000, guid: 65e4cf7f8d1a91944b577ca221b50404, type: 2}
   stamina: {fileID: 11400000, guid: 713e5652cbd0e9e468efd90a82f03eb1, type: 2}
-  basicKick: {fileID: 0}
-  basicPass: {fileID: 0}
+  basicKick: {fileID: 11400000, guid: dce48c2accf34504fa66f5d439678b50, type: 2}
+  basicPass: {fileID: 11400000, guid: a06af83e347666849bd6221b44fe88ba, type: 2}
+  basicActionOne: {fileID: 11400000, guid: 85fed513b44127845a436a1a35752beb, type: 2}
+  basicActionTwo: {fileID: 11400000, guid: 708b4b5e1c17b0448b128509996ec1e8, type: 2}

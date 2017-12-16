@@ -240,7 +240,6 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 {
     public SoccerAIState AiState { get { return aiState; } }
     private SoccerAIState aiState;
-    private float timeToTrak = 0.0f;
 
     public SoccerAIUnSelected(AIController owner, PlayerController controller) : base(owner, controller)
     {
@@ -411,16 +410,17 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         Vector3 ballPosition = BallController.GetPosition();
         ballPosition.y = Player.transform.position.y;
 
-        //Rasteira
+        //Rasteira ou acao secundaria
         PlayerController enemyforward;
-        timeToTrak += Time.deltaTime;
+        SkillVar skill = Player.GetSkill_BasicActionTwo();
+
         if (Player.IsHitForwad(0.2f, out enemyforward, Player.GetCampTeam().Enemy()))
         {
-            if (timeToTrak > 1.5f)
+            if (skill.IsReady)
             {
                 motionType = LocomotionType.normal;
-                Locomotion.TriggerPass();
-                timeToTrak = 0.0f;
+                if (Locomotion.TriggerPass())
+                    skill.TriggerCooldown();
             }
         }
 
@@ -487,7 +487,7 @@ public class SoccerAISelected : SoccerAIGeneric
     public SoccerAIState AiState { get { return aiState; } }
     private SoccerAIState aiState;
     private float timeToSelect = 0;
-    private float timeToTrak = 0;
+
     public SoccerAISelected(AIController owner, PlayerController controller) : base(owner, controller)
     {
         aiState = SoccerAIState.nothing;
@@ -581,17 +581,17 @@ public class SoccerAISelected : SoccerAIGeneric
         else
             motionType = LocomotionType.normal;
 
-        //Rasteira
+        //Rasteira ou acao secundaria de poce de bola
         PlayerController enemyforward;
-        timeToTrak += Time.deltaTime;
         if (Player.IsHitForwad(0.2f, out enemyforward, Player.GetCampTeam().Enemy()))
         {
+            SkillVar skill = Player.GetSkill_BasicActionTwo();
 
-            if (timeToTrak > 1.5f)
+            if (skill.IsReady)
             {
                 motionType = LocomotionType.normal;
-                Locomotion.TriggerPass();
-                timeToTrak = 0.0f;
+                if (Locomotion.TriggerPass())
+                    skill.TriggerCooldown();
             }
         }
 
@@ -697,8 +697,13 @@ public class SoccerAIwithBall : SoccerAIGeneric
             {
                 if (Player.IsHitBetween(toPass) == false && Player.IsMyBall())
                 {
-                    Owner.TriggerPass(toPass);
-                    inPass = true;
+
+                    if (Owner.TriggerPass(toPass))
+                    {
+                        inPass = true;
+                        Player.GetSkill_BasicPass().TriggerCooldown();
+                    }
+
                 }
                 else
                 {
@@ -759,20 +764,26 @@ public class SoccerAIwithBall : SoccerAIGeneric
             }
             else //Player inimigo mas longe de mais vou tentar um passe de bola
             {
-
+                SkillVar skillpass = Player.GetSkill_BasicPass();
                 PlayerController topass = null;
                 if (GetToPass(out topass))
                 {
-
-                    toPass = topass;
-                    toGo = Player.transform.position;
-                    //Stop();
+                    if (Player.IsHitBetween(topass) == false && skillpass.IsReady)
+                    {
+                        toPass = topass;
+                        toGo = Player.transform.position;
+                    }
+                    else
+                    {
+                        inGoalDir = true;
+                    }
                 }
                 else
                 {
 
                     inGoalDir = true;
                 }
+
             }
         }
         else
@@ -782,17 +793,35 @@ public class SoccerAIwithBall : SoccerAIGeneric
             if (enemyNear != null)
             {
                 //Inimigo perto demais para ir pro gol. a probalidade de perder a bola e muito grande
-                //Assim sendo vou tentar driblar
-                if (enemyNear.Distance(Player) <= 1.0f && enemyNear.IsSelected())
+                //Vou tentar um passe de bola
+                SkillVar skillpass = Player.GetSkill_BasicPass();
+                PlayerController topass = null;
+                if (GetToPass(out topass) && skillpass.IsReady && enemyNear.IsSelected())
                 {
-                    if (timeToDrible >= 1.0f || Locomotion.IsAgentDone)
+
+                    if (!Player.IsHitBetween(topass))
                     {
-                        toGo = Locomotion.GetRandomNavCircle(Player, 3.5f);
-                        timeToDrible = 0;
+
+                        toPass = topass;
+                        toGo = Player.transform.position;
+                        inGoalDir = false;
+                       
                     }
+                }
+                else
+                {
+                    //Nenhum player para tocar Assim sendo vou tentar driblar
+                    if (enemyNear.Distance(Player) <= 1.0f && enemyNear.IsSelected())
+                    {
+                        if (timeToDrible >= 1.0f || Locomotion.IsAgentDone)
+                        {
+                            toGo = Locomotion.GetRandomNavCircle(Player, 3.5f);
+                            timeToDrible = 0;
+                        }
 
-                    inGoalDir = false;
+                        inGoalDir = false;
 
+                    }
                 }
             }
 
@@ -850,6 +879,10 @@ public class SoccerAIwithBall : SoccerAIGeneric
         playersNear.RemoveAll(p => p.IsHitBetween(Player));
         playersNear.Remove(Player);
         playersNear.Remove(BallController.GetLastOwner());
+        playersNear.RemoveAll(p => p.isOk == false);
+        playersNear.RemoveAll(p => p.Locomotion.inTrack);
+        playersNear.RemoveAll(p => p.Locomotion.inAir);
+        playersNear.RemoveAll(p => p.Distance(Player) <= 2.5f);
 
         if (playersNear.Count > 0) //Existem jogadores proximos
         {

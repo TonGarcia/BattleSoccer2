@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d1136aa1074824391fa31bcd4ad908, type: 3}
+  m_Name: Pass
+  m_EditorClassIdentifier: 
+  icon_withBall: {fileID: 21300000, guid: fd03d00feb6733b47a466e92e7077b8c, type: 3}
+  icon_withOutBall: {fileID: 21300000, guid: fd03d00feb6733b47a466e92e7077b8c, type: 3}
+  skill:
+    ability: {fileID: 0}
+    maxValue: 100
+    currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 5
+    regenDuration: 10
+    subtractDuration: 5
+    dampTime: 3.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
+    panel: {fileID: 0}

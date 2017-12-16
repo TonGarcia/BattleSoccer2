@@ -2640,6 +2640,58 @@ MonoBehaviour:
     imageValueFillAmount: {fileID: 0}
     imageCooldownFillAmout: {fileID: 0}
     panel: {fileID: 0}
+  basicKick:
+    ability: {fileID: 0}
+    maxValue: 100
+    currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 1
+    regenDuration: 10
+    subtractDuration: 5
+    dampTime: 3.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
+    panel: {fileID: 0}
+  basicPass:
+    ability: {fileID: 0}
+    maxValue: 100
+    currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 1
+    regenDuration: 10
+    subtractDuration: 5
+    dampTime: 3.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
+    panel: {fileID: 0}
+  basicActionOne:
+    ability: {fileID: 0}
+    maxValue: 100
+    currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 1
+    regenDuration: 10
+    subtractDuration: 5
+    dampTime: 3.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
+    panel: {fileID: 0}
+  basicActionTwo:
+    ability: {fileID: 0}
+    maxValue: 100
+    currentValue: 0
+    CriticalValue: 0
+    coolDownDuration: 1
+    regenDuration: 10
+    subtractDuration: 5
+    dampTime: 3.5
+    mode: 0
+    imageValueFillAmount: {fileID: 0}
+    imageCooldownFillAmout: {fileID: 0}
+    panel: {fileID: 0}
 --- !u!114 &114175090587763036
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2680,8 +2732,9 @@ MonoBehaviour:
   biped: {fileID: 114153472405146974}
   spline: {fileID: 4734401533622898}
   speedIKDump: 4.5
-  tugDistance: 1.5
-  activeWithBall: 0
+  handDistance: 1.5
+  tugWarDistance: 1
+  activeWithBall: 1
 --- !u!114 &114520211209018984
 MonoBehaviour:
   m_ObjectHideFlags: 1

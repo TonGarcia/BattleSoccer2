@@ -9,5 +9,6 @@ public class PlayerProfile : ScriptableObject
     public Ability stamina;
     public Ability basicKick;
     public Ability basicPass;
-
+    public Ability basicActionOne;
+    public Ability basicActionTwo;
 }

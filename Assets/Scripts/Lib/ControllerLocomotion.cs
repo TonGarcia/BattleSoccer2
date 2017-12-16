@@ -85,6 +85,7 @@ namespace SoccerGame
         public bool inStrafe { get { return motionType == LocomotionType.strafe; } }
         public bool inSoccer { get { return motionType == LocomotionType.soccer; } }
         public bool inHandAttak { get { return m_Animator.GetCurrentAnimatorStateInfo(1).IsName("HandAttack"); } }
+        public bool inHoldTug { get { return m_Animator.GetCurrentAnimatorStateInfo(4).IsName("HoldTug"); } }
         public bool inTurn
         {
             get
@@ -132,7 +133,7 @@ namespace SoccerGame
         private int m_StumbleId = 0;
         private int m_OwnerBallId = 0;
         private int m_TripId = 0;
-        private int m_TugId = 0;
+        private int m_HoldTugId = 0;
 
 
         public void Start(PlayerController controller, ControllerGravity gravity)
@@ -155,7 +156,7 @@ namespace SoccerGame
             m_StumbleId = Animator.StringToHash("Stumble");
             m_OwnerBallId = Animator.StringToHash("OwnerBall");
             m_TripId = Animator.StringToHash("Trip");
-            m_TugId = Animator.StringToHash("TugOfWar");
+            m_HoldTugId = Animator.StringToHash("HoldTug");
 
 
         }
@@ -421,26 +422,33 @@ namespace SoccerGame
         {
             animSpeedMultiplier = 1.0f;
         }
-        public void TriggerKick()
+        public bool TriggerKick()
         {
+            bool result = false;
             if (inSoccer == false && inStrafe == false && inStumble == false && inTrip == false)
             {
                 if (inWalkRun == true || inIdle == true || inAir == true)
                 {
                     m_Animator.SetTrigger(m_KickId);
+                    result = true;
 
                 }
             }
+            return result;
         }
-        public void TriggerPass()
+        public bool TriggerPass()
         {
+            bool result = false;
             if (inSoccer == false && inStrafe == false && inStumble == false)
             {
                 if (inWalkRun == true || inIdle == true || inAir == true)
                 {
                     m_Animator.SetTrigger(m_PassId);
+                    result = true;
                 }
             }
+
+            return result;
         }
         public void TriggerEntry()
         {
@@ -461,13 +469,13 @@ namespace SoccerGame
             if (!inStumble && !inPass && !inKick && !inTrack && !inTrip)
                 m_Animator.SetTrigger(m_StumbleId);
         }
-        public void SetTugAnimator()
+        public void SetHoldTugAnimator()
         {
-            m_Animator.SetBool(m_TugId, true);
+            m_Animator.SetBool(m_HoldTugId, true);
         }
-        public void ResetTugAnimator()
+        public void ResetHoldTugAnimator()
         {
-            m_Animator.SetBool(m_TugId, false);
+            m_Animator.SetBool(m_HoldTugId, false);
         }
         public void JointTo(PlayerController playerToJoint)
         {
@@ -484,8 +492,6 @@ namespace SoccerGame
             // SetTugAnimator();
             // playerToJoint.Locomotion.SetTugAnimator();
 
-
-
         }
         public void RemoveJoint()
         {
@@ -495,7 +501,7 @@ namespace SoccerGame
                 MonoBehaviour.Destroy(joint);
 
 
-            ResetTugAnimator();
+            ResetHoldTugAnimator();
             // if (m_jointedController != null)
             //     m_jointedController.Locomotion.ResetTugAnimator();
             m_jointedController = null;

@@ -220,7 +220,7 @@ namespace SoccerGame
                 return;
 
             isEvCooldown = false;
-
+            isReady = false;
             nextReadyTime = coolDownDuration + Time.time;
             coolDownTimeLeft = coolDownDuration;
             if (imageCooldownFillAmout != null)
@@ -230,6 +230,7 @@ namespace SoccerGame
         {
 
             isReady = true;
+            coolDownTimeLeft = 0;
             if (imageCooldownFillAmout != null)
                 imageCooldownFillAmout.enabled = false;
 
@@ -245,9 +246,7 @@ namespace SoccerGame
         {
             isReady = false;
             coolDownTimeLeft -= Time.deltaTime;
-
-
-
+                            
             if (imageCooldownFillAmout != null)
             {
                 imageCooldownFillAmout.enabled = true;

@@ -7,33 +7,27 @@ using System;
 
 public class TugOfWar : MonoBehaviour
 {
+    [SerializeField]
+    private BipedIK biped;
+    [SerializeField]
+    private Transform spline;
+    [SerializeField]
+    private float speedIKDump = 3.5f;
+    [SerializeField]
+    private float handDistance = 1.5f;
+    [SerializeField]
+    private float tugWarDistance = 1.0f;
+    [SerializeField]
+    private bool activeWithBall = false;
 
-    public BipedIK biped;
-    public Transform spline;
-    public float speedIKDump = 3.5f;
-    public float handDistance = 1.5f;
-    public float tugWarDistance = 1.0f;
-
-    public bool activeWithBall = false;
     PlayerController player;
     PlayerController jointPlayer;
 
     private void Start()
     {
         player = GetComponent<PlayerController>();
-        GetComponent<PlayerAnimatorEvents>().OnHandingAttackStart += OnHandAttak;
-        GetComponent<PlayerAnimatorEvents>().OnHandingAttackOk += OnHandAttak;
-        GetComponent<PlayerAnimatorEvents>().OnHandingAttackFinish += OnHandAttak;
     }
-
-    private void OnDestroy()
-    {
-        GetComponent<PlayerAnimatorEvents>().OnHandingAttackStart -= OnHandAttak;
-        GetComponent<PlayerAnimatorEvents>().OnHandingAttackOk -= OnHandAttak;
-        GetComponent<PlayerAnimatorEvents>().OnHandingAttackFinish -= OnHandAttak;
-    }
-
-
+    
     // Update is called once per frame
     void Update()
     {
@@ -47,16 +41,17 @@ public class TugOfWar : MonoBehaviour
 
         if (jointPlayer)
         {
-            if (player.isOk == false || player.Locomotion.inStumble || player.Locomotion.inTrack)
+            if (player.isOk == false || player.Locomotion.inStumble || player.Locomotion.inTrack || player.IsMyBall() || !player.GetSkill_BasicActionOne().IsReady)
                 RemoveJoint();
         }
-        else if (player.Locomotion.inHandAttak)
+        else if (player.Locomotion.inHoldTug)
         {
             if (mnPlayer != null && !player.Locomotion.inAir && player.isOk && !mnPlayer.IsMyTeaM(player))
             {
                 float dist = mnPlayer.Distance(player);
                 if (dist <= handDistance && dist > 0.5f && mnPlayer.isOk && !mnPlayer.Locomotion.inAir)
                 {
+                    //JOINT
                     player.Locomotion.JointTo(mnPlayer);
                     jointPlayer = mnPlayer;
                     jointPlayer.GetAnimatorEvents().OnChangeDirStart += EnemyOnChangeDir;
@@ -64,17 +59,52 @@ public class TugOfWar : MonoBehaviour
             }
         }
 
-    }
-
-
-    private void OnHandAttak(string arg)
-    {
-        if (jointPlayer)
+        //CONTROLE MANUAL
+        if (!player.IsIA)
         {
-            RemoveJoint();
-            return;
+            if (player.IsMyBall() || !player.isOk)
+            {
+                if (player.Locomotion.inHoldTug)
+                    player.Locomotion.ResetHoldTugAnimator();
+                player.GetSkill_BasicActionOne().mode = SkillVarMode.autoSubtract;
+                return;
+            }
+                        
+            if (ControllerInput.GetButton(player.GetInputType(), player.GetInputs().Input_Kick))
+            {
+                SkillVar skilltug = player.GetSkill_BasicActionOne();
+
+                if (skilltug.IsMax)
+                {
+                    skilltug.TriggerCooldown();
+                   
+                }
+
+                if (skilltug.IsReady)
+                {
+                    skilltug.mode = SkillVarMode.autoRegen;
+                    if (jointPlayer == null)
+                        player.Locomotion.SetHoldTugAnimator();
+                    else
+                        player.Locomotion.ResetHoldTugAnimator();
+                }
+                else
+                {
+                    skilltug.SetCurrentValue(0);
+                    skilltug.mode = SkillVarMode.nothing;
+                    player.Locomotion.ResetHoldTugAnimator();
+                }
+            }
+
+            if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Kick))
+            {
+                SkillVar skilltug = player.GetSkill_BasicActionOne();
+                skilltug.mode = SkillVarMode.autoSubtract;
+                player.Locomotion.ResetHoldTugAnimator();
+            }
 
         }
+
     }
 
     private void EnemyOnChangeDir()
@@ -88,6 +118,7 @@ public class TugOfWar : MonoBehaviour
     {
         player.Locomotion.RemoveJoint();
         jointPlayer.GetAnimatorEvents().OnChangeDirStart -= EnemyOnChangeDir;
+        jointPlayer.Locomotion.TriggerStumb();
         jointPlayer = null;
 
     }
