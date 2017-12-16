@@ -44,7 +44,21 @@ public static class BallControllerExtensions
         else
             return true;
     }
-    public static bool IsBallNear(this PlayerController player, float relativeDistance = 5.5f)
+    /// <summary>
+    /// Informa se o jogaodr é o jogador mais proximo da bola atualmente sem ser o jogador selecionado
+    /// </summary>
+    /// <param name="player"></param>
+    /// <returns></returns>
+    public static bool IsBallMostNearUnselected(this PlayerController player)
+    {
+
+        PlayerController mostNeat = GameManager.instance.GetPlayerNearBallUnselected(player.GetCampTeam());
+        if (mostNeat != null)
+            return player == mostNeat;
+        else
+            return true;
+    }
+    public static bool IsBallNear(this PlayerController player, float relativeDistance = 3.5f)
     {
         float distance = BallController.instance.transform.Distance(player.transform);
         if (distance > relativeDistance)

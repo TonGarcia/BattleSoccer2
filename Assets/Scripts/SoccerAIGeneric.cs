@@ -31,6 +31,7 @@ public enum SoccerAIState
     findToPass,
     goToGoal,
     drible,
+    helpTug,
 }
 public abstract class SoccerAIGeneric
 {
@@ -171,7 +172,8 @@ public abstract class SoccerAIGeneric
     public virtual void StopHandleStates()
     {
         Stop();
-
+        Locomotion.ResetHoldTugAnimator();
+        Locomotion.RemoveJoint();
     }
     public virtual void ForceGoTo(Vector3 position)
     {
@@ -269,6 +271,9 @@ public class SoccerAIUnSelected : SoccerAIGeneric
             case SoccerAIState.marcando:
                 Handle_MarcandoState();
                 break;
+            case SoccerAIState.helpTug:
+                Handle_HelpTugState();
+                break;
         }
 
         return true;
@@ -278,6 +283,16 @@ public class SoccerAIUnSelected : SoccerAIGeneric
     {
         if (Agent.isOnNavMesh == false || Agent.enabled == false)
             return;
+
+        //Se o jogador selecionado do meu time estive segurando um adversário
+        //a prioridade é ir ajudar, pegando a bola do adversário
+
+        if (Player.GetCampTeam().GetSelectedPlayer().Locomotion.isJoint && Player.IsBallMostNearUnselected())
+        {
+            aiState = SoccerAIState.helpTug;
+            return;
+        }
+
 
         //Indo para a origem
         //Se eu não estiver no ponto de origem vou ir para ele.
@@ -414,7 +429,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         PlayerController enemyforward;
         SkillVar skill = Player.GetSkill_BasicActionTwo();
 
-        if (Player.IsHitForwad(0.2f, out enemyforward, Player.GetCampTeam().Enemy()))
+        if (Player.IsHitForwad(0.5f, out enemyforward, Player.GetCampTeam().Enemy()))
         {
             if (skill.IsReady)
             {
@@ -433,9 +448,48 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
 
     }
+    private void Handle_HelpTugState()
+    {
+        PlayerController playerToHelp = Player.GetCampTeam().GetSelectedPlayer();
+
+        if (playerToHelp.Locomotion.isJoint == false || Player.IsBallMostNearUnselected() == false)
+        {
+            aiState = SoccerAIState.nothing;
+            return;
+        }
+
+       SkillVar skillStamina = Player.GetSkill_Stamina();
+
+
+        Vector2 move = Locomotion.GetDirectionAI();
+        Direction = move.x;
+        Speed = move.y;
+
+        //Seta destino bola ou jogador agarrado
+        PlayerController joitedPlayer = playerToHelp.Locomotion.JoitedPlayer;
+        if (joitedPlayer.IsMyBall() == false)
+            Agent.SetDestination(joitedPlayer.transform.position);
+        else
+            Agent.SetDestination(BallController.GetPosition());       
+
+        //Rasteira quando estiver peto
+        if (joitedPlayer.Distance(Player) <= 1.5f)
+        {
+            if (Player.GetSkill_BasicActionTwo().IsReady)
+            {
+                motionType = LocomotionType.normal;
+                if (Player.Locomotion.TriggerPass())
+                {
+                    Player.GetSkill_BasicActionTwo().TriggerCooldown();
+                }
+            }
+        }
+
+
+    }
     private void Handle_MarcandoState()
     {
-        Debug.Log("Marcando");
+
         /*
         //Se meu time estiver na defesa e houver um jogador inimigo de marcação proximo a mim, vou marcar
         //Minha marcação vai terminar caso
@@ -805,7 +859,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
                         toPass = topass;
                         toGo = Player.transform.position;
                         inGoalDir = false;
-                       
+
                     }
                 }
                 else

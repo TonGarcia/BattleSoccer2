@@ -14,12 +14,12 @@ MonoBehaviour:
   icon_withBall: {fileID: 21300000, guid: 26ac80742318de7488d12441619fecf1, type: 3}
   icon_withOutBall: {fileID: 21300000, guid: 26ac80742318de7488d12441619fecf1, type: 3}
   skill:
-    ability: {fileID: 0}
+    ability: {fileID: 11400000}
     maxValue: 100
     currentValue: 0
     CriticalValue: 0
     coolDownDuration: 5
-    regenDuration: 10
+    regenDuration: 3
     subtractDuration: 5
     dampTime: 3.5
     mode: 0

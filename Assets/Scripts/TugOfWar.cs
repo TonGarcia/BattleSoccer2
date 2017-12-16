@@ -101,6 +101,7 @@ public class TugOfWar : MonoBehaviour
                 SkillVar skilltug = player.GetSkill_BasicActionOne();
                 skilltug.mode = SkillVarMode.autoSubtract;
                 player.Locomotion.ResetHoldTugAnimator();
+                RemoveJoint();
             }
 
         }
@@ -116,7 +117,11 @@ public class TugOfWar : MonoBehaviour
 
     void RemoveJoint()
     {
+
         player.Locomotion.RemoveJoint();
+        if (jointPlayer == null)
+            return;
+
         jointPlayer.GetAnimatorEvents().OnChangeDirStart -= EnemyOnChangeDir;
         jointPlayer.Locomotion.TriggerStumb();
         jointPlayer = null;

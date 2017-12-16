@@ -326,6 +326,35 @@ public class GameManager : MonoBehaviour
         }
 
     }
+    /// <summary>
+    /// Pesquisa em um time especifico pelo jogador mais proximo da bola sem ser o jogador selecionado
+    /// </summary>
+    /// <param name="team">Time da pesquisa</param>
+    /// <returns>Retorna o Jogador mais proximo da bola, Nunca retorna nulo a menos que o time não tenha jogador nenhum</returns>
+
+    public PlayerController GetPlayerNearBallUnselected(CampTeam team)
+    {
+        TeamManager manager = GetTeamManager(team);
+
+        List<PlayerController> players = manager.Players;
+        players.RemoveAll(r => r.isOk == false);
+        players.RemoveAll(r => r.IsSelected());
+        // players.RemoveAll(r => r.Locomotion.inAir);
+
+        if (players.Count > 0)
+        {
+            float min = players.Min(r => r.transform.Distance(BallController.instance.transform));
+            PlayerController player = players.FirstOrDefault(r => r.transform.Distance(BallController.instance.transform) == min);
+
+
+            return player;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
     public PlayerController GetSelectedPlayer(CampTeam team)
     {
         TeamManager manager = GetTeamManager(team);

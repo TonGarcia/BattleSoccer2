@@ -111,13 +111,15 @@ namespace SoccerGame
 
             }
         }
-
+        public bool isJoint { get { return m_jointedController != null; } }
+        public PlayerController JoitedPlayer { get { return m_jointedController; } }
         private Animator m_Animator = null;
         private NavMeshAgent m_Agent = null;
         private Rigidbody m_Rigidbody = null;
         private ControllerGravity m_Gravity = null;
         private PlayerController m_controller = null;
         private PlayerController m_jointedController = null;
+
 
         private bool m_ai = false;
 
@@ -471,11 +473,13 @@ namespace SoccerGame
         }
         public void SetHoldTugAnimator()
         {
-            m_Animator.SetBool(m_HoldTugId, true);
+            if (m_Animator != null)
+                m_Animator.SetBool(m_HoldTugId, true);
         }
         public void ResetHoldTugAnimator()
         {
-            m_Animator.SetBool(m_HoldTugId, false);
+            if (m_Animator != null)
+                m_Animator.SetBool(m_HoldTugId, false);
         }
         public void JointTo(PlayerController playerToJoint)
         {
@@ -488,13 +492,17 @@ namespace SoccerGame
 
             joint.connectedBody = playerToJoint.GetComponent<Rigidbody>();
             joint.enableCollision = false;
+            joint.connectedMassScale = 5.0f;
             m_jointedController = playerToJoint;
+
             // SetTugAnimator();
             // playerToJoint.Locomotion.SetTugAnimator();
 
         }
         public void RemoveJoint()
         {
+            if (m_Rigidbody == null)
+                return;
 
             FixedJoint joint = m_Rigidbody.gameObject.GetComponent<FixedJoint>();
             if (joint != null)
