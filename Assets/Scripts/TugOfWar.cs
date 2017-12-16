@@ -62,7 +62,7 @@ public class TugOfWar : MonoBehaviour
         //CONTROLE MANUAL
         if (!player.IsIA)
         {
-            if (player.IsMyBall() || !player.isOk)
+            if (player.IsMyBall() || player.isOk==false)
             {
                 if (player.Locomotion.inHoldTug)
                     player.Locomotion.ResetHoldTugAnimator();
@@ -70,7 +70,7 @@ public class TugOfWar : MonoBehaviour
                 return;
             }
                         
-            if (ControllerInput.GetButton(player.GetInputType(), player.GetInputs().Input_Kick))
+            if (ControllerInput.GetButton(player.GetInputType(), player.GetInputs().Input_Kick) && player.isOk)
             {
                 SkillVar skilltug = player.GetSkill_BasicActionOne();
 

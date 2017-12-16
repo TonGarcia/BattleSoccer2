@@ -30,7 +30,7 @@ public class ManualController : MonoBehaviour
             return;
 
         //Seleciona outro jogador manual mais proximo se eu estiver muito longe da bola
-        if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric && player.GetCampTeam().HasPlayerOk())
+        if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric && player.GetCampTeam().HasPlayerOk() && !player.Locomotion.inHoldTug && player.Locomotion.isJoint)
         {
             timeToSelect += Time.deltaTime;
             if (timeToSelect > 1.5f)
