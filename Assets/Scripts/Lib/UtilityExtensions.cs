@@ -120,12 +120,14 @@ namespace SoccerGame
         /// Se o valor atual da skill for menor que o setado pelo <see cref="CriticalValue"/>, este metodo será verdadeiro.
         /// </summary>
         public bool IsCritical { get { return currentValue < (maxValue * CriticalValue); } }
+        public bool isToggle { get { return toggle; } }
 
         private float elapsedValue = 0;
         private float coolDownTimeLeft = 0;
         private float nextReadyTime = 0;
         private bool isReady = true;
         private bool isEvCooldown = true;
+        private bool toggle = false;
 
         public void SetCurrentValue(float v)
         {
@@ -172,7 +174,14 @@ namespace SoccerGame
         {
             imageCooldownFillAmout = image;
         }
-
+        public void SetToggle()
+        {
+            toggle = true;
+        }
+        public void ResetTogle()
+        {
+            toggle = false;
+        }
         public void Update()
         {
             if (mode == SkillVarMode.autoRegen)

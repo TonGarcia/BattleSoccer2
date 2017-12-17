@@ -209,9 +209,13 @@ public class PlayerController : MonoBehaviour
     }
     private void OnCollisionEnter(Collision collision)
     {
+        if (!isOk || locomotion.inStumble || locomotion.inEntry || locomotion.inTrack || locomotion.inTrip)
+            return;
+
         PlayerController colPlayer = collision.gameObject.GetComponent<PlayerController>();
         if (colPlayer)
         {
+
             //if (colPlayer.locomotion.inTrack && colPlayer.IsMyTeaM(this) == false)
             //    locomotion.SetTrip();
             //else

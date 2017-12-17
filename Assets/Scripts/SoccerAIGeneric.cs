@@ -286,11 +286,13 @@ public class SoccerAIUnSelected : SoccerAIGeneric
 
         //Se o jogador selecionado do meu time estive segurando um adversário
         //a prioridade é ir ajudar, pegando a bola do adversário
-
-        if (Player.GetCampTeam().GetSelectedPlayer().Locomotion.isJoint && Player.IsBallMostNearUnselected())
+        if (Player.GetCampTeam().GetSelectedPlayer() != null)
         {
-            aiState = SoccerAIState.helpTug;
-            return;
+            if (Player.GetCampTeam().GetSelectedPlayer().Locomotion.isJoint && Player.IsBallMostNearUnselected())
+            {
+                aiState = SoccerAIState.helpTug;
+                return;
+            }
         }
 
 
@@ -451,8 +453,13 @@ public class SoccerAIUnSelected : SoccerAIGeneric
     private void Handle_HelpTugState()
     {
         PlayerController playerToHelp = Player.GetCampTeam().GetSelectedPlayer();
+        if(playerToHelp==null)
+        {
+            aiState = SoccerAIState.nothing;
+            return;
+        }
 
-        if (playerToHelp.Locomotion.isJoint == false || Player.IsBallMostNearUnselected() == false)
+        if (playerToHelp.Locomotion.isJoint == false || Player.IsBallMostNearUnselectedWithSkillTwo() == false)
         {
             aiState = SoccerAIState.nothing;
             return;

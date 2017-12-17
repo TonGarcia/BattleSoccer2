@@ -9,7 +9,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3d1136aa1074824391fa31bcd4ad908, type: 3}
-  m_Name: BasicAttack
+  m_Name: TugOfWar
   m_EditorClassIdentifier: 
   icon_withBall: {fileID: 21300000, guid: 26ac80742318de7488d12441619fecf1, type: 3}
   icon_withOutBall: {fileID: 21300000, guid: 26ac80742318de7488d12441619fecf1, type: 3}
@@ -18,8 +18,8 @@ MonoBehaviour:
     maxValue: 100
     currentValue: 0
     CriticalValue: 0
-    coolDownDuration: 5
-    regenDuration: 3
+    coolDownDuration: 15
+    regenDuration: 5
     subtractDuration: 5
     dampTime: 3.5
     mode: 0

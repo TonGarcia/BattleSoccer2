@@ -41,7 +41,14 @@ public class TugOfWar : MonoBehaviour
 
         if (jointPlayer)
         {
-            if (player.isOk == false || player.Locomotion.inStumble || player.Locomotion.inTrack || player.IsMyBall() || !player.GetSkill_BasicActionOne().IsReady)
+            if (!player.isOk ||
+                player.Locomotion.inStumble ||
+                player.Locomotion.inTrack || 
+                player.IsMyBall() || 
+                !jointPlayer.isOk ||
+                !player.GetSkill_BasicActionOne().IsReady
+                
+                )
                 RemoveJoint();
         }
         else if (player.Locomotion.inHoldTug)

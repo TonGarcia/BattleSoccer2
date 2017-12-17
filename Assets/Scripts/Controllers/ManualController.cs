@@ -23,6 +23,8 @@ public class ManualController : MonoBehaviour
     void Awake()
     {
         player = GetComponent<PlayerController>();
+        // SignEvents();
+
     }
     void Update()
     {
@@ -30,7 +32,10 @@ public class ManualController : MonoBehaviour
             return;
 
         //Seleciona outro jogador manual mais proximo se eu estiver muito longe da bola
-        if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric && player.GetCampTeam().HasPlayerOk() && !player.Locomotion.inHoldTug && player.Locomotion.isJoint)
+        if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric &&
+            player.GetCampTeam().HasPlayerOk() &&
+            !player.Locomotion.inHoldTug &&
+            !player.Locomotion.isJoint)
         {
             timeToSelect += Time.deltaTime;
             if (timeToSelect > 1.5f)
@@ -113,34 +118,34 @@ public class ManualController : MonoBehaviour
         dir = move.x;
         speed = move.y;
 
-        
+
         //Fill kick power amount 
-        if (ControllerInput.GetButton(player.GetInputType(), player.GetInputs().Input_Kick))
+        if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Kick))
         {
             //Fill kick power or fill action2 power
             SkillVar skillKick = player.GetSkill_BasicKick();
-           
+
 
             if (player.IsMyBall())
             {
+                skillKick.SetToggle();
+
                 if (skillKick.IsReady)
                 {
                     skillKick.mode = SkillVarMode.autoRegen;
                 }
             }
-           
+
+            playerToPass = null;
+            GameManager.instance.ResetIndicator();
         }
         //Kick ball
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Kick))
         {
             //Fill kick power if is myBall
             SkillVar skillKick = player.GetSkill_BasicKick();
-            skillKick.mode = SkillVarMode.nothing;
-            skillKick.SetCurrentValue(0);
 
-           
-
-            if (player.IsMyBall())
+            if (player.IsMyBall() && skillKick.isToggle)
             {
                 if (skillKick.IsReady)
                 {
@@ -150,7 +155,10 @@ public class ManualController : MonoBehaviour
                     }
                 }
             }
-           
+
+            skillKick.mode = SkillVarMode.nothing;
+            skillKick.SetCurrentValue(0);
+            skillKick.ResetTogle();
 
             playerToPass = null;
             GameManager.instance.ResetIndicator();
@@ -227,6 +235,7 @@ public class ManualController : MonoBehaviour
             {
                 if (locomotion.inNormal)
                 {
+
                     if (locomotion.TriggerPass())
                     {
                         selectedSkill.TriggerCooldown();
@@ -236,6 +245,7 @@ public class ManualController : MonoBehaviour
                         playerToPass = null;
                         GameManager.instance.ResetIndicator();
                     }
+
                 }
             }
             else
@@ -317,7 +327,7 @@ public class ManualController : MonoBehaviour
     private void EvChangeDirectionOk()
     {
 
-        BallController.instance.SetBallDesprotectTo(player);
+        // BallController.instance.SetBallDesprotectTo(player);
 
     }
     private void EvChangeDirectionFinish()
@@ -343,6 +353,7 @@ public class ManualController : MonoBehaviour
 
     private void EvPassStart()
     {
+
         if (player.Locomotion.inAir)
             return;
 
@@ -354,7 +365,7 @@ public class ManualController : MonoBehaviour
     }
     private void EvPassOk()
     {
-        BallController.instance.SetBallDesprotectTo(player);
+
 
         if (player.IsMyBall())
         {
@@ -376,13 +387,18 @@ public class ManualController : MonoBehaviour
             playerToPass = null;
             GameManager.instance.ResetIndicator();
         }
+
     }
     private void EvPassFinish()
     {
+
         player.UnsetKinematic();
 
         //BUGFIX - previne tompo atrazado
         locomotion.ResetTrip();
+
+        BallController.instance.SetBallDesprotectTo(player);
+
     }
 
     private void EvLongKickOk()
@@ -425,7 +441,7 @@ public class ManualController : MonoBehaviour
     //Traking
     private void EvTrakStart()
     {
-
+        player.UnsetKinematic();
     }
     private void EvTrakOkt()
     {
@@ -439,7 +455,8 @@ public class ManualController : MonoBehaviour
     }
     private void EvTrakFinish()
     {
-
+        //BUGIF Previne Trip atrazado
+        locomotion.ResetTrip();
     }
     //Triping
     private void EvTripFinish()
@@ -463,10 +480,32 @@ public class ManualController : MonoBehaviour
     //Private methods
     private void SignEvents()
     {
+        PlayerAnimatorEvents animatorEvents = GetComponent<PlayerAnimatorEvents>();
+        animatorEvents.OnChangeDirStart += EvChangeDirectionStart;
+        animatorEvents.OnChangeDirOk += EvChangeDirectionOk;
+        animatorEvents.OnChangeDirFinish += EvChangeDirectionFinish;
+        animatorEvents.OnTurnStart += EvTurnDirectionStart;
+        animatorEvents.OnTurnFinish += EvTurnDirectionFinish;
+        animatorEvents.OnKickOk += EvLongKickOk;
+        animatorEvents.OnKickFinish += EvKickFinish;
+        animatorEvents.OnPassStart += EvPassStart;
+        animatorEvents.OnPassOk += EvPassOk;
+        animatorEvents.OnPassFinish += EvPassFinish;
+        animatorEvents.OnEnttryStart += EvEntryStart;
+        animatorEvents.OnEnttryFinish += EvEntryFinish;
+        animatorEvents.OnStumblesStart += EvStumbleStart;
+        animatorEvents.OnStumblesFinish += EvStumbleFinish;
+        animatorEvents.OnTrackingStart += EvTrakStart;
+        animatorEvents.OnTrackingOk += EvTrakOkt;
+        animatorEvents.OnTrackingFinish += EvTrakFinish;
+        animatorEvents.OnTripingStart += EvTripStart;
+        animatorEvents.OnTripingFinish += EvTripFinish;
+        animatorEvents.OnOnStandingupFinish += EvStandup;
         StartCoroutine(IESignevents());
     }
     private void UnsignEvents()
     {
+
         PlayerAnimatorEvents animatorEvents = GetComponent<PlayerAnimatorEvents>();
         animatorEvents.OnChangeDirStart -= EvChangeDirectionStart;
         animatorEvents.OnChangeDirOk -= EvChangeDirectionOk;
@@ -512,30 +551,7 @@ public class ManualController : MonoBehaviour
         return selectedSkill;
     }
     private IEnumerator IESignevents()
-    {
-
-
-        PlayerAnimatorEvents animatorEvents = GetComponent<PlayerAnimatorEvents>();
-        animatorEvents.OnChangeDirStart += EvChangeDirectionStart;
-        animatorEvents.OnChangeDirOk += EvChangeDirectionOk;
-        animatorEvents.OnChangeDirFinish += EvChangeDirectionFinish;
-        animatorEvents.OnTurnStart += EvTurnDirectionStart;
-        animatorEvents.OnTurnFinish += EvTurnDirectionFinish;
-        animatorEvents.OnKickOk += EvLongKickOk;
-        animatorEvents.OnKickFinish += EvKickFinish;
-        animatorEvents.OnPassStart += EvPassStart;
-        animatorEvents.OnPassOk += EvPassOk;
-        animatorEvents.OnPassFinish += EvPassFinish;
-        animatorEvents.OnEnttryStart += EvEntryStart;
-        animatorEvents.OnEnttryFinish += EvEntryFinish;
-        animatorEvents.OnStumblesStart += EvStumbleStart;
-        animatorEvents.OnStumblesFinish += EvStumbleFinish;
-        animatorEvents.OnTrackingStart += EvTrakStart;
-        animatorEvents.OnTrackingOk += EvTrakOkt;
-        animatorEvents.OnTrackingFinish += EvTrakFinish;
-        animatorEvents.OnTripingStart += EvTripStart;
-        animatorEvents.OnTripingFinish += EvTripFinish;
-        animatorEvents.OnOnStandingupFinish += EvStandup;
+    {        
 
         while (BallController.instance == null)
             yield return null;

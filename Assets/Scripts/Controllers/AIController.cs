@@ -56,6 +56,8 @@ public class AIController : MonoBehaviour
         nvAceleration = agent.acceleration;
 
         SelectedAIState = AIUnselected;
+
+        //SignEvents();
     }
 
     void Update()
@@ -170,7 +172,7 @@ public class AIController : MonoBehaviour
     }
     private void EvChangeDirectionOk()
     {
-        BallController.instance.SetBallDesprotectTo(player);
+        //BallController.instance.SetBallDesprotectTo(player);
     }
     private void EvChangeDirectionFinish()
     {
@@ -281,7 +283,7 @@ public class AIController : MonoBehaviour
     //Traking
     private void EvTrakStart()
     {
-
+        player.UnsetKinematic();
     }
     private void EvTrakOkt()
     {
@@ -294,7 +296,8 @@ public class AIController : MonoBehaviour
     }
     private void EvTrakFinish()
     {
-
+        //BUGIF Previne Trip atrazado
+        locomotion.ResetTrip();
     }
     //Triping
     private void EvTripFinish()
@@ -356,6 +359,28 @@ public class AIController : MonoBehaviour
     }
     private void SignEvents()
     {
+        //Animatro sign
+        PlayerAnimatorEvents animatorEvents = GetComponent<PlayerAnimatorEvents>();
+        animatorEvents.OnChangeDirStart += EvChangeDirectionStart;
+        animatorEvents.OnChangeDirOk += EvChangeDirectionOk;
+        animatorEvents.OnChangeDirFinish += EvChangeDirectionFinish;
+        animatorEvents.OnTurnStart += EvTurnDirectionStart;
+        animatorEvents.OnTurnFinish += EvTurnDirectionFinish;
+        animatorEvents.OnKickOk += EvLongKickOk;
+        animatorEvents.OnKickFinish += EvKickFinish;
+        animatorEvents.OnEnttryStart += EvEntryStart;
+        animatorEvents.OnEnttryFinish += EvEntryFinish;
+        animatorEvents.OnPassStart += EvShortPassStart;
+        animatorEvents.OnPassOk += EvShortPassOk;
+        animatorEvents.OnPassFinish += EvShortPassFinish;
+        animatorEvents.OnStumblesStart += EvStumbleStart;
+        animatorEvents.OnStumblesFinish += EvStumbleFinish;
+        animatorEvents.OnTrackingStart += EvTrakStart;
+        animatorEvents.OnTrackingOk += EvTrakOkt;
+        animatorEvents.OnTrackingFinish += EvTrakFinish;
+        animatorEvents.OnTripingStart += EvTripStart;
+        animatorEvents.OnTripingFinish += EvTripFinish;
+        animatorEvents.OnOnStandingupFinish += EvStandup;
         StartCoroutine(IESignevents());
     }
     private void UnsignEvents()
@@ -407,28 +432,7 @@ public class AIController : MonoBehaviour
     }
     private IEnumerator IESignevents()
     {
-        //Animatro sign
-        PlayerAnimatorEvents animatorEvents = GetComponent<PlayerAnimatorEvents>();
-        animatorEvents.OnChangeDirStart += EvChangeDirectionStart;
-        animatorEvents.OnChangeDirOk += EvChangeDirectionOk;
-        animatorEvents.OnChangeDirFinish += EvChangeDirectionFinish;
-        animatorEvents.OnTurnStart += EvTurnDirectionStart;
-        animatorEvents.OnTurnFinish += EvTurnDirectionFinish;
-        animatorEvents.OnKickOk += EvLongKickOk;
-        animatorEvents.OnKickFinish += EvKickFinish;
-        animatorEvents.OnEnttryStart += EvEntryStart;
-        animatorEvents.OnEnttryFinish += EvEntryFinish;
-        animatorEvents.OnPassStart += EvShortPassStart;
-        animatorEvents.OnPassOk += EvShortPassOk;
-        animatorEvents.OnPassFinish += EvShortPassFinish;
-        animatorEvents.OnStumblesStart += EvStumbleStart;
-        animatorEvents.OnStumblesFinish += EvStumbleFinish;
-        animatorEvents.OnTrackingStart += EvTrakStart;
-        animatorEvents.OnTrackingOk += EvTrakOkt;
-        animatorEvents.OnTrackingFinish += EvTrakFinish;
-        animatorEvents.OnTripingStart += EvTripStart;
-        animatorEvents.OnTripingFinish += EvTripFinish;
-        animatorEvents.OnOnStandingupFinish += EvStandup;
+      
 
         while (BallController.instance == null)
             yield return null;
@@ -436,9 +440,7 @@ public class AIController : MonoBehaviour
         BallController.instance.onSetMyOwner += OnBallSetOwner;
         BallController.instance.onRemoveMyOwner += OnBallRemoveOwner;
     }
-
-
-
+    
     //InternalMethods
     internal bool TriggerPass(PlayerController toPlayer)
     {
