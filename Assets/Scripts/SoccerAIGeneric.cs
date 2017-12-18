@@ -665,11 +665,13 @@ public class SoccerAISelected : SoccerAIGeneric
         if (!skillTrak.IsReady && skillTug.IsReady && Player.Locomotion.isJoint == false)
         {
             PlayerController enemy = Player.GetEnemyNear();
-            if (enemy.Distance(Player) <= 1.5f && enemy.IsMyBall())
-                Player.Locomotion.SetHoldTugAnimator();
-            else
-                Player.Locomotion.ResetHoldTugAnimator();
-
+            if (enemy != null)
+            {
+                if (enemy.Distance(Player) <= 1.5f && enemy.IsMyBall())
+                    Player.Locomotion.SetHoldTugAnimator();
+                else
+                    Player.Locomotion.ResetHoldTugAnimator();
+            }
         }
         else if (Player.Locomotion.isJoint)
         {

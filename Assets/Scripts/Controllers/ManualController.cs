@@ -456,7 +456,7 @@ public class ManualController : MonoBehaviour
     {
         if (player.IsMyBall())
             BallController.SetPass(8.0f);
-
+        player.Locomotion.ResetTriggers();
         player.SetKinematic();
     }
     private void EvStumbleFinish()
@@ -467,6 +467,7 @@ public class ManualController : MonoBehaviour
     //Traking
     private void EvTrakStart()
     {
+        player.Locomotion.ResetTriggers();
         player.UnsetKinematic();
     }
     private void EvTrakOkt()
@@ -496,7 +497,7 @@ public class ManualController : MonoBehaviour
             BallController.instance.SetBallDesprotectTo(player);
             BallController.SetPass(8.0f);
         }
-
+        player.Locomotion.ResetTriggers();
         player.SetKinematic();
     }
     private void EvStandup()

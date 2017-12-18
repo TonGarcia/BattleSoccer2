@@ -270,7 +270,7 @@ public class AIController : MonoBehaviour
             BallController.instance.SetBallDesprotectTo(player);
             BallController.SetPass(8.0f);
         }
-
+        player.Locomotion.ResetTriggers();
         player.SetKinematic();
     }
     private void EvStumbleFinish()
@@ -280,6 +280,7 @@ public class AIController : MonoBehaviour
     //Traking
     private void EvTrakStart()
     {
+        player.Locomotion.ResetTriggers();
         player.UnsetKinematic();
     }
     private void EvTrakOkt()
@@ -308,7 +309,7 @@ public class AIController : MonoBehaviour
             BallController.instance.SetBallDesprotectTo(player);
             BallController.SetPass(8.0f);
         }
-
+        player.Locomotion.ResetTriggers();
         player.SetKinematic();
     }
 

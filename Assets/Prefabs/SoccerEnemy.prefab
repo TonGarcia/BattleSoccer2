@@ -2710,7 +2710,7 @@ MonoBehaviour:
     maxValue: 100
     currentValue: 0
     CriticalValue: 0
-    coolDownDuration: 5
+    coolDownDuration: 15
     regenDuration: 10
     subtractDuration: 5
     dampTime: 3.5

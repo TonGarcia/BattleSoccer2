@@ -555,6 +555,14 @@ namespace SoccerGame
             m_jointedController = null;
 
         }
+        public void ResetTriggers()
+        {
+            m_Animator.ResetTrigger(m_KickId);
+            m_Animator.ResetTrigger(m_PassId);
+            m_Animator.ResetTrigger(m_ActionOneId);
+            m_Animator.ResetTrigger(m_ActionTwoId);
+            m_Animator.ResetTrigger(m_EntryId);
+        }
         private Vector3 GetDirectionAxis(float h, float v)
         {
 
