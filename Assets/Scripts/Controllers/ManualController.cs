@@ -35,7 +35,8 @@ public class ManualController : MonoBehaviour
         if (player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric &&
             player.GetCampTeam().HasPlayerOk() &&
             !player.Locomotion.inHoldTug &&
-            !player.Locomotion.isJoint)
+            !player.Locomotion.isJoint &&
+            playerToPass == null)
         {
             timeToSelect += Time.deltaTime;
             if (timeToSelect > 1.5f)
@@ -171,8 +172,8 @@ public class ManualController : MonoBehaviour
 
             if (Stamina.IsCritical == false && player.isOk)
             {
-                playerToPass = null;
-                GameManager.instance.ResetIndicator();
+               // playerToPass = null;
+              //  GameManager.instance.ResetIndicator();
                 player.SetMotionSoccer();
                 player.Locomotion.SetSpeedMultiplies(1.2f);
             }
@@ -180,8 +181,8 @@ public class ManualController : MonoBehaviour
         }
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
-            playerToPass = null;
-            GameManager.instance.ResetIndicator();
+           // playerToPass = null;
+           // GameManager.instance.ResetIndicator();
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
             player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
@@ -192,16 +193,16 @@ public class ManualController : MonoBehaviour
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
 
-            playerToPass = null;
-            GameManager.instance.ResetIndicator();
+           // playerToPass = null;
+          //  GameManager.instance.ResetIndicator();
             player.SetMotionStrafe();
             player.Locomotion.SetSpeedMultiplies(1.2f);
 
         }
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
-            playerToPass = null;
-            GameManager.instance.ResetIndicator();
+           // playerToPass = null;
+           // GameManager.instance.ResetIndicator();
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
 
@@ -224,21 +225,37 @@ public class ManualController : MonoBehaviour
                 }
             }
         }
+        //Rasteira
+        if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Pass))
+        {
+            if (player.IsMyBall() == false && locomotion.inNormal)
+            {
+                SkillVar skilltrack = player.GetSkill_BasicActionTwo();
+                if (skilltrack.IsReady)
+                {
+                    if (locomotion.TriggerActionTwo())
+                    {
+                        skilltrack.TriggerCooldown();
+                    }
+                }
 
-        //Passe de bola ou Action Two
+            }
+        }
+
+        //Passe de bola
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Pass))
         {
             //playerToPass = null;
             //GameManager.instance.ResetIndicator();
-            SkillVar selectedSkill = GetSkillsActionTwo();
-            if (selectedSkill.IsReady)
+            SkillVar skillPass = player.GetSkill_BasicPass();
+            if (skillPass.IsReady && player.IsMyBall())
             {
                 if (locomotion.inNormal)
                 {
 
                     if (locomotion.TriggerPass())
                     {
-                        selectedSkill.TriggerCooldown();
+                        skillPass.TriggerCooldown();
                     }
                     else
                     {
@@ -296,6 +313,11 @@ public class ManualController : MonoBehaviour
             }
         }
 
+        if(playerToPass!=null)
+        {
+            playerToPass = null;
+            GameManager.instance.ResetIndicator();
+        }
     }
     private void OnBallRemoveOwner(PlayerController lasOwner)
     {
@@ -366,7 +388,6 @@ public class ManualController : MonoBehaviour
     private void EvPassOk()
     {
 
-
         if (player.IsMyBall())
         {
             if (playerToPass != null)
@@ -384,8 +405,8 @@ public class ManualController : MonoBehaviour
                 BallController.SetPass(12.0f);
             }
 
-            playerToPass = null;
-            GameManager.instance.ResetIndicator();
+           // playerToPass = null;
+           // GameManager.instance.ResetIndicator();
         }
 
     }
@@ -551,7 +572,7 @@ public class ManualController : MonoBehaviour
         return selectedSkill;
     }
     private IEnumerator IESignevents()
-    {        
+    {
 
         while (BallController.instance == null)
             yield return null;

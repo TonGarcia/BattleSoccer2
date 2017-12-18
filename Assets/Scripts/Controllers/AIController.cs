@@ -76,14 +76,7 @@ public class AIController : MonoBehaviour
         //Vou ajudar correndo para perto da bola
         if (waitingToPass)
         {
-            if (locomotion.IsAgentDone)
-            {
-                direction = 0;
-                speed = 0;
-                agent.destination = transform.position;
-                waitingToPass = false;
-                return;
-            }
+            
             locomotion.motionType = LocomotionType.strafe;
 
             //Move and loocakt

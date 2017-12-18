@@ -575,22 +575,20 @@ public class GameManager : MonoBehaviour
 
     public bool IsIA(CampTeam team)
     {
-        TeamManager manager = GetTeamManager(team);
+       
         return team.GetInputType() == ControllerInputType.ControllerCPU;
     }
     public bool IsController1(CampTeam team)
     {
-        TeamManager manager = GetTeamManager(team);
+
         return team.GetInputType() == ControllerInputType.Controller1;
     }
     public bool IsController2(CampTeam team)
     {
-        TeamManager manager = GetTeamManager(team);
         return team.GetInputType() == ControllerInputType.Controller2;
     }
     public bool IsControllerCPU(CampTeam team)
     {
-        TeamManager manager = GetTeamManager(team);
         return team.GetInputType() == ControllerInputType.ControllerCPU;
     }
     public bool HasTwoPlayers()

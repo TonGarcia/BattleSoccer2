@@ -56,7 +56,7 @@ public class TugOfWar : MonoBehaviour
             if (mnPlayer != null && !player.Locomotion.inAir && player.isOk && !mnPlayer.IsMyTeaM(player))
             {
                 float dist = mnPlayer.Distance(player);
-                if (dist <= handDistance && dist > 0.5f && mnPlayer.isOk && !mnPlayer.Locomotion.inAir)
+                if (dist <= tugWarDistance && dist > 0.5f && mnPlayer.isOk && !mnPlayer.Locomotion.inAir)
                 {
                     //JOINT
                     player.Locomotion.JointTo(mnPlayer);
@@ -80,6 +80,8 @@ public class TugOfWar : MonoBehaviour
             if (ControllerInput.GetButton(player.GetInputType(), player.GetInputs().Input_Kick) && player.isOk)
             {
                 SkillVar skilltug = player.GetSkill_BasicActionOne();
+                skilltug.SetToggle();
+                
 
                 if (skilltug.IsMax)
                 {
@@ -106,9 +108,15 @@ public class TugOfWar : MonoBehaviour
             if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Kick))
             {
                 SkillVar skilltug = player.GetSkill_BasicActionOne();
+                if (skilltug.isToggle == false)
+                    return;
+
                 skilltug.mode = SkillVarMode.autoSubtract;
-                player.Locomotion.ResetHoldTugAnimator();
-                RemoveJoint();
+                player.Locomotion.ResetHoldTugAnimator();                
+                skilltug.ResetTogle();
+
+                if(skilltug.IsReady)
+                    RemoveJoint();
             }
 
         }

@@ -131,9 +131,10 @@ namespace SoccerGame
         private int m_JumpLegCycleId = 0;
         private int m_KickId = 0;
         private int m_PassId = 0;
+        private int m_ActionOneId = 0;
+        private int m_ActionTwoId = 0;
         private int m_EntryId = 0;
         private int m_StumbleId = 0;
-        private int m_OwnerBallId = 0;
         private int m_TripId = 0;
         private int m_HoldTugId = 0;
 
@@ -155,8 +156,9 @@ namespace SoccerGame
             m_KickId = Animator.StringToHash("LongKick");
             m_PassId = Animator.StringToHash("ShortPass");
             m_EntryId = Animator.StringToHash("Entry");
+            m_ActionOneId = Animator.StringToHash("ActionOne");
+            m_ActionTwoId = Animator.StringToHash("ActionTwo");
             m_StumbleId = Animator.StringToHash("Stumble");
-            m_OwnerBallId = Animator.StringToHash("OwnerBall");
             m_TripId = Animator.StringToHash("Trip");
             m_HoldTugId = Animator.StringToHash("HoldTug");
 
@@ -446,6 +448,34 @@ namespace SoccerGame
                 if (inWalkRun == true || inIdle == true || inAir == true)
                 {
                     m_Animator.SetTrigger(m_PassId);
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+        public bool TriggerActionTwo()
+        {
+            bool result = false;
+            if (inSoccer == false && inStrafe == false && inStumble == false)
+            {
+                if (inWalkRun == true || inIdle == true)
+                {
+                    m_Animator.SetTrigger(m_ActionTwoId);
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+        public bool TriggerActionOne()
+        {
+            bool result = false;
+            if (inSoccer == false && inStrafe == false && inStumble == false)
+            {
+                if (inWalkRun == true || inIdle == true)
+                {
+                    m_Animator.SetTrigger(m_ActionOneId);
                     result = true;
                 }
             }

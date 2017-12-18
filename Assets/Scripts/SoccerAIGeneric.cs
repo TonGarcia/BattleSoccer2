@@ -465,9 +465,6 @@ public class SoccerAIUnSelected : SoccerAIGeneric
             return;
         }
 
-       SkillVar skillStamina = Player.GetSkill_Stamina();
-
-
         Vector2 move = Locomotion.GetDirectionAI();
         Direction = move.x;
         Speed = move.y;
@@ -485,7 +482,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
             if (Player.GetSkill_BasicActionTwo().IsReady)
             {
                 motionType = LocomotionType.normal;
-                if (Player.Locomotion.TriggerPass())
+                if (Player.Locomotion.TriggerActionTwo())
                 {
                     Player.GetSkill_BasicActionTwo().TriggerCooldown();
                 }
@@ -648,10 +645,10 @@ public class SoccerAISelected : SoccerAIGeneric
         {
             SkillVar skill = Player.GetSkill_BasicActionTwo();
 
-            if (skill.IsReady)
+            if (skill.IsReady && !Player.IsMyBall())
             {
                 motionType = LocomotionType.normal;
-                if (Locomotion.TriggerPass())
+                if (Locomotion.TriggerActionTwo())
                     skill.TriggerCooldown();
             }
         }
@@ -698,7 +695,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
     private Vector3 MidCampPosition { get { return GameManager.instance.midCampTransform.position; } }
     Vector3 toGo = Vector3.zero;
     PlayerController toPass = null;
-    private bool inPass = false;
+ 
     private bool inGoalDir = false;
 
     public SoccerAIwithBall(AIController owner, PlayerController controller) : base(owner, controller)
@@ -758,10 +755,8 @@ public class SoccerAIwithBall : SoccerAIGeneric
             {
                 if (Player.IsHitBetween(toPass) == false && Player.IsMyBall())
                 {
-
                     if (Owner.TriggerPass(toPass))
-                    {
-                        inPass = true;
+                    {                       
                         Player.GetSkill_BasicPass().TriggerCooldown();
                     }
 
@@ -943,7 +938,8 @@ public class SoccerAIwithBall : SoccerAIGeneric
         playersNear.RemoveAll(p => p.isOk == false);
         playersNear.RemoveAll(p => p.Locomotion.inTrack);
         playersNear.RemoveAll(p => p.Locomotion.inAir);
-        playersNear.RemoveAll(p => p.Distance(Player) <= 2.5f);
+        playersNear.RemoveAll(p => p.Distance(Player) <= 3.5f);
+        playersNear.RemoveAll(p => p.IsHitBetween(Player) == true);
 
         if (playersNear.Count > 0) //Existem jogadores proximos
         {
@@ -1070,7 +1066,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
     //Eventos de jogador
     private void OnPassFinish()
     {
-        inPass = false;
+       
         toPass = null;
     }
 
