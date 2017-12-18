@@ -27,7 +27,7 @@ public class TugOfWar : MonoBehaviour
     {
         player = GetComponent<PlayerController>();
     }
-    
+
     // Update is called once per frame
     void Update()
     {
@@ -43,11 +43,11 @@ public class TugOfWar : MonoBehaviour
         {
             if (!player.isOk ||
                 player.Locomotion.inStumble ||
-                player.Locomotion.inTrack || 
-                player.IsMyBall() || 
+                player.Locomotion.inTrack ||
+                player.IsMyBall() ||
                 !jointPlayer.isOk ||
                 !player.GetSkill_BasicActionOne().IsReady
-                
+
                 )
                 RemoveJoint();
         }
@@ -69,24 +69,24 @@ public class TugOfWar : MonoBehaviour
         //CONTROLE MANUAL
         if (!player.IsIA)
         {
-            if (player.IsMyBall() || player.isOk==false)
+            if (player.IsMyBall() || player.isOk == false)
             {
                 if (player.Locomotion.inHoldTug)
                     player.Locomotion.ResetHoldTugAnimator();
                 player.GetSkill_BasicActionOne().mode = SkillVarMode.autoSubtract;
                 return;
             }
-                        
+
             if (ControllerInput.GetButton(player.GetInputType(), player.GetInputs().Input_Kick) && player.isOk)
             {
                 SkillVar skilltug = player.GetSkill_BasicActionOne();
                 skilltug.SetToggle();
-                
+
 
                 if (skilltug.IsMax)
                 {
                     skilltug.TriggerCooldown();
-                   
+
                 }
 
                 if (skilltug.IsReady)
@@ -112,10 +112,10 @@ public class TugOfWar : MonoBehaviour
                     return;
 
                 skilltug.mode = SkillVarMode.autoSubtract;
-                player.Locomotion.ResetHoldTugAnimator();                
+                player.Locomotion.ResetHoldTugAnimator();
                 skilltug.ResetTogle();
 
-                if(skilltug.IsReady)
+                if (skilltug.IsReady)
                     RemoveJoint();
             }
 
@@ -130,8 +130,12 @@ public class TugOfWar : MonoBehaviour
 
     }
 
-    void RemoveJoint()
+    public void RemoveJoint()
     {
+        if (player == null)
+            return;
+        if (player.Locomotion == null)
+            return;
 
         player.Locomotion.RemoveJoint();
         if (jointPlayer == null)

@@ -137,6 +137,12 @@ public abstract class SoccerAIGeneric
         else
             Player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
 
+        if (Locomotion.isJoint)
+            Player.GetSkill_BasicActionOne().mode = SkillVarMode.autoRegen;
+        else
+            Player.GetSkill_BasicActionOne().mode = SkillVarMode.autoSubtract;
+
+
         if (isForcedGoTo)
         {
             if (Player.IsMyBall())
@@ -230,6 +236,8 @@ public abstract class SoccerAIGeneric
         Speed = 0;
         Direction = 0;
         motionType = LocomotionType.normal;
+        Locomotion.ResetHoldTugAnimator();
+        player.GetTugOfWar().RemoveJoint();
         Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
         Player.GetComponent<Animator>().rootPosition = Player.transform.position;
         isForcedGoTo = false;
@@ -453,7 +461,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
     private void Handle_HelpTugState()
     {
         PlayerController playerToHelp = Player.GetCampTeam().GetSelectedPlayer();
-        if(playerToHelp==null)
+        if (playerToHelp == null)
         {
             aiState = SoccerAIState.nothing;
             return;
@@ -474,7 +482,7 @@ public class SoccerAIUnSelected : SoccerAIGeneric
         if (joitedPlayer.IsMyBall() == false)
             Agent.SetDestination(joitedPlayer.transform.position);
         else
-            Agent.SetDestination(BallController.GetPosition());       
+            Agent.SetDestination(BallController.GetPosition());
 
         //Rasteira quando estiver peto
         if (joitedPlayer.Distance(Player) <= 1.5f)
@@ -616,16 +624,10 @@ public class SoccerAISelected : SoccerAIGeneric
         }
 
 
+        Vector3 goTotarget = BallController.GetPosition();
         BallController ball = BallController.instance;
         float balldistance = ball.transform.Distance(Player.transform);
 
-        //Corre atraz da bola
-        Vector3 destination = BallController.GetPosition();
-        Agent.SetDestination(destination);
-
-        Vector2 move = Locomotion.GetDirectionAI();
-        Speed = move.y;
-        Direction = move.x;
 
         //Ativa movimento soccer se tiver stamina e estiver muito longe da bola
 
@@ -639,22 +641,50 @@ public class SoccerAISelected : SoccerAIGeneric
         else
             motionType = LocomotionType.normal;
 
-        //Rasteira ou acao secundaria de poce de bola
-        PlayerController enemyforward;
-        if (Player.IsHitForwad(0.2f, out enemyforward, Player.GetCampTeam().Enemy()))
-        {
-            SkillVar skill = Player.GetSkill_BasicActionTwo();
 
-            if (skill.IsReady && !Player.IsMyBall())
+        SkillVar skillTug = Player.GetSkill_BasicActionOne();
+        SkillVar skillTrak = Player.GetSkill_BasicActionTwo();
+
+        //Ação Rasteira
+        if (skillTrak.IsReady && Player.Locomotion.isJoint == false)
+        {
+            //Rasteira ou acao secundaria de poce de bola
+            PlayerController enemyforward;
+
+            if (Player.IsHitForwad(0.2f, out enemyforward, Player.GetCampTeam().Enemy()))
             {
                 motionType = LocomotionType.normal;
                 if (Locomotion.TriggerActionTwo())
-                    skill.TriggerCooldown();
+                    skillTrak.TriggerCooldown();
             }
         }
 
+        //Ação TugOfWar
+        if (!skillTrak.IsReady && skillTug.IsReady && Player.Locomotion.isJoint == false)
+        {
+            PlayerController enemy = Player.GetEnemyNear();
+            if (enemy.Distance(Player) <= 1.5f && enemy.IsMyBall())
+                Player.Locomotion.SetHoldTugAnimator();
+            else
+                Player.Locomotion.ResetHoldTugAnimator();
+
+        }
+        else if (Player.Locomotion.isJoint)
+        {
+            Player.Locomotion.ResetHoldTugAnimator();
+            goTotarget = Player.GetEnemyGoalPosition().position;
+
+            if (skillTug.IsMax || Locomotion.JoitedPlayer.IsMyBall() == false)
+            {
+                skillTug.TriggerCooldown();
+                skillTug.SetCurrentValue(0);
+                Player.GetTugOfWar().RemoveJoint();
+            }
+        }
         //Verifica a distancia da bola, se estiver muito longe procuro outor jogador mais proximo para selecionar
-        if (Player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric && Player.GetCampTeam().HasPlayerOk())
+        if (Player.GetCampTeam().GetSelectionMode() == GameOptionMode.automatric
+    && Player.GetCampTeam().HasPlayerOk()
+    && !Player.Locomotion.isJoint)
         {
             timeToSelect += Time.deltaTime;
             if (timeToSelect > 1.5f)
@@ -670,6 +700,14 @@ public class SoccerAISelected : SoccerAIGeneric
                 }
             }
         }
+
+
+        //Corre atraz do trajeto        
+        Agent.SetDestination(goTotarget);
+
+        Vector2 move = Locomotion.GetDirectionAI();
+        Speed = move.y;
+        Direction = move.x;
 
     }
 
@@ -695,7 +733,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
     private Vector3 MidCampPosition { get { return GameManager.instance.midCampTransform.position; } }
     Vector3 toGo = Vector3.zero;
     PlayerController toPass = null;
- 
+
     private bool inGoalDir = false;
 
     public SoccerAIwithBall(AIController owner, PlayerController controller) : base(owner, controller)
@@ -756,8 +794,10 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 if (Player.IsHitBetween(toPass) == false && Player.IsMyBall())
                 {
                     if (Owner.TriggerPass(toPass))
-                    {                       
+                    {
                         Player.GetSkill_BasicPass().TriggerCooldown();
+                        toPass = null;
+                        
                     }
 
                 }
@@ -854,14 +894,11 @@ public class SoccerAIwithBall : SoccerAIGeneric
                 PlayerController topass = null;
                 if (GetToPass(out topass) && skillpass.IsReady && enemyNear.IsSelected())
                 {
-
                     if (!Player.IsHitBetween(topass))
                     {
-
                         toPass = topass;
                         toGo = Player.transform.position;
                         inGoalDir = false;
-
                     }
                 }
                 else
@@ -959,8 +996,8 @@ public class SoccerAIwithBall : SoccerAIGeneric
             }
             else
             {
-                float min = playersNear.Min(r => r.Distance(Player));
-                selec = playersNear.FirstOrDefault(r => r.Distance(Player) == min);
+                float min = playersNear.Min(r => r.Distance(Player.GetEnemyGoalPosition().position));
+                selec = playersNear.FirstOrDefault(r => r.Distance(Player.GetEnemyGoalPosition().position) == min);
             }
 
             if (selec != null)
@@ -1066,7 +1103,7 @@ public class SoccerAIwithBall : SoccerAIGeneric
     //Eventos de jogador
     private void OnPassFinish()
     {
-       
+
         toPass = null;
     }
 

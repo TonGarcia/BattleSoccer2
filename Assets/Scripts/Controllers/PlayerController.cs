@@ -33,6 +33,10 @@ public static class PlayerControllerExtensions
     {
         return controller.GetComponent<PlayerAnimatorEvents>();
     }
+    public static TugOfWar GetTugOfWar(this PlayerController controller)
+    {
+        return controller.GetComponent<TugOfWar>();
+    }
     public static bool IsMyTeaM(this PlayerController controller, PlayerController player)
     {
         return controller.GetCampTeam() == player.GetCampTeam();
