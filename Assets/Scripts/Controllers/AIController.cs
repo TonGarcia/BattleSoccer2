@@ -159,7 +159,11 @@ public class AIController : MonoBehaviour
         if (enemys.Count > 0)
             foreach (PlayerController enemy in enemys)
                 if (enemy.Locomotion.inAir == false)
-                    enemy.Locomotion.TriggerStumb();
+                {
+                    //Inimigo que estiver segurando o jogador nao sera afetado
+                    if (enemy.Locomotion.isJoint == false)
+                        enemy.Locomotion.TriggerStumb();
+                }
 
 
     }

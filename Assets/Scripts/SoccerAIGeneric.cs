@@ -237,6 +237,8 @@ public abstract class SoccerAIGeneric
         Direction = 0;
         motionType = LocomotionType.normal;
         Locomotion.ResetHoldTugAnimator();
+        Locomotion.ResetSpeedMultiples();
+
         player.GetTugOfWar().RemoveJoint();
         Player.GetComponent<Rigidbody>().velocity = Vector3.zero;
         Player.GetComponent<Animator>().rootPosition = Player.transform.position;

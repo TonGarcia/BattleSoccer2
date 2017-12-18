@@ -145,6 +145,7 @@ public class ManualController : MonoBehaviour
         {
             //Fill kick power if is myBall
             SkillVar skillKick = player.GetSkill_BasicKick();
+            locomotion.ResetHoldTugAnimator();
 
             if (player.IsMyBall() && skillKick.isToggle)
             {
@@ -172,8 +173,8 @@ public class ManualController : MonoBehaviour
 
             if (Stamina.IsCritical == false && player.isOk)
             {
-               // playerToPass = null;
-              //  GameManager.instance.ResetIndicator();
+                // playerToPass = null;
+                //  GameManager.instance.ResetIndicator();
                 player.SetMotionSoccer();
                 player.Locomotion.SetSpeedMultiplies(1.2f);
             }
@@ -181,8 +182,8 @@ public class ManualController : MonoBehaviour
         }
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Stamina))
         {
-           // playerToPass = null;
-           // GameManager.instance.ResetIndicator();
+            // playerToPass = null;
+            // GameManager.instance.ResetIndicator();
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
             player.GetSkill_Stamina().mode = SkillVarMode.autoRegen;
@@ -193,16 +194,16 @@ public class ManualController : MonoBehaviour
         if (ControllerInput.GetButtonDown(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
 
-           // playerToPass = null;
-          //  GameManager.instance.ResetIndicator();
+            // playerToPass = null;
+            //  GameManager.instance.ResetIndicator();
             player.SetMotionStrafe();
             player.Locomotion.SetSpeedMultiplies(1.2f);
 
         }
         if (ControllerInput.GetButtonUp(player.GetInputType(), player.GetInputs().Input_Strafe))
         {
-           // playerToPass = null;
-           // GameManager.instance.ResetIndicator();
+            // playerToPass = null;
+            // GameManager.instance.ResetIndicator();
             player.Locomotion.ResetSpeedMultiples();
             player.SetMotionNormal();
 
@@ -313,7 +314,7 @@ public class ManualController : MonoBehaviour
             }
         }
 
-        if(playerToPass!=null)
+        if (playerToPass != null)
         {
             playerToPass = null;
             GameManager.instance.ResetIndicator();
@@ -343,7 +344,11 @@ public class ManualController : MonoBehaviour
         List<PlayerController> enemys = GameManager.instance.GetPlayersNearBall(adversary, 2.5f);
         if (enemys.Count > 0)
             foreach (PlayerController enemy in enemys)
-                enemy.Locomotion.TriggerStumb();
+            {
+                //Inimigo que estiver segurando o jogador nao sera afetado
+                if (enemy.Locomotion.isJoint == false)
+                    enemy.Locomotion.TriggerStumb();
+            }
 
     }
     private void EvChangeDirectionOk()
@@ -405,8 +410,8 @@ public class ManualController : MonoBehaviour
                 BallController.SetPass(12.0f);
             }
 
-           // playerToPass = null;
-           // GameManager.instance.ResetIndicator();
+            // playerToPass = null;
+            // GameManager.instance.ResetIndicator();
         }
 
     }

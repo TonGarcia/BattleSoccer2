@@ -433,6 +433,7 @@ namespace SoccerGame
             {
                 if (inWalkRun == true || inIdle == true || inAir == true)
                 {
+                    m_Animator.ResetTrigger(m_KickId);
                     m_Animator.SetTrigger(m_KickId);
                     result = true;
 
@@ -447,6 +448,7 @@ namespace SoccerGame
             {
                 if (inWalkRun == true || inIdle == true || inAir == true)
                 {
+                    m_Animator.ResetTrigger(m_PassId);
                     m_Animator.SetTrigger(m_PassId);
                     result = true;
                 }
@@ -461,6 +463,7 @@ namespace SoccerGame
             {
                 if (inWalkRun == true || inIdle == true)
                 {
+                    m_Animator.ResetTrigger(m_ActionTwoId);
                     m_Animator.SetTrigger(m_ActionTwoId);
                     result = true;
                 }
@@ -475,6 +478,7 @@ namespace SoccerGame
             {
                 if (inWalkRun == true || inIdle == true)
                 {
+                    m_Animator.ResetTrigger(m_ActionOneId);
                     m_Animator.SetTrigger(m_ActionOneId);
                     result = true;
                 }
@@ -485,7 +489,10 @@ namespace SoccerGame
         public void TriggerEntry()
         {
             if (!inEntry)
+            {
+                m_Animator.ResetTrigger(m_EntryId);
                 m_Animator.SetTrigger(m_EntryId);
+            }
         }
         public void SetTrip()
         {
@@ -499,7 +506,10 @@ namespace SoccerGame
         public void TriggerStumb()
         {
             if (!inStumble && !inPass && !inKick && !inTrack && !inTrip)
+            {
+                m_Animator.ResetTrigger(m_StumbleId);
                 m_Animator.SetTrigger(m_StumbleId);
+            }
         }
         public void SetHoldTugAnimator()
         {
